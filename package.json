@@ -1,0 +1,52 @@
+{
+  "name": "oracle-time-tracker",
+  "repository": "jneidel/oracle-time-tracker",
+  "version": "0.0.1",
+  "author": {
+    "name": "Jonathan Neidel",
+    "email": "git@jneidel.com",
+    "url": "https://jneidel.com"
+  },
+  "scripts": {
+    "start": "node dist/app.js",
+    "test": "jest --coverage",
+    "build": "tsc",
+    "watch": "concurrently -k -n \"🔨,🚀\" \"npm run watch-build\" \"npm run watch-test\" --prefix name",
+    "watch-build": "tsc -w",
+    "watch-test": "jest --watch",
+    "lint": "eslint --fix -c ~/.config/eslint/eslintrc-ts --ext .ts --parser-options \"{ 'ecmaVersion': 10, 'ecmaFeatures': { 'impliedStrict': true }, project: ./tsconfig.json }\" src"
+  },
+  "bin": {
+    "ott": "dist/app.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=16"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "dotenv-expand": "^10.0.0",
+    "sequelize": "^6.28.0",
+    "sqlite3": "^5.1.4"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.0.3",
+    "@types/node": "^16.11.9",
+    "@types/sequelize": "^4.28.14",
+    "jest": "^27.3.1",
+    "ts-jest": "^27.0.7",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.2"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/**/*.test.ts"
+    ],
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    }
+  }
+}
