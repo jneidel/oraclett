@@ -1,2 +1,2 @@
-export * from "./data-directory";
-export * from "./fs";
+export * from "./env";
+export * as fs from "./fs";

@@ -1,5 +1,5 @@
 import { Command, Flags } from "@oclif/core";
-import { projects } from "../../config";
+import { addProject } from "../../controller/project";
 import inquirer from "inquirer";
 
 export default class Add extends Command {
@@ -62,9 +62,9 @@ $ oraclett project add "INTPD999DXD - People Development DXD" -t "01 - Career de
       };
       await ask();
 
-      projects.add( projectCode, taskDetails );
+      addProject( projectCode, taskDetails );
     } else {
-      projects.add( args.project_code, flags.taskDetail );
+      addProject( args.project_code, flags.taskDetail );
     }
   }
 }

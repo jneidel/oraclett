@@ -1,5 +1,5 @@
 import { Command, Flags } from "@oclif/core";
-import { projects } from "../../config";
+import { listProjects } from "../../controller/project";
 
 export default class List extends Command {
   static description = "List all projects";
@@ -15,6 +15,6 @@ export default class List extends Command {
   async run(): Promise<void> {
     const { flags } = await this.parse( List );
 
-    projects.list( flags.filter );
+    listProjects( flags.filter );
   }
 }
