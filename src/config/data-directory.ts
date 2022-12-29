@@ -6,5 +6,5 @@ export const HOURS_FILE = `${DATA_DIR}/hours.json`;
 export const TASKS_FILE = `${DATA_DIR}/tasks.json`;
 
 export async function createDataDir() {
-  await fs.mkdir(DATA_DIR, { recursive: true });
+  await fs.mkdir( DATA_DIR, { recursive: true } );
 }
