@@ -68,7 +68,8 @@ async function addProject( codeString: string, taskDetailsStrings: string[] = []
 
   const projects = await readAllProjects();
   if (projects[key]) {
-    projects[key].description = code[key].description;
+    if (code[key].description)
+      projects[key].description = code[key].description;
     projects[key].taskDetails = Object.assign(projects[key].taskDetails, code[key].taskDetails);
     console.log( "Successfully updated" )
   } else {

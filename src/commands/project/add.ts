@@ -1,5 +1,6 @@
 import {Command, Flags} from '@oclif/core'
 import { projects } from "../../config";
+import inquirer from 'inquirer';
 
 export default class Add extends Command {
   static description = 'Add a project'
@@ -29,6 +30,41 @@ $ oraclett project add "INTPD999DXD - People Development DXD" -t "01 - Career de
   async run(): Promise<void> {
     const {args, flags} = await this.parse(Add)
 
-    projects.add( args.project_code, flags.taskDetail )
+    if (!args.project_code) {
+      const { project_code } = await inquirer.prompt( {
+        type: "input",
+        name: "project_code",
+        message: "What is the project code you want to add?"
+      } );
+
+      let taskDetails: string[] = [];
+      const ask = async () => {
+        return inquirer.prompt([
+          {
+            type: "input",
+            name: "taskDetails",
+            message: "What task details do you want to add?",
+          },
+          {
+            type: "confirm",
+            name: "askAgain",
+            message: "Do you want to add another task detail to the project code?",
+            default: false,
+          },
+        ]).then((answers) => {
+          taskDetails.push(answers.taskDetails);
+          if (answers.askAgain) {
+            return ask();
+          } else {
+            return taskDetails;
+          }
+        });
+      };
+      await ask();
+
+      projects.add( project_code, taskDetails )
+    } else {
+      projects.add( args.project_code, flags.taskDetail )
+    }
   }
 }
