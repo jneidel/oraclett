@@ -49,7 +49,7 @@ async function listProjects( projectToFilterBy: string|undefined ) {
     return `${projectCodeString  }\n${  taskDetailsString}`;
   } );
 
-  if ( projectList.length > 0 ) {
+  if ( projectList.length !== 0 ) {
     console.log( "Projects:" );
     console.log( projectList.join( "\n" ) );
   } else {

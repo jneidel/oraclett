@@ -18,7 +18,7 @@
     "watch": "concurrently -k -n \"🔨,🚀\" \"npm run watch-build\" \"npm run watch-test\" --prefix name",
     "watch-build": "tsc -w",
     "watch-test": "jest --watch",
-    "lint": "eslint --fix -c ~/.config/eslint/eslintrc-ts --ext .ts --parser-options \"{ 'ecmaVersion': 10, 'ecmaFeatures': { 'impliedStrict': true }, project: ./tsconfig.json }\" src",
+    "lint": "eslint --fix --ext .ts --parser-options \"{ 'ecmaVersion': 10, 'ecmaFeatures': { 'impliedStrict': true }, project: ./tsconfig.json }\" src",
     "pack": "npm run build && oclif manifest && oclif readme"
   },
   "files": [
@@ -44,6 +44,10 @@
     "@types/jest": "^27.0.3",
     "@types/node": "^16.11.9",
     "@types/sequelize": "^4.28.14",
+    "@typescript-eslint/eslint-plugin": "^5.47.1",
+    "eslint": "^8.30.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-unicorn": "^45.0.2",
     "jest": "^27.3.1",
     "ts-jest": "^27.0.7",
     "ts-node": "^10.4.0",
