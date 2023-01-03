@@ -44,11 +44,11 @@ export async function addHours( data: {
     hours[isoYear][isoWeek][project][taskDetails] = Object.assign( hours[isoYear][isoWeek][project][taskDetails], structure[isoYear][isoWeek][project][taskDetails] );
   } else if ( hours[isoYear][isoWeek][project][taskDetails][dayOfTheWeek] ) {
     const currentHours =  hours[isoYear][isoWeek][project][taskDetails][dayOfTheWeek];
-    const combinedHours = Number(currentHours) + Number(hoursToLog);
+    const combinedHours = Number( currentHours ) + Number( hoursToLog );
     if ( combinedHours > 8 && !force )
       throw new Error( `${combinedHours} --force` );
     else
-      hours[isoYear][isoWeek][project][taskDetails][dayOfTheWeek] = Number(combinedHours);
+      hours[isoYear][isoWeek][project][taskDetails][dayOfTheWeek] = Number( combinedHours );
   } else {
     console.log( "bruh" );
   }

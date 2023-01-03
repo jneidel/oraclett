@@ -1,12 +1,11 @@
 import { Command } from "@oclif/core";
-import { removeProject, readProjects, combineToOracleString } from "../../controller/project";
 import inquirer from "inquirer";
+import { removeProject, readProjects } from "../../controller/project";
+import { interactiveHelpText, combineToOracleString } from "../../controller/utils";
 
 export default class Remove extends Command {
-  static summary = "Remove projects or a projects task details";
-  static description = `Remove projects or a projects task details.
-
-Passing no arguments will start an interactive session.`;
+  static summary = "Remove projects or a projects task details.";
+  static description = interactiveHelpText;
 
   static args = [ {
     name       : "projectCode",
@@ -62,7 +61,7 @@ Passing no arguments will start an interactive session.`;
           type   : "list",
           message: "Select project to remove",
           name   : "projectToBeRemoved",
-          choices: Object.keys( projects ).map( key => ( { value: key, name: combineToOracleString( key, projects[key].description ) } ) ),
+          choices: Object.keys( projects ).map( key => ( { value: key, name: combineToOracleString( key, projects[key].description ) } ) ).reverse(),
           when( answers ) {
             return answers.whatToRemove === "project";
           },

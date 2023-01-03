@@ -1,22 +1,9 @@
 import chalk from "chalk";
 import { fs, PROJECTS_FILE } from "../config";
+import { parseOracleString } from "./utils";
 
 export const readProjects = async () => fs.read( PROJECTS_FILE );
 const writeProjects = async data => fs.write( PROJECTS_FILE, data );
-
-export function parseOracleString( str: string ) {
-  const match = str.match( /(.+) - (.*)/ );
-  if ( match )
-    return { [match[1]]: { description: match[2] } };
-  else
-    return { str: { description: null } };
-}
-export function combineToOracleString( key: string, description: string|null ) {
-  if ( description === null )
-    return key;
-  else
-    return `${key} - ${description}`;
-}
 
 export async function listProjects( projectToFilterBy: string|undefined ) {
   let projectList = await readProjects();
@@ -47,7 +34,7 @@ export async function listProjects( projectToFilterBy: string|undefined ) {
 }
 
 export async function addProject( codeString: string, taskDetailsStrings: string[] = [] ) {
-  const code = parseOracleString( codeString );
+  const code: any = parseOracleString( codeString );
   const [ key ] = Object.keys( code );
 
   const tds = taskDetailsStrings
@@ -82,7 +69,6 @@ export async function removeProject( projectCode: string, taskDetail: string|nul
   writeProjects( projects );
 }
 
-
 export async function editProject( data: {project: string; newName: string; taskDetail?: string } ) {
   let projects = await readProjects();
   let { project, newName, taskDetail } = data;
@@ -91,13 +77,18 @@ export async function editProject( data: {project: string; newName: string; task
   if ( taskDetail ) {
     taskDetail = Object.keys( parseOracleString( taskDetail ) )[0];
     projects[project].taskDetails = Object.assign( projects[project].taskDetails, newNameObject );
-    delete projects[project].taskDetails[taskDetail];
+
+    const keyHasChanged = taskDetail !== Object.keys( newNameObject )[0];
+    if ( keyHasChanged ) delete projects[project].taskDetails[taskDetail];
   } else {
-    const projectCode = Object.keys( newNameObject )[0];
-    newNameObject[projectCode].taskDetails = projects[project].taskDetails;
+    const newProjectCode = Object.keys( newNameObject )[0];
+    newNameObject[newProjectCode].taskDetails = projects[project].taskDetails;
     projects = Object.assign( projects, newNameObject );
-    delete projects[project];
-    project = projectCode;
+
+    const keyHasChanged = project !== newProjectCode;
+    if ( keyHasChanged ) delete projects[project];
+
+    project = newProjectCode;
   }
 
   await writeProjects( projects );

@@ -35,7 +35,7 @@ $ <%= config.bin %> <%= command.id %> 10 -p INTPD999DXD -t 01 -d today -f
     force: Flags.boolean( {
       char       : "f",
       description: "Force logging more than 8h on one workday",
-      hidden: true,
+      hidden     : true,
     } ),
   };
 
@@ -54,13 +54,13 @@ $ <%= config.bin %> <%= command.id %> 10 -p INTPD999DXD -t 01 -d today -f
         await validateProject( project );
       const answers = await inquirer.prompt( [
         {
-          type    : "number",
-          name    : "hours",
-          message : "How many hours?",
-          when    : () => !hours,
-          validate(value) {
-            const valid = !isNaN(parseFloat(value));
-            return valid || 'Please enter a number';
+          type   : "number",
+          name   : "hours",
+          message: "How many hours?",
+          when   : () => !hours,
+          validate( value ) {
+            const valid = !isNaN( parseFloat( value ) );
+            return valid || "Please enter a number";
           },
         },
         {
@@ -87,13 +87,13 @@ $ <%= config.bin %> <%= command.id %> 10 -p INTPD999DXD -t 01 -d today -f
         },
       ] );
 
-      if (answers.project)
+      if ( answers.project )
         project = answers.project;
-      if (answers.taskDetail)
+      if ( answers.taskDetail )
         taskDetails = answers.taskDetail;
-      if (answers.date)
+      if ( answers.date )
         date = answers.date;
-      if (answers.hours)
+      if ( answers.hours )
         hours = answers.hours;
     }
 
@@ -104,16 +104,15 @@ $ <%= config.bin %> <%= command.id %> 10 -p INTPD999DXD -t 01 -d today -f
     } catch ( err: any ) {
       if ( err.message.match( /--force/ ) ) {
 
-        const combinedHours = err.message.split(" ")[0];
+        const combinedHours = err.message.split( " " )[0];
         const force = await inquirer.prompt( [ {
-          type: "confirm",
-          name: "force",
+          type   : "confirm",
+          name   : "force",
           message: `You are attempting to log a combined ${combinedHours} hours for a workday. Continue?`,
-        } ] ).then(answers => answers.force);
-        if (force)
+        } ] ).then( answers => answers.force );
+        if ( force )
           await addHours( { hoursToLog: hours, dateString: date, project, taskDetails, force } );
-      } else
-        this.error( err.message );
+      } else {this.error( err.message );}
     }
   }
 }

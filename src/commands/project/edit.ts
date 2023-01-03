@@ -1,12 +1,11 @@
 import { Command } from "@oclif/core";
-import { editProject, readProjects, combineToOracleString, parseOracleString } from "../../controller/project";
 import inquirer from "inquirer";
+import { editProject, readProjects } from "../../controller/project";
+import { interactiveHelpText, combineToOracleString, parseOracleString, getReadableChoices } from "../../controller/utils";
 
 export default class Edit extends Command {
-  static summary = "Edit the name of a projects or a projects task detail";
-  static description = `Edit the name of a projects or a projects task detail.
-
-Passing no arguments will start an interactive session.`;
+  static summary = "Edit the name of a projects or a projects task detail.";
+  static description = interactiveHelpText;
 
   static args = [ {
     name       : "projectCode",
@@ -21,7 +20,7 @@ Passing no arguments will start an interactive session.`;
       {
         type   : "expand",
         name   : "whatToEdit",
-        message: "Do you want to edit a project or a projects task detail?",
+        message: "Do you want to edit a Project or the Task details of a project?",
         choices: [
           {
             key  : "p",
@@ -38,8 +37,8 @@ Passing no arguments will start an interactive session.`;
       {
         type   : "list",
         name   : "project",
-        message: "What project do you want to remove a Task Detail from?",
-        choices: Object.keys( projects ),
+        message: "What project?",
+        choices: () => getReadableChoices.project(),
         when( answers ) {
           return !args.projectCode && answers.whatToEdit === "taskDetail";
         },
@@ -47,7 +46,7 @@ Passing no arguments will start an interactive session.`;
       {
         type   : "list",
         name   : "taskDetailToBeEdited",
-        message: "Select the task detail to edit",
+        message: "Select for editing:",
         choices( answers ) {
           const projectCode = args.projectCode ? args.projectCode : answers.project;
 
@@ -59,7 +58,7 @@ Passing no arguments will start an interactive session.`;
       },
       {
         type   : "list",
-        message: "Select project to edit",
+        message: "Select for editing:",
         name   : "projectToBeEdited",
         choices: Object.keys( projects ).map( key => ( { name: combineToOracleString( key, projects[key].description ) } ) ),
         when( answers ) {
@@ -69,7 +68,7 @@ Passing no arguments will start an interactive session.`;
       {
         type   : "editor",
         name   : "renamedOption",
-        message: "Please rename the value in question",
+        message: "Please rename it",
         default( answers ) {
           if ( answers.whatToEdit === "project" )
             return answers.projectToBeEdited || combineToOracleString( args.projectCode, projects[args.projectCode].description );
@@ -95,6 +94,5 @@ Passing no arguments will start an interactive session.`;
       editProject( { project: answers.projectToBeEdited, newName: answers.renamedOption } );
     else
       editProject( { project: answers.project, newName: answers.renamedOption, taskDetail: answers.taskDetailToBeEdited } );
-
   }
 }

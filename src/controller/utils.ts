@@ -5,7 +5,7 @@ export function parseOracleString( str: string ) {
   if ( match )
     return { [match[1]]: { description: match[2] } };
   else
-    return { str: { description: null } };
+    return { [str]: { description: null } };
 }
 export function combineToOracleString( key: string, description: string|null ) {
   if ( description === null )

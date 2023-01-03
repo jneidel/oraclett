@@ -2,7 +2,7 @@ import { Command, Flags } from "@oclif/core";
 import { listProjects } from "../../controller/project";
 
 export default class List extends Command {
-  static description = "List all projects";
+  static description = "List all projects.";
 
   static flags = {
     filter: Flags.string( {

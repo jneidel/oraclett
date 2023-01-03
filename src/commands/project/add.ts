@@ -1,17 +1,20 @@
 import { Command, Flags } from "@oclif/core";
-import { addProject } from "../../controller/project";
 import inquirer from "inquirer";
+import { addProject } from "../../controller/project";
+import { interactiveHelpText } from "../../controller/utils";
 
 export default class Add extends Command {
-  static description = "Add a project";
+  static summary = "Add a project.";
+  static description = `${interactiveHelpText}
 
-  static examples = [
-    `
-$ oraclett project add
-$ oraclett project add "INTPD999DXD - People Development DXD"
-$ oraclett project add "INTPD999DXD - People Development DXD" -t "01 - Career development" -t "03 - Discipline Weeks"
-`,
-  ];
+Copy paste the values from Oracle.
+A project code will look like this: INTPD999DXD - People Development DXD
+And the task details will like this: 01 - Career development`;
+
+  static examples = [ `$ <%= config.bin %> <%= command.id %>
+$ <%= config.bin %> <%= command.id %> -p "INTPD999DXD - People Development DXD"
+$ <%= config.bin %> <%= command.id %> -t "01 - Career development" -t "03 - Discipline Weeks" -p "INTPD999DXD - People Development DXD"
+` ];
 
   static flags = {
     taskDetail: Flags.string( {
@@ -20,30 +23,35 @@ $ oraclett project add "INTPD999DXD - People Development DXD" -t "01 - Career de
       multiple   : true,
       aliases    : [ "task", "detail", "details" ],
     } ),
+    project: Flags.string( {
+      char       : "p",
+      description: "The project code",
+      aliases    : [ "projectCode", "projectcode" ],
+    } ),
   };
 
-  static args = [ {
-    name       : "project_code",
-    description: "The project code",
-  } ];
-
   async run(): Promise<void> {
-    const { args, flags } = await this.parse( Add );
+    const { flags } = await this.parse( Add );
+    let { project, taskDetail }: {project: any; taskDetail: string[]|undefined} = flags;
+    const taskDetails: string[] = taskDetail || [];
 
-    if ( !args.project_code ) {
-      const { project_code: projectCode } = await inquirer.prompt( {
+    if ( !project || !taskDetail ) {
+      await inquirer.prompt( {
         type   : "input",
-        name   : "project_code",
+        name   : "project",
         message: "What is the project code you want to add?",
+        when   : () => !project,
+      } ).then( answers => {
+        if ( answers.project )
+          project = answers.project;
       } );
 
-      const taskDetails: string[] = [];
-      const ask = async () => {
+      const askLoop = async () => {
         return inquirer.prompt( [
           {
             type   : "input",
             name   : "taskDetails",
-            message: "What task details do you want to add?",
+            message: "Add a task detail:",
           },
           {
             type   : "confirm",
@@ -54,17 +62,25 @@ $ oraclett project add "INTPD999DXD - People Development DXD" -t "01 - Career de
         ] ).then( ( answers ) => {
           taskDetails.push( answers.taskDetails );
           if ( answers.askAgain )
-            return ask();
+            return askLoop();
           else
             return taskDetails;
-
         } );
       };
-      await ask();
 
-      addProject( projectCode, taskDetails );
-    } else {
-      addProject( args.project_code, flags.taskDetail );
+      if ( taskDetails.length !== 0 ) {
+        const { shouldAdd } = await inquirer.prompt( [ {
+          type   : "confirm",
+          name   : "shouldAdd",
+          message: "Do you want to add another task detail to the project code?",
+          default: false,
+        } ] );
+        if ( shouldAdd )
+          await askLoop();
+      } else {
+        await askLoop();
+      }
     }
+    addProject( project, taskDetails );
   }
 }
