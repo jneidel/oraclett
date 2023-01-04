@@ -37,17 +37,15 @@ $ <%= config.bin %> <%= command.id %> 10 -p INTPD999DXD -t 01 -d today -f
       description: "Force logging more than 8h on one workday",
       hidden     : true,
     } ),
+    hours: Flags.string( {
+      char       : "H",
+      description: "The number of hours to log. (1h: 1, 30min: 0.5, etc.)",
+    } ),
   };
 
-  static args = [ {
-    name       : "hours",
-    description: "The number of hours to log. (1h: 1, 30min: 0.5, etc.)",
-  } ];
-
   async run(): Promise<void> {
-    const { args, flags } = await this.parse( Add );
-    let { project, taskDetails, date } = flags;
-    let { hours } = args;
+    const { flags } = await this.parse( Add );
+    let { project, taskDetails, date, hours } = flags;
 
     if ( !project || !taskDetails || !date || !hours ) {
       if ( project )
