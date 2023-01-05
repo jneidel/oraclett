@@ -1,5 +1,6 @@
 import { Command, Flags } from "@oclif/core";
 import { listHours } from "../../controller/hours";
+import { validateDateString } from "../../controller/validation";
 
 export default class List extends Command {
   static description = "List all projects.";
@@ -24,6 +25,8 @@ $ <%= config.bin %> <%= command.id %> -d "last week" --short
   async run(): Promise<void> {
     const { flags } = await this.parse( List );
     const { date, short } = flags;
+
+    validateDateString( date );
 
     listHours( date, short );
   }

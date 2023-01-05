@@ -5,9 +5,11 @@ import { readProjects } from "./project";
 export function validateDateString( dateString = "today", dontThrow = false ): string|boolean {
   const date = Date.create( dateString );
   const message = `Invalid date string passed.
-  Supported are even human readable string like: today, yesterday, tomorrow, fri, last week tue, last wednesday.
 
-  You can interactively test what works here: https://sugarjs.com/dates/#/Parsing`;
+Besides normal dates like 5/24, human readable (relative) dates are supported:
+  today, yesterday, tomorrow, fri, last week tue, last wednesday, aug 15
+
+Optionally you can interactively test what works here: https://sugarjs.com/dates/#/Parsing`;
 
   if ( !Date.isValid( date ) ) {
     if ( !dontThrow )

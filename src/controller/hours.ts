@@ -72,7 +72,7 @@ export async function listHours( dateStringOrWeekNr: string|number, shortendTitl
     .then( hours => hours[isoYear][isoWeek] )
     .catch( () => null );
 
-  if ( relevantHours === null ) {
+  if ( !relevantHours ) {
     console.log( `No hours logged in week ${isoWeek} of ${isoYear}.
 
 To log some use: hours add` );
@@ -165,4 +165,20 @@ To log some use: hours add` );
     console.log( `Logged hours for week ${isoWeek} of ${isoYear}:\n` );
     CliUx.ux.table( tableData, columns, {} );
   }
+}
+
+export async function editHours( data: {
+  project: string;
+  taskDetail: string;
+  year: string;
+  week: string;
+  dayOfTheWeek: string;
+  newHours: number;
+} ) {
+  const { project, taskDetail, year, week, dayOfTheWeek, newHours } = data;
+  const hours = await readHours( true );
+
+  console.log( project, taskDetail, year, week, dayOfTheWeek, newHours );
+
+  hours[year][week][project][taskDetail][dayOfTheWeek] = newHours;
 }
