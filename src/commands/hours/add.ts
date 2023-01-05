@@ -26,11 +26,11 @@ $ <%= config.bin %> <%= command.id %> 10 -p INTPD999DXD -t 01 -d today -f
     } ),
     project: Flags.string( {
       char       : "p",
-      description: "A project code",
+      description: "A project code (it it's short version)",
     } ),
     date: Flags.string( {
       char       : "d",
-      description: "A (human-reable) date string (defaults to today)",
+      description: "The date for which to log (defaults to today, can be human-readable)",
     } ),
     force: Flags.boolean( {
       char       : "f",
@@ -45,7 +45,9 @@ $ <%= config.bin %> <%= command.id %> 10 -p INTPD999DXD -t 01 -d today -f
 
   async run(): Promise<void> {
     const { flags } = await this.parse( Add );
-    let { project, taskDetails, date, hours } = flags;
+    let { project, taskDetails, date, hours }: any = flags;
+    if ( hours )
+      hours = Number( hours );
 
     if ( !project || !taskDetails || !date || !hours ) {
       if ( project )

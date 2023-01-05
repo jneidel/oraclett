@@ -73,7 +73,9 @@
       "help"
     ],
     "additionalVersionFlags": [
-      "-v"
+      "-v",
+      "-V",
+      "version"
     ]
   },
   "jest": {
