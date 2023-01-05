@@ -109,7 +109,7 @@ async function dayMode( dayOfTheWeek: string, hoursData, throwNoTimeLoggedError:
   if ( projectsInQuestion.length === 0 ) {
     return throwNoTimeLoggedError();
   } else if ( projectsInQuestion.length === 1 ) {
-    console.log( `Using: ${projectsInQuestion[0]}` );
+    console.log( `Using ${projectsInQuestion[0]}` );
     project = projectsInQuestion[0];
   } else {
     const scrubbedHoursData = removeAllKeysExcept( hoursData, projectsInQuestion );
@@ -123,7 +123,7 @@ async function dayMode( dayOfTheWeek: string, hoursData, throwNoTimeLoggedError:
   if ( taskDetailsInQuestion.length === 0 ) {
     return throwNoTimeLoggedError();
   } else if ( taskDetailsInQuestion.length === 1 ) {
-    console.log( `Using: ${taskDetailsInQuestion[0]}` );
+    console.log( `Using ${taskDetailsInQuestion[0]}` );
     taskDetail = taskDetailsInQuestion[0];
   } else {
     const scrubbedHoursData = removeAllKeysExcept( hoursData[project], taskDetailsInQuestion );
@@ -154,11 +154,9 @@ async function askForProject( hoursData, throwNoTimeLoggedError: Function ): Pro
       type   : "list",
       name   : "project",
       message: "What project?",
-      choices: async () => {
+      choices: () => {
         const projectsToChooseFrom = Object.keys( hoursData );
-        const choic = await getReadableChoices.project( projectsToChooseFrom );
-        console.log( choic );
-        return choic;
+        return getReadableChoices.project( projectsToChooseFrom );
       },
     } ] ).then( res => res.project );
   }

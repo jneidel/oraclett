@@ -1,8 +1,7 @@
 import { CliUx } from "@oclif/core";
 const { Date } = require( "sugar" );
 import { fs, HOURS_FILE } from "../config";
-import { combineToOracleString } from "./utils";
-import { readProjects } from "./project";
+import { getFullNames } from "./utils";
 
 export const readHours = async ( forceReadingFromDisk = false ) => fs.read( HOURS_FILE, forceReadingFromDisk );
 const writeHours = async data => fs.write( HOURS_FILE, data );
@@ -125,16 +124,18 @@ To log some use: hours add` );
       };
     } );
 
-    const rawProjectsData = await readProjects();
-    const projectTaskDetailText = projectTaskDetailCombinations.map( ( combi: any ) => {  // TODO: include descriptions
-      if ( shortendTitles ) {return `${combi.project}: ${combi.taskDetail} `;} else {
-        const rawProject = rawProjectsData[combi.project];
-        const projectText = combineToOracleString( combi.project, rawProject.description );
-        const taskDetailText = combineToOracleString( combi.taskDetail, rawProject.taskDetails[combi.taskDetail].description );
+    const projectTaskDetailText = await Promise.all( projectTaskDetailCombinations.map( async ( combi: any ) => {
+      if ( shortendTitles ) {
+        return `${combi.project}: ${combi.taskDetail} `;
+      } else {
+        const [ projectName, taskDetailName  ] = await Promise.all( [
+          getFullNames.project( combi.project ),
+          getFullNames.taskDetail( combi.project, combi.taskDetail ),
+        ] );
 
-        return `${projectText}: ${taskDetailText} `;
+        return `${projectName}: ${taskDetailName} `;
       }
-    } );
+    } ) );
 
     const tableData  = projectTaskDetailText.map( ( project, index ) => {
       const hours = hoursPerWeekday[index];

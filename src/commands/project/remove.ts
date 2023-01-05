@@ -1,7 +1,7 @@
 import { Command } from "@oclif/core";
 import inquirer from "inquirer";
-import { removeProject, readProjects } from "../../controller/project";
-import { interactiveHelpText, combineToOracleString } from "../../controller/utils";
+import { removeProject } from "../../controller/project";
+import { interactiveHelpText, getReadableChoices } from "../../controller/utils";
 
 export default class Remove extends Command {
   static summary = "Remove projects or a projects task details.";
@@ -15,64 +15,45 @@ export default class Remove extends Command {
   async run(): Promise<void> {
     const { args } = await this.parse( Remove );
 
-    if ( args.projectCode ) {
-      removeProject( args.projectCode );
+    const { whatToRemove }: { whatToRemove: "project"|"taskDetail" } = await inquirer.prompt( [ {
+      type   : "expand",
+      name   : "whatToRemove",
+      message: "Do you want to remove a project or a projects task detail?",
+      choices: [
+        {
+          key  : "p",
+          name : "Project",
+          value: "project",
+        },
+        {
+          key  : "t",
+          name : "Task Detail",
+          value: "taskDetail",
+        },
+      ],
+    } ] );
+
+    let projectKey = args.projecCode;
+    if ( !projectKey ) {
+      await inquirer.prompt( [ {
+        type   : "list",
+        name   : "project",
+        message: "What project?",
+        choices: () => getReadableChoices.project(),
+      } ] ).then( ans => projectKey = ans.project );
+    }
+
+    if ( whatToRemove === "project" ) {
+      removeProject( projectKey, taskDetailKey );
     } else {
-      const projects = await readProjects();
-      const answers = await inquirer.prompt( [
-        {
-          type   : "expand",
-          name   : "whatToRemove",
-          message: "Do you want to remove a project or a projects task detail?",
-          choices: [
-            {
-              key  : "p",
-              name : "Project",
-              value: "project",
-            },
-            {
-              key  : "t",
-              name : "Task Detail",
-              value: "taskDetail",
-            },
-          ],
-        },
-        {
-          type   : "list",
-          name   : "project",
-          message: "What project do you want to remove a Task Detail from?",
-          choices: Object.keys( projects ),
-          when( answers ) {
-            return answers.whatToRemove === "taskDetail";
-          },
-        },
-        {
-          type   : "list",
-          name   : "taskDetailToBeRemoved",
-          message: "Select the task detail to remove",
-          choices( answers ) {
-            return Object.keys( projects[answers.project].taskDetails ).map( key => ( { name: combineToOracleString( key, projects[answers.project].taskDetails[key].description ), value: key } ) );
-          },
-          when( answers ) {
-            return answers.whatToRemove === "taskDetail";
-          },
-        },
-        {
-          type   : "list",
-          message: "Select project to remove",
-          name   : "projectToBeRemoved",
-          choices: Object.keys( projects ).map( key => ( { value: key, name: combineToOracleString( key, projects[key].description ) } ) ).reverse(),
-          when( answers ) {
-            return answers.whatToRemove === "project";
-          },
-        },
-      ] );
+      var { taskDetailKey } = await inquirer.prompt( [ {
+        type   : "list",
+        name   : "taskDetailKey",
+        message: "What task detail?",
+        choices: () => getReadableChoices.taskDetails( projectKey ),
+      } ] );
 
-      if ( answers.whatToRemove === "project" )
-        removeProject( answers.projectToBeRemoved );
-      else
-        removeProject( answers.project, answers.taskDetailToBeRemoved );
-
+      removeProject( projectKey, taskDetailKey );
     }
   }
 }

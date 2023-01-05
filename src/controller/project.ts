@@ -1,6 +1,5 @@
-import chalk from "chalk";
 import { fs, PROJECTS_FILE } from "../config";
-import { parseOracleString } from "./utils";
+import { parseOracleString, getFullNames } from "./utils";
 
 export const readProjects = async () => fs.read( PROJECTS_FILE );
 const writeProjects = async data => fs.write( PROJECTS_FILE, data );
@@ -13,23 +12,25 @@ export async function listProjects( projectToFilterBy: string|undefined ) {
     projectKeys = projectKeys.filter( projectKey => projectKey === projectToFilterBy );
 
 
-  projectList = projectKeys.map( ( projectKey: string ) => {
-    const project = projectList[projectKey];
-
-    const projectCodeString = ` ${chalk.green( projectKey )} (${project.description})`;
-    const taskDetailsString = Object.keys( project.taskDetails ).sort()
-      .map( taskDetailKey => {
-        const { description } = project.taskDetails[taskDetailKey];
-        return `  * ${chalk.blue( taskDetailKey )} (${description})`;
-      } ).join( "\n" );
-    return `${projectCodeString  }\n${  taskDetailsString}`;
-  } );
+  projectList = await Promise.all( projectKeys.map( async ( projectKey: string ) => {
+    const projectName = await getFullNames.project( projectKey, { style: "parens", keyColor: "#00ff5f" } );
+    const taskDetailNames = await Promise.all(
+      Object.keys( projectList[projectKey].taskDetails ).sort()
+        .map( async taskDetailKey => {
+          const name = await getFullNames.taskDetail( projectKey, taskDetailKey, { style: "parens", keyColor: "#005fd7" } );
+          return `  * ${name}`;
+        } )
+    ).then( arr => arr.join( "\n" ) );
+    return `${projectName}\n${taskDetailNames}`;
+  } ) );
 
   if ( projectList.length !== 0 ) {
     console.log( "Projects:" );
     console.log( projectList.join( "\n" ) );
   } else {
-    console.log( "There are no projects.\nTo add use: $ oraclett project add" );
+    console.log( `There are no projects.
+
+To add a few use: project add` );
   }
 }
 
