@@ -1,7 +1,7 @@
 import { Command } from "@oclif/core";
 import inquirer from "inquirer";
-import { readHours, removeHours, dayWeekMode, parseDateStringForValues } from "../../controller/hours";
-import { getReadableChoices } from "../../controller/utils";
+import { readHours, removeHours, dayWeekMode } from "../../controller/hours";
+import { getReadableChoices, parseDateStringForValues } from "../../controller/utils";
 
 export default class Remove extends Command {
   static summary = "Remove logged hours interactively.";

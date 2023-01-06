@@ -1,5 +1,7 @@
 import chalk from "chalk";
+const { Date } = require( "sugar" );
 import { readProjects } from "./project";
+import { validateDateString } from "./validation";
 
 export function parseOracleString( str: string ) {
   const match = str.match( /(.+) - (.*)/ );
@@ -121,3 +123,32 @@ export const getFullNames = {
   project   : getFullProjectName,
   taskDetail: getFullTaskDetailName,
 };
+
+type AddNumbers = ( a: number ) => number;
+type PushToArray = ( a: string[] ) => string[];
+
+export function createAndMergeWithStructure( source, structureToMerge, addDataFunc: AddNumbers|PushToArray ) {
+  const key = Object.keys( structureToMerge )[0];
+  if ( typeof structureToMerge[key] !== "object" || Array.isArray( structureToMerge[key] ) ) {
+    if ( !source[key] )
+      source[key] = structureToMerge[key];
+
+    // @ts-ignore
+    source[key] = addDataFunc( source[key] );
+
+    return source;
+  } else {
+    let newSource = source;
+    if ( typeof source[key] !== "object" )
+      newSource  = Object.assign( source, structureToMerge );
+
+    newSource[key] = createAndMergeWithStructure( newSource[key], structureToMerge[key], addDataFunc );
+    return newSource;
+  }
+}
+
+export function parseDateStringForValues( dateString: string, formatString: string ): string[] {
+  validateDateString( dateString );
+  const date = Date.create( dateString );
+  return Date.format( date, formatString ).split( " " );
+}

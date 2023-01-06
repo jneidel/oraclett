@@ -1,10 +1,8 @@
 import { CliUx } from "@oclif/core";
 import { Flags } from "@oclif/core";
-const { Date } = require( "sugar" );
 import inquirer from "inquirer";
 import { fs, HOURS_FILE } from "../config";
-import { getFullNames, getReadableChoices } from "./utils";
-import { validateDateString } from "./validation";
+import { getFullNames, getReadableChoices, createAndMergeWithStructure, parseDateStringForValues } from "./utils";
 
 export const readHours = async ( forceReadingFromDisk = false ) => fs.read( HOURS_FILE, forceReadingFromDisk );
 const writeHours = async data => fs.write( HOURS_FILE, data );
@@ -17,58 +15,32 @@ export async function addHours( data: {
   force: boolean;
 } ) {
   const { hoursToLog, dateString, project, taskDetails, force } = data;
-  let hours = await readHours( true );
+  const ogHours = await readHours( true );
 
-  const date = Date.create( dateString );
-
-  const [ isoWeek, isoYear, dayOfTheWeek ] = Date.format( date, "%V %G %a" ).split( " " );
+  const [ isoWeek, isoYear, dayOfTheWeek ] = parseDateStringForValues( dateString, "%V %G %a" );
   const structure = {
     [isoYear]: {
       [isoWeek]: {
         [project]: {
           [taskDetails]: {
-            [dayOfTheWeek]: hoursToLog,
+            [dayOfTheWeek]: 0,
           },
         },
 
       },
     },
   };
+  const newHours = createAndMergeWithStructure( ogHours, structure, ( a: number ) => a + hoursToLog );
 
-  if ( !hours[isoYear] ) {
-    hours = Object.assign( hours, structure );
-  } else if ( !hours[isoYear][isoWeek] ) {
-    hours[isoYear] = Object.assign( hours[isoYear], structure[isoYear] );
-  } else if ( !hours[isoYear][isoWeek][project] ) {
-    hours[isoYear][isoWeek] = Object.assign( hours[isoYear][isoWeek], structure[isoYear][isoWeek] );
-  } else if ( !hours[isoYear][isoWeek][project][taskDetails] ) {
-    hours[isoYear][isoWeek][project] = Object.assign( hours[isoYear][isoWeek][project], structure[isoYear][isoWeek][project] );
-  } else if ( !hours[isoYear][isoWeek][project][taskDetails][dayOfTheWeek] ) {
-    hours[isoYear][isoWeek][project][taskDetails] = Object.assign( hours[isoYear][isoWeek][project][taskDetails], structure[isoYear][isoWeek][project][taskDetails] );
-  } else if ( hours[isoYear][isoWeek][project][taskDetails][dayOfTheWeek] ) {
-    const currentHours =  hours[isoYear][isoWeek][project][taskDetails][dayOfTheWeek];
-    const combinedHours = Number( currentHours ) + Number( hoursToLog );
-    if ( combinedHours > 8 && !force )
-      throw new Error( `${combinedHours} --force` );
-    else
-      hours[isoYear][isoWeek][project][taskDetails][dayOfTheWeek] = Number( combinedHours );
-  } else {
-    console.log( "bruh" );
-  }
-  await writeHours( hours );
+  const combinedHours = newHours[isoYear][isoWeek][project][taskDetails][dayOfTheWeek];
+  if ( combinedHours > 8 && !force )
+    throw new Error( `${combinedHours} --force` );
 
-  // print out weekly hours logged for that combination
+  await writeHours( newHours );
 }
 
-export async function listHours( dateStringOrWeekNr: string|number, shortendTitles ) {
-  let date;
-  if ( typeof dateStringOrWeekNr === "number" ) {
-    // date = new Date();
-    // date.setISOWeek(); broken
-  } else {
-    date = Date.create( dateStringOrWeekNr );
-  }
-  const [ isoWeek, isoYear ] = Date.format( date, "%V %G" ).split( " " );
+export async function listHours( dateString: string, useShortedTitles: boolean ) {
+  const [ isoWeek, isoYear ] = parseDateStringForValues( dateString, "%V %G" );
 
   const relevantHours = await readHours()
     .then( hours => hours[isoYear][isoWeek] )
@@ -128,7 +100,7 @@ To log some use: hours add` );
     } );
 
     const projectTaskDetailText = await Promise.all( projectTaskDetailCombinations.map( async ( combi: any ) => {
-      if ( shortendTitles ) {
+      if ( useShortedTitles ) {
         return `${combi.project}: ${combi.taskDetail} `;
       } else {
         const [ projectName, taskDetailName  ] = await Promise.all( [
@@ -201,12 +173,6 @@ export async function removeHours( data: {
   await writeHours( hours );
 }
 
-export function parseDateStringForValues( dateString, formatString ): string[] {
-  validateDateString( dateString );
-  const date = Date.create( dateString );
-  return Date.format( date, formatString ).split( " " );
-}
-
 const dayWeekModeHelpText = `If a day is specified, you will edit that days hours.
 If a week is specified, you will be able to pick a day to edit for.
 
@@ -225,8 +191,7 @@ const dayWeekModeDateFlag = Flags.string( {
 
 type OperatingMode = "week"|"day";
 function evalOperatingMode( dateString: string ): OperatingMode {
-  const date = Date.create( dateString );
-  const [ h, m, s ] = Date.format( date, "%H %M %S" ).split( " " );
+  const [ h, m, s ] = parseDateStringForValues( dateString, "%H %M %S" );
 
   let operatingMode: OperatingMode = "week";
   if ( h === "00" && m === "00" && s === "00" )

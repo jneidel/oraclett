@@ -1,6 +1,7 @@
 import { Command } from "@oclif/core";
 import inquirer from "inquirer";
-import { readHours, editHours, dayWeekMode, parseDateStringForValues } from "../../controller/hours";
+import { readHours, editHours, dayWeekMode } from "../../controller/hours";
+import { parseDateStringForValues } from "../../controller/utils";
 
 export default class Edit extends Command {
   static summary = "Edit the logged hours interactively.";
