@@ -1,47 +1,37 @@
 import { Command } from "@oclif/core";
 import inquirer from "inquirer";
 import { editProject } from "../../controller/project";
-import { interactiveHelpText, getReadableChoices, getFullNames } from "../../controller/utils";
+import { getReadableChoices, getFullNames } from "../../controller/utils";
 
 export default class Edit extends Command {
-  static summary = "Edit the name of a projects or a projects task detail.";
-  static description = interactiveHelpText;
-
-  static args = [ {
-    name       : "projectCode",
-    description: "The project to be edited",
-  } ];
+  static summary = "Edit the names interactively.";
+  static description = `Allows for renaming a projects or their task details.`;
 
   async run(): Promise<void> {
-    const { args } = await this.parse( Edit );
-
     const { whatToEdit }: { whatToEdit: "project"|"taskDetail" } = await inquirer.prompt( [ {
-      type   : "expand",
+      type   : "list",
       name   : "whatToEdit",
-      message: "Do you want to edit a Project or the Task details of a project?",
+      message: "What do you want to edit?",
       choices: [
         {
           key  : "p",
-          name : "Project",
+          name : "Project Name",
           value: "project",
         },
         {
           key  : "t",
-          name : "Task Detail",
+          name : "Task Details (of a project)",
           value: "taskDetail",
         },
       ],
     } ] );
 
-    let projectKey = args.projectCode;
-    if ( !projectKey ) {
-      await inquirer.prompt( [ {
-        type   : "list",
-        name   : "project",
-        message: "What project?",
-        choices: () => getReadableChoices.project(),
-      } ] ).then( ans => projectKey = ans.project );
-    }
+    const projectKey = await inquirer.prompt( [ {
+      type   : "list",
+      name   : "project",
+      message: "What project?",
+      choices: () => getReadableChoices.project(),
+    } ] ).then( ans => ans.project );
 
     let valueToEdit: string;
     if ( whatToEdit === "project" ) {

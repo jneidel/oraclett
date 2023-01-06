@@ -1,24 +1,16 @@
 import { Command } from "@oclif/core";
 import inquirer from "inquirer";
 import { removeProject } from "../../controller/project";
-import { interactiveHelpText, getReadableChoices } from "../../controller/utils";
+import { getReadableChoices } from "../../controller/utils";
 
 export default class Remove extends Command {
-  static summary = "Remove projects or a projects task details.";
-  static description = interactiveHelpText;
-
-  static args = [ {
-    name       : "projectCode",
-    description: "The project to be remove",
-  } ];
+  static summary = "Remove a project or a projects task details interactively.";
 
   async run(): Promise<void> {
-    const { args } = await this.parse( Remove );
-
     const { whatToRemove }: { whatToRemove: "project"|"taskDetail" } = await inquirer.prompt( [ {
-      type   : "expand",
+      type   : "list",
       name   : "whatToRemove",
-      message: "Do you want to remove a project or a projects task detail?",
+      message: "What do you want to remove?",
       choices: [
         {
           key  : "p",
@@ -27,21 +19,18 @@ export default class Remove extends Command {
         },
         {
           key  : "t",
-          name : "Task Detail",
+          name : "Task Details (of a project)",
           value: "taskDetail",
         },
       ],
     } ] );
 
-    let projectKey = args.projecCode;
-    if ( !projectKey ) {
-      await inquirer.prompt( [ {
-        type   : "list",
-        name   : "project",
-        message: "What project?",
-        choices: () => getReadableChoices.project(),
-      } ] ).then( ans => projectKey = ans.project );
-    }
+    const projectKey = await inquirer.prompt( [ {
+      type   : "list",
+      name   : "project",
+      message: "What project?",
+      choices: () => getReadableChoices.project(),
+    } ] ).then( ans => ans.project );
 
     if ( whatToRemove === "project" ) {
       removeProject( projectKey, taskDetailKey );

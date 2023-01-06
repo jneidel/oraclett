@@ -2,7 +2,7 @@
 const { Date } = require( "sugar" );
 import { readProjects } from "./project";
 
-export function validateDateString( dateString = "today", dontThrow = false ): string|boolean {
+export function validateDateString( dateString: string, dontThrow = false ): string|boolean {
   const date = Date.create( dateString );
   const message = `Invalid date string passed.
 

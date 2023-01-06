@@ -8,8 +8,8 @@ export default class List extends Command {
   static flags = {
     date: Flags.string( {
       char       : "d",
-      description: "A date to specify the week (defaults to this week, can be human-readable)",
-      default    : "today",
+      description: "A date to specify the week (can be human-readable)",
+      default    : "this week",
     } ),
     short: Flags.boolean( {
       char       : "s",

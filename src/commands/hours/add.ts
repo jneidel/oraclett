@@ -8,7 +8,7 @@ export default class Add extends Command {
   static summary = "Log working hours.";
   static description = `${interactiveHelpText}
 
-This will add to existing hours, you if this command is run twice the hours logged will be double.`;
+This will add to existing hours, if this command is run twice the hours logged will be doubly.`;
 
   static examples = [ `$ <%= config.bin %> <%= command.id %>
 $ <%= config.bin %> <%= command.id %> 3

@@ -9,6 +9,7 @@ export default class List extends Command {
       char       : "f",
       description: "Filter for a project code",
       aliases    : [ "code" ],
+      hidden     : true,
     } ),
   };
 
