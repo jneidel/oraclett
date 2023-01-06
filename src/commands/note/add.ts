@@ -1,8 +1,8 @@
 import { Command, Flags } from "@oclif/core";
-import inquirer from "inquirer";
 import { interactiveHelpText, getReadableChoices } from "../../controller/utils";
-import { addHours } from "../../controller/hours";
+import { addNote } from "../../controller/notes";
 import { validateDateString, validateProject, validateTaskDetails } from "../../controller/validation";
+import * as askFor from "../../controller/questions";
 
 export default class Add extends Command {
   static summary = "Log working hours.";
@@ -19,10 +19,10 @@ $ <%= config.bin %> <%= command.id %> 10 -p INTPD999DXD -t 01 -d today -f
   static aliases = [ "hours:log" ];
 
   static flags = {
-    taskDetails: Flags.string( {
+    taskDetail: Flags.string( {
       char       : "t",
       description: "The details of a task (in it's short version, e.g. 01)",
-      aliases    : [ "task", "detail", "details" ],
+      aliases    : [ "task", "detail", "details", "taskDetails" ],
     } ),
     project: Flags.string( {
       char       : "p",
@@ -30,12 +30,7 @@ $ <%= config.bin %> <%= command.id %> 10 -p INTPD999DXD -t 01 -d today -f
     } ),
     date: Flags.string( {
       char       : "d",
-      description: "The date for which to log (defaults to today, can be human-readable)",
-    } ),
-    force: Flags.boolean( {
-      char       : "f",
-      description: "Force logging more than 8h on one workday",
-      hidden     : true,
+      description: "The date for which to log (can be human-readable)",
     } ),
     note: Flags.string( {
       char       : "n",
@@ -45,6 +40,26 @@ $ <%= config.bin %> <%= command.id %> 10 -p INTPD999DXD -t 01 -d today -f
 
   async run(): Promise<void> {
     const { flags } = await this.parse( Add );
-    let { project, taskDetails, date, note }: any = flags;
+    let { project, taskDetail, date, note }: any = flags;
+
+    if ( project )
+      await validateProject( project );
+    else
+      project = await askFor.project();
+
+    if ( taskDetail )
+      await validateTaskDetails( project, taskDetail );
+    else
+      taskDetail = await askFor.taskDetail( project );
+
+    if ( date )
+      validateDateString( date );
+    else
+      date = askFor.date( "today" );
+
+    if ( !note )
+      note = await askFor.text( "Note:" );
+
+    await addNote( { project, taskDetail, note, dateString: date } );
   }
 }

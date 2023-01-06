@@ -1,8 +1,8 @@
 import { CliUx } from "@oclif/core";
 import { Flags } from "@oclif/core";
-import inquirer from "inquirer";
 import { fs, HOURS_FILE } from "../config";
-import { getFullNames, getReadableChoices, createAndMergeWithStructure, parseDateStringForValues } from "./utils";
+import { getFullNames, createAndMergeWithStructure, parseDateStringForValues } from "./utils";
+import * as askFor from "./questions";
 
 export const readHours = async ( forceReadingFromDisk = false ) => fs.read( HOURS_FILE, forceReadingFromDisk );
 const writeHours = async data => fs.write( HOURS_FILE, data );
@@ -11,10 +11,10 @@ export async function addHours( data: {
   hoursToLog: number|any;
   dateString: string|any;
   project: string|any;
-  taskDetails: string|any;
+  taskDetail: string|any;
   force: boolean;
 } ) {
-  const { hoursToLog, dateString, project, taskDetails, force } = data;
+  const { hoursToLog, dateString, project, taskDetail, force } = data;
   const ogHours = await readHours( true );
 
   const [ isoWeek, isoYear, dayOfTheWeek ] = parseDateStringForValues( dateString, "%V %G %a" );
@@ -22,7 +22,7 @@ export async function addHours( data: {
     [isoYear]: {
       [isoWeek]: {
         [project]: {
-          [taskDetails]: {
+          [taskDetail]: {
             [dayOfTheWeek]: 0,
           },
         },
@@ -32,7 +32,7 @@ export async function addHours( data: {
   };
   const newHours = createAndMergeWithStructure( ogHours, structure, ( a: number ) => a + hoursToLog );
 
-  const combinedHours = newHours[isoYear][isoWeek][project][taskDetails][dayOfTheWeek];
+  const combinedHours = newHours[isoYear][isoWeek][project][taskDetail][dayOfTheWeek];
   if ( combinedHours > 8 && !force )
     throw new Error( `${combinedHours} --force` );
 
@@ -223,9 +223,9 @@ To log some use: hours add.`;
 }
 
 async function weekMode( hoursData, throwNoTimeLoggedError: Function ) {
-  const project = await askForProject( hoursData, throwNoTimeLoggedError );
-  const taskDetail = await askForTaskDetail( project, hoursData[project], throwNoTimeLoggedError );
-  const dayOfTheWeek: string = await askForDayOfTheWeek( hoursData[project][taskDetail], throwNoTimeLoggedError );
+  const project = await selectProject( hoursData, throwNoTimeLoggedError );
+  const taskDetail = await selectTaskDetail( project, hoursData[project], throwNoTimeLoggedError );
+  const dayOfTheWeek: string = await selectDayOfTheWeek( hoursData[project][taskDetail], throwNoTimeLoggedError );
 
   return { project, taskDetail, dayOfTheWeek };
 }
@@ -242,7 +242,7 @@ async function dayMode( dayOfTheWeek: string, hoursData, throwNoTimeLoggedError:
     project = projectsInQuestion[0];
   } else {
     const scrubbedHoursData = removeAllKeysExcept( hoursData, projectsInQuestion );
-    project = await askForProject( scrubbedHoursData, throwNoTimeLoggedError );
+    project = await selectProject( scrubbedHoursData, throwNoTimeLoggedError );
   }
 
   let taskDetail = "";
@@ -256,7 +256,7 @@ async function dayMode( dayOfTheWeek: string, hoursData, throwNoTimeLoggedError:
     taskDetail = taskDetailsInQuestion[0];
   } else {
     const scrubbedHoursData = removeAllKeysExcept( hoursData[project], taskDetailsInQuestion );
-    taskDetail = await askForTaskDetail( project, scrubbedHoursData, throwNoTimeLoggedError );
+    taskDetail = await selectTaskDetail( project, scrubbedHoursData, throwNoTimeLoggedError );
   }
 
   return { project, taskDetail, dayOfTheWeek };
@@ -290,7 +290,7 @@ function dayModeHasResults( hoursData, dayOfTheWeek ) {
   return projectsInQuestion.length !== 0;
 }
 
-async function askForProject( hoursData, throwNoTimeLoggedError: Function ): Promise<string> {
+async function selectProject( hoursData, throwNoTimeLoggedError: Function ): Promise<string> {
   if ( Object.keys( hoursData ).length === 0 ) {
     return throwNoTimeLoggedError();
   } else if ( Object.keys( hoursData ).length === 1 ) {
@@ -298,19 +298,12 @@ async function askForProject( hoursData, throwNoTimeLoggedError: Function ): Pro
     console.log( `Using ${project}` );
     return new Promise( ( resolve ) => resolve( project ) );
   } else {
-    return inquirer.prompt( [ {
-      type   : "list",
-      name   : "project",
-      message: "What project?",
-      choices: () => {
-        const projectsToChooseFrom = Object.keys( hoursData );
-        return getReadableChoices.project( projectsToChooseFrom );
-      },
-    } ] ).then( res => res.project );
+    const projectsToChooseFrom = Object.keys( hoursData );
+    return askFor.project( projectsToChooseFrom );
   }
 }
 
-async function askForTaskDetail( project, hoursData, throwNoTimeLoggedError: Function ): Promise<string> {
+async function selectTaskDetail( project, hoursData, throwNoTimeLoggedError: Function ): Promise<string> {
   if ( Object.keys( hoursData ).length === 0 ) {
     return throwNoTimeLoggedError();
   } else if ( Object.keys( hoursData ).length === 1 ) {
@@ -318,19 +311,12 @@ async function askForTaskDetail( project, hoursData, throwNoTimeLoggedError: Fun
     console.log( `Using ${taskDetail}` );
     return new Promise( ( resolve ) => resolve( taskDetail ) );
   } else {
-    return inquirer.prompt( [ {
-      type   : "list",
-      name   : "taskDetail",
-      message: "What task detail?",
-      choices: () => {
-        const taskDetailsToChooseFrom = Object.keys( hoursData );
-        return getReadableChoices.taskDetails( project, taskDetailsToChooseFrom );
-      },
-    } ] ).then( res => res.taskDetail );
+    const taskDetailsToChooseFrom = Object.keys( hoursData );
+    return askFor.taskDetail( project, taskDetailsToChooseFrom );
   }
 }
 
-async function askForDayOfTheWeek( hoursData, throwNoTimeLoggedError: Function ): Promise<string> {
+async function selectDayOfTheWeek( hoursData, throwNoTimeLoggedError: Function ): Promise<string> {
   if ( Object.keys( hoursData ).length === 0 ) {
     return throwNoTimeLoggedError();
   } else if ( Object.keys( hoursData ).length === 1 ) {
@@ -338,12 +324,7 @@ async function askForDayOfTheWeek( hoursData, throwNoTimeLoggedError: Function )
     console.log( `Using ${dayOfTheWeek}` );
     return new Promise( ( resolve ) => resolve( dayOfTheWeek ) );
   } else {
-    return inquirer.prompt( [ {
-      type   : "list",
-      name   : "dayOfTheWeek",
-      message: "What day of the week?",
-      choices: Object.keys( hoursData ),
-    } ] ).then( res => res.dayOfTheWeek );
+    return askFor.dayOfTheWeek( Object.keys( hoursData ) );
   }
 }
 

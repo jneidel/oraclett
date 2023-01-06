@@ -1,7 +1,7 @@
 import { Command } from "@oclif/core";
-import inquirer from "inquirer";
 import { readHours, editHours, dayWeekMode } from "../../controller/hours";
 import { parseDateStringForValues } from "../../controller/utils";
+import * as askFor from "../../controller/questions";
 
 export default class Edit extends Command {
   static summary = "Edit the logged hours interactively.";
@@ -39,16 +39,7 @@ export default class Edit extends Command {
     }
 
     const currentHours = hoursData[project][taskDetail][dayOfTheWeek];
-    const { newHours } = await inquirer.prompt( [ {
-      type   : "number",
-      name   : "newHours",
-      message: `To how many hours should this be changed? (Current: ${currentHours})`,
-      default: currentHours,
-      validate( value ) {
-        const valid = !isNaN( parseFloat( value ) );
-        return valid || "Please enter a number";
-      },
-    } ] );
+    const newHours = await askFor.number( `To how many hours should this be changed? (Current: ${currentHours})`, currentHours );
 
     editHours( { newHours, project, taskDetail, year, week, dayOfTheWeek } );
   }
