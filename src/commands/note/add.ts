@@ -55,7 +55,7 @@ $ <%= config.bin %> <%= command.id %> 10 -p INTPD999DXD -t 01 -d today -f
     if ( date )
       validateDateString( date );
     else
-      date = askFor.date( "today" );
+      date = await askFor.date( "today" );
 
     if ( !note )
       note = await askFor.text( "Note:" );

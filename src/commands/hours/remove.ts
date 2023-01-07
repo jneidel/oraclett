@@ -1,7 +1,8 @@
 import { Command } from "@oclif/core";
 import inquirer from "inquirer";
-import { readHours, removeHours, dayWeekMode } from "../../controller/hours";
+import { readHours, removeHours } from "../../controller/hours";
 import { parseDateStringForValues } from "../../controller/utils";
+import * as dayWeekMode from "../../controller/day-week-mode";
 
 export default class Remove extends Command {
   static summary = "Remove logged hours interactively.";
@@ -18,7 +19,7 @@ export default class Remove extends Command {
 
     const [ week, year, dayInQuestion ] = parseDateStringForValues( dateString, "%V %G %a" );
     let operatingMode = dayWeekMode.evalOperatingMode( dateString );
-    let throwNoTimeLoggedError = dayWeekMode.getNoTimeLoggedErrorFunction( dateString, this.error );
+    let throwNoTimeLoggedError = dayWeekMode.getNoEntriesErrorFunction( dateString, this.error, "hours" );
 
     const hours = await readHours();
     if ( !( hours[year] && hours[year][week] ) )
@@ -28,7 +29,7 @@ export default class Remove extends Command {
     if ( dateString === "today" && !dayWeekMode.dayModeHasResults( hoursData, dayOfTheWeek ) ) {
       this.log( "No entries for today. Changing to week mode." );
       operatingMode = "week";
-      throwNoTimeLoggedError = dayWeekMode.getNoTimeLoggedErrorFunction( "this week", this.error );
+      throwNoTimeLoggedError = dayWeekMode.getNoEntriesErrorFunction( "this week", this.error, "hours" );
     }
 
     if ( operatingMode === "day" ) {

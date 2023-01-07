@@ -125,9 +125,9 @@ export const getFullNames = {
 };
 
 type AddNumbers = ( a: number ) => number;
-type PushToArray = ( a: string[] ) => string[];
+type AddStrings = ( a: string ) => string;
 
-export function createAndMergeWithStructure( source, structureToMerge, addDataFunc: AddNumbers|PushToArray ) {
+export function createAndMergeWithStructure( source, structureToMerge, addDataFunc: AddNumbers|AddStrings ) {
   const key = Object.keys( structureToMerge )[0];
   if ( typeof structureToMerge[key] !== "object" || Array.isArray( structureToMerge[key] ) ) {
     if ( !source[key] )

@@ -19,14 +19,14 @@ export async function addNote( data: {
       [isoWeek]: {
         [project]: {
           [taskDetail]: {
-            [dayOfTheWeek]: [],
+            [dayOfTheWeek]: "",
           },
         },
 
       },
     },
   };
-  const newNotes = createAndMergeWithStructure( ogNotes, structure, ( a: string[] ) => { a.push( noteToAdd ); return a; } );
+  const newNotes = createAndMergeWithStructure( ogNotes, structure, ( a: string ) => a === "" ? noteToAdd : `${a}; ${noteToAdd}` );
   await writeNotes( newNotes );
 }
 

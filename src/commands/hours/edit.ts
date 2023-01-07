@@ -1,7 +1,8 @@
 import { Command } from "@oclif/core";
-import { readHours, editHours, dayWeekMode } from "../../controller/hours";
+import { readHours, editHours } from "../../controller/hours";
 import { parseDateStringForValues } from "../../controller/utils";
 import * as askFor from "../../controller/questions";
+import * as dayWeekMode from "../../controller/day-week-mode";
 
 export default class Edit extends Command {
   static summary = "Edit the logged hours interactively.";
@@ -18,17 +19,17 @@ export default class Edit extends Command {
 
     const [ week, year, dayInQuestion ] = parseDateStringForValues( dateString, "%V %G %a" );
     let operatingMode = dayWeekMode.evalOperatingMode( dateString );
-    let throwNoTimeLoggedError = dayWeekMode.getNoTimeLoggedErrorFunction( dateString, this.error );
+    let throwNoTimeLoggedError = dayWeekMode.getNoEntriesErrorFunction( dateString, this.error, "hours" );
 
     const hours = await readHours();
     if ( !( hours[year] && hours[year][week] ) )
       throwNoTimeLoggedError();
     const hoursData = hours[year][week];
 
-    if ( dateString === "today" && !dayWeekMode.dayModeHasResults( hoursData, dayOfTheWeek ) ) {
+    if ( dateString === "today" && !dayWeekMode.dayModeHasResults( hoursData, dayInQuestion ) ) {
       this.log( "No entries for today. Changing to week mode." );
       operatingMode = "week";
-      throwNoTimeLoggedError = dayWeekMode.getNoTimeLoggedErrorFunction( "this week", this.error );
+      throwNoTimeLoggedError = dayWeekMode.getNoEntriesErrorFunction( "this week", this.error, "hours" );
     }
 
     if ( operatingMode === "day" ) {

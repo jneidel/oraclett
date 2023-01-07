@@ -57,10 +57,10 @@ export async function number( message: string, defaultVal?: number ) {
 export async function renaming( defaultVal: string,  message = "Please open your editor to rename" ) {
   return inquirer.prompt( [ {
     type   : "editor",
-    name   : "renamedValue",
+    name   : "updated",
     message,
     default: defaultVal,
-  } ] ).then( ans => ans.renamedValue.trim() );
+  } ] ).then( ans => ans.updated.trim() );
 }
 
 export async function projectOrTaskDetail( message: string ): Promise<"project"|"taskDetail"> {
@@ -80,7 +80,7 @@ export async function projectOrTaskDetail( message: string ): Promise<"project"|
         value: "taskDetail",
       },
     ],
-  } ] ).then( ans => ans.renamedValue.trim() );
+  } ] ).then( ans => ans.what );
 }
 
 export async function text( message: string ) {
