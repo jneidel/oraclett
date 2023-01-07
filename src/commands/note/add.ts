@@ -22,7 +22,7 @@ $ <%= config.bin %> <%= command.id %> 10 -p INTPD999DXD -t 01 -d today -f
     taskDetail: Flags.string( {
       char       : "t",
       description: "The details of a task (in it's short version, e.g. 01)",
-      aliases    : [ "task", "detail", "details", "taskDetails" ],
+      aliases    : [ "task-detail", "task", "detail", "details", "taskDetails", "task-details" ],
     } ),
     project: Flags.string( {
       char       : "p",

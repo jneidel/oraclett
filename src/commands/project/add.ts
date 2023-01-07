@@ -21,12 +21,11 @@ $ <%= config.bin %> <%= command.id %> -t "01 - Career development" -t "03 - Disc
       char       : "t",
       description: "A task detail",
       multiple   : true,
-      aliases    : [ "task", "detail", "details" ],
+      aliases    : [ "task-detail", "task", "detail", "details", "taskDetails", "task-details" ],
     } ),
     project: Flags.string( {
       char       : "p",
       description: "The project code",
-      aliases    : [ "projectCode", "projectcode", "code", "c" ],
     } ),
   };
 
