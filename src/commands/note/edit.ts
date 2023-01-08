@@ -6,7 +6,9 @@ import * as dayWeekMode from "../../controller/day-week-mode";
 
 export default class Edit extends Command {
   static summary = "Edit the your notes interactively.";
-  static description = dayWeekMode.helpText;
+  static description = `${dayWeekMode.helpText}
+\n${askFor.renamingHelpText( "change your note" )}`;
+
   static examples = dayWeekMode.examples;
 
   static flags = {

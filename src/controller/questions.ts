@@ -70,12 +70,10 @@ export async function projectOrTaskDetail( message: string ): Promise<"project"|
     message,
     choices: [
       {
-        key  : "p",
         name : "Project Name",
         value: "project",
       },
       {
-        key  : "t",
         name : "Task Details (of a project)",
         value: "taskDetail",
       },
@@ -100,3 +98,5 @@ export async function date( defaultVal = "today" ) {
     validate: input => validateDateString( input, true ),
   } ] ).then( ans => ans.date );
 }
+
+export const renamingHelpText = ( wording ) => `It will ask you to ${wording} in your $EDITOR (in your case: ${process.env.EDITOR}).`;

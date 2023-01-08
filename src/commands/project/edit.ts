@@ -5,7 +5,8 @@ import * as askFor from "../../controller/questions";
 
 export default class Edit extends Command {
   static summary = "Edit the names interactively.";
-  static description = `Allows for renaming a projects or their task details.`;
+  static description = `Allows for renaming a projects or their task details.
+\n${askFor.renamingHelpText( "rename" )}`;
 
   async run(): Promise<void> {
     const whatToEdit = await askFor.projectOrTaskDetail( "What do you want to edit?" );
