@@ -29,9 +29,9 @@ export function evalOperatingMode( dateString: string ): OperatingMode {
   return operatingMode;
 }
 
-export function getNoEntriesErrorFunction( dateString: string, errorFunc: Function, object: "hours"|"note" ): Function {
+export function getNoEntriesErrorFunction( dateString: string, errorFunc: Function, object: "hours"|"note", forceMode?: OperatingMode ): Function {
   const [ week, year ] = parseDateStringForValues( dateString, "%V %G" );
-  const operatingMode = evalOperatingMode( dateString );
+  const operatingMode = forceMode ? forceMode : evalOperatingMode( dateString );
 
   const isHours = object === "hours";
 
@@ -102,7 +102,7 @@ function removeAllKeysExcept( obj, exceptions: string[] ) {
 
   return clone;
 }
-function assembleProjectCombinationsForDOTW( data, dayOfTheWeek: string ): any {
+export function assembleProjectCombinationsForDOTW( data, dayOfTheWeek: string ): any {
   return Object.keys( data ).reduce( ( acc, project ) => {
     const tdsWithCorrectDOTW = Object.keys( data[project] ).filter( td => {
       const hasCorrectDOTW = !!data[project][td][dayOfTheWeek];

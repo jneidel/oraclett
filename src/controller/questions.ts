@@ -99,4 +99,13 @@ export async function date( defaultVal = "today" ) {
   } ] ).then( ans => ans.date );
 }
 
+export async function confirmation( data: { message: string; default: boolean } ) {
+  return inquirer.prompt( [ {
+    type   : "confirm",
+    name   : "confirmation",
+    message: data.message,
+    default: data.default,
+  } ] ).then( ans => ans.confirmation );
+}
+
 export const renamingHelpText = ( wording ) => `It will ask you to ${wording} in your $EDITOR (in your case: ${process.env.EDITOR}).`;

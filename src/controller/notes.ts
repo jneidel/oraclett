@@ -1,14 +1,16 @@
+import chalk from "chalk";
 import { fs, NOTES_FILE } from "../config";
-import { createAndMergeWithStructure, parseDateStringForValues } from "./utils";
+import { createAndMergeWithStructure, parseDateStringForValues, getFullNames } from "./utils";
+import { getNoEntriesErrorFunction } from "./day-week-mode";
 
 export const readNotes = async ( forceReadingFromDisk = false ) => fs.read( NOTES_FILE, forceReadingFromDisk );
 const writeNotes = async data => fs.write( NOTES_FILE, data );
 
 export async function addNote( data: {
   note: number|any;
-  dateString: string|any;
-  project: string|any;
-  taskDetail: string|any;
+  dateString: string;
+  project: string;
+  taskDetail: string;
 } ) {
   const { note: noteToAdd, dateString, project, taskDetail } = data;
   const ogNotes = await readNotes( true );
@@ -26,21 +28,86 @@ export async function addNote( data: {
       },
     },
   };
-  const newNotes = createAndMergeWithStructure( ogNotes, structure, ( a: string ) => a === "" ? noteToAdd : `${a}; ${noteToAdd}` );
+  const newNotes = createAndMergeWithStructure( ogNotes, structure, ( cur: string ) => cur === "" ? noteToAdd : `${cur}, ${noteToAdd}` );
   await writeNotes( newNotes );
 }
 
 export async function editNote( data: {
-  note: number|any;
-  dateString: string|any;
-  project: string|any;
-  taskDetail: string|any;
+  note: number;
+  project: string;
+  taskDetail: string;
+  year: string;
+  week: string;
+  dayOfTheWeek: string;
 } ) {
-  const { note: note, dateString, project, taskDetail } = data;
-  const [ week, year, dayOfTheWeek ] = parseDateStringForValues( dateString, "%V %G %a" );
+  const { note, project, taskDetail, week, year, dayOfTheWeek } = data;
 
   const notes = await readNotes( true );
   notes[year][week][project][taskDetail][dayOfTheWeek] = note;
+  await writeNotes( notes );
+}
 
-  console.log( JSON.stringify( notes, null, 2 ) );
+export async function removeNote( data: {
+  project: string;
+  taskDetail: string;
+  year: string;
+  week: string;
+  dayOfTheWeek: string;
+} ) {
+  const { project, taskDetail, week, year, dayOfTheWeek } = data;
+
+  const notes = await readNotes( true );
+  delete notes[year][week][project][taskDetail][dayOfTheWeek];
+  await writeNotes( notes );
+}
+
+export async function listNotes( dateString: string ) {
+  const [ isoWeek, isoYear ] = parseDateStringForValues( dateString, "%V %G" );
+
+  const notes = await readNotes( true );
+  const notesData = notes[isoYear][isoWeek];
+
+  const allProjectTaskDetailDOTWCombinations = Object.keys( notesData ).reduce( ( acc: any[], projectKey ) => {
+    const taskDetailsDOTWCombinations = Object.keys( notesData[projectKey] ).reduce( ( acc: any[], taskDetailKey ) => {
+      const dotwArr = Object.keys( notesData[projectKey][taskDetailKey] );
+      dotwArr.forEach( dotw => acc.push( { taskDetailKey, dotw } ) );
+      return acc;
+    }, [] );
+
+    taskDetailsDOTWCombinations.forEach( obj => acc.push( Object.assign( obj, { projectKey } ) ) );
+    return acc;
+  }, [] );
+
+  const combinationsGroupedByDOTW = allProjectTaskDetailDOTWCombinations.reduce( ( acc, combi ) => {
+    const { dotw } = combi;
+    if ( !acc[dotw] )
+      acc[dotw] = [ combi ];
+    else
+      acc[dotw].push( combi );
+    return acc;
+  }, {} );
+
+  const output = await Promise.all( [ "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" ].map( dotw => {
+    if ( !combinationsGroupedByDOTW[dotw] )
+      return undefined;
+    else
+      return combinationsGroupedByDOTW[dotw];
+  } ).filter( x => x ).map( async dotwGroup => {
+    const { dotw } = dotwGroup[0];
+
+    const theDaysProjectsWithTheirNotesText = await Promise.all( dotwGroup.map( async combi => {
+      const { projectKey, taskDetailKey, dotw } = combi;
+      const project = await getFullNames.project( projectKey, { style: "hyphen", keyColor: "project" } );
+      const taskDetail = await getFullNames.taskDetail( projectKey, taskDetailKey, { style: "hyphen", keyColor: "td" } );
+      const projectText = `${project}: ${taskDetail}`;
+
+      const note = notesData[projectKey][taskDetailKey][dotw];
+      return `${projectText}
+    ${chalk.magenta( note )}`;
+    } ) );
+    return `${chalk.yellow( dotw )}:
+  ${theDaysProjectsWithTheirNotesText.join( `\n  ` )}`;
+  } ) ).then( textArr => textArr.join( "\n" ) );
+
+  console.log( `Notes for week ${isoWeek} of ${isoYear}:\n${output}` );
 }

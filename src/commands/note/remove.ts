@@ -1,13 +1,12 @@
 import { Command } from "@oclif/core";
-import { editNote, readNotes } from "../../controller/notes";
+import { removeNote, readNotes } from "../../controller/notes";
 import { parseDateStringForValues } from "../../controller/utils";
 import * as askFor from "../../controller/questions";
 import * as dayWeekMode from "../../controller/day-week-mode";
 
-export default class Edit extends Command {
-  static summary = "Edit your notes interactively.";
-  static description = `${dayWeekMode.helpText}
-\n${askFor.renamingHelpText( "change your note" )}`;
+export default class Remove extends Command {
+  static summary = "Remove your notes interactively.";
+  static description = dayWeekMode.helpText;
 
   static examples = dayWeekMode.examples;
 
@@ -16,7 +15,7 @@ export default class Edit extends Command {
   };
 
   async run(): Promise<void> {
-    const { flags } = await this.parse( Edit );
+    const { flags } = await this.parse( Remove );
     const dateString = flags.date;
 
     const [ week, year, dayInQuestion ] = parseDateStringForValues( dateString, "%V %G %a" );
@@ -42,8 +41,12 @@ export default class Edit extends Command {
     }
 
     const currentNote = notesData[project][taskDetail][dayOfTheWeek];
-    const updatedNote = await askFor.renaming( currentNote, "Please update the notes in your editor:" );
+    const confirmDeletion = await askFor.confirmation( {
+      message: `Execute deletion of this note?\n  Note: ${currentNote}`,
+      default: true,
+    } );
 
-    editNote( { note: updatedNote, project, taskDetail, year, week, dayOfTheWeek } );
+    if ( confirmDeletion )
+      removeNote( { project, taskDetail, year, week, dayOfTheWeek } );
   }
 }

@@ -11,18 +11,31 @@ export function parseOracleString( str: string ) {
     return { [str]: { description: null } };
 }
 
+const colors = {
+  project   : "#00ff5f",
+  taskDetail: "#005fd7",
+};
+
 type FullNameOptions = {
   style?: "parens"|"hyphen";
-  keyColor?: string|null;
+  keyColor?: string;
 }
 const fullNameOptionsDefaults = {
   style   : "hyphen",
-  keyColor: null,
+  keyColor: "",
 };
 export function combineIntoFullName( key: string, description: string|null, options: FullNameOptions = {} ): string {
-  const { style, keyColor } = Object.assign( fullNameOptionsDefaults, options );
+  let { style, keyColor } = Object.assign( fullNameOptionsDefaults, options );
 
-  const coloredKey = keyColor !== null ? chalk.hex( keyColor )( key ) : key;
+  switch ( keyColor ) {
+    case "project":
+      keyColor = colors.project;
+      break;
+    case "td":
+      keyColor = colors.taskDetail;
+      break;
+  }
+  const coloredKey = keyColor !== "" ? chalk.hex( keyColor )( key ) : key;
 
   if ( description === null ) {return coloredKey;} else {
     switch ( style ) {

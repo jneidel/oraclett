@@ -1,4 +1,5 @@
 import { CliUx } from "@oclif/core";
+import chalk from "chalk";
 import { fs, HOURS_FILE } from "../config";
 import { getFullNames, createAndMergeWithStructure, parseDateStringForValues } from "./utils";
 
@@ -7,9 +8,9 @@ const writeHours = async data => fs.write( HOURS_FILE, data );
 
 export async function addHours( data: {
   hoursToLog: number|any;
-  dateString: string|any;
-  project: string|any;
-  taskDetail: string|any;
+  dateString: string;
+  project: string;
+  taskDetail: string;
   force: boolean;
 } ) {
   const { hoursToLog, dateString, project, taskDetail, force } = data;
@@ -63,9 +64,9 @@ To log some use: hours add` );
     }, [] );
 
     const totals = { total: 0, Mon: 0, Tue: 0, Wed: 0, Thu: 0, Fri: 0, Sat: 0, Sun: 0 };
-    const calulcateTotal = ( combiHours ) => {
-      const total = Object.keys( combiHours ).reduce( ( acc, key ) => {
-        const hours = combiHours[key];
+    const calulcateTotal = ( projectWeeklyHours ) => {
+      const total = Object.keys( projectWeeklyHours ).reduce( ( acc, key ) => {
+        const hours = projectWeeklyHours[key];
         if ( typeof hours === "number" ) {
           totals[key] += hours;
           return acc + hours;
@@ -78,21 +79,25 @@ To log some use: hours add` );
     let hasWeekend = false;
     const hoursPerWeekday = projectTaskDetailCombinations.map( combi => {
       const { project, taskDetail } = combi;
-      const combiHours = relevantHours[project][taskDetail];
+      let projectWeeklyHours = relevantHours[project][taskDetail];
+      const total = calulcateTotal( projectWeeklyHours );
+
+      projectWeeklyHours = Object.keys( projectWeeklyHours ).reduce( ( acc, dotw ) => {
+        acc[dotw] = chalk.magenta( projectWeeklyHours[dotw] );
+        return acc;
+      }, {} );
 
       if ( !hasWeekend )
-        hasWeekend = !!( combiHours.Sat || combiHours.Sun );
-
-      const total = calulcateTotal( combiHours );
+        hasWeekend = !!( projectWeeklyHours.Sat || projectWeeklyHours.Sun );
 
       return {
-        Mon: combiHours.Mon,
-        Tue: combiHours.Tue,
-        Wed: combiHours.Wed,
-        Thu: combiHours.Thu,
-        Fri: combiHours.Fri,
-        Sat: combiHours.Sat,
-        Sun: combiHours.Sun,
+        Mon: projectWeeklyHours.Mon,
+        Tue: projectWeeklyHours.Tue,
+        Wed: projectWeeklyHours.Wed,
+        Thu: projectWeeklyHours.Thu,
+        Fri: projectWeeklyHours.Fri,
+        Sat: projectWeeklyHours.Sat,
+        Sun: projectWeeklyHours.Sun,
         total,
       };
     } );
@@ -102,15 +107,15 @@ To log some use: hours add` );
         return `${combi.project}: ${combi.taskDetail} `;
       } else {
         const [ projectName, taskDetailName  ] = await Promise.all( [
-          getFullNames.project( combi.project ),
-          getFullNames.taskDetail( combi.project, combi.taskDetail ),
+          getFullNames.project( combi.project, { keyColor: "project" } ),
+          getFullNames.taskDetail( combi.project, combi.taskDetail, { keyColor: "td" } ),
         ] );
 
         return `${projectName}: ${taskDetailName} `;
       }
     } ) );
 
-    const tableData  = projectTaskDetailText.map( ( project, index ) => {
+    const tableData = projectTaskDetailText.map( ( project, index ) => {
       const hours = hoursPerWeekday[index];
       return Object.assign( { project }, hours );
     } );
@@ -136,24 +141,23 @@ To log some use: hours add` );
       { total: {} }
     );
 
-    console.log( `Logged hours for week ${isoWeek} of ${isoYear}:\n` );
+    console.log( `Hours logged for week ${isoWeek} of ${isoYear}:` );
     CliUx.ux.table( tableData, columns, {} );
   }
 }
 
 export async function editHours( data: {
+  newHours: number;
   project: string;
   taskDetail: string;
   year: string;
   week: string;
   dayOfTheWeek: string;
-  newHours: number;
 } ) {
   const { project, taskDetail, year, week, dayOfTheWeek, newHours } = data;
+
   const hours = await readHours( true );
-
   hours[year][week][project][taskDetail][dayOfTheWeek] = newHours;
-
   await writeHours( hours );
 }
 export async function removeHours( data: {
@@ -164,9 +168,8 @@ export async function removeHours( data: {
   dayOfTheWeek: string;
 } ) {
   const { project, taskDetail, year, week, dayOfTheWeek } = data;
+
   const hours = await readHours( true );
-
   delete hours[year][week][project][taskDetail][dayOfTheWeek];
-
   await writeHours( hours );
 }

@@ -13,11 +13,11 @@ export async function listProjects( projectToFilterBy: string|undefined ) {
 
 
   projectList = await Promise.all( projectKeys.map( async ( projectKey: string ) => {
-    const projectName = await getFullNames.project( projectKey, { style: "parens", keyColor: "#00ff5f" } );
+    const projectName = await getFullNames.project( projectKey, { style: "parens", keyColor: "project" } );
     const taskDetailNames = await Promise.all(
       Object.keys( projectList[projectKey].taskDetails ).sort()
         .map( async taskDetailKey => {
-          const name = await getFullNames.taskDetail( projectKey, taskDetailKey, { style: "parens", keyColor: "#005fd7" } );
+          const name = await getFullNames.taskDetail( projectKey, taskDetailKey, { style: "parens", keyColor: "td" } );
           return `  * ${name}`;
         } )
     ).then( arr => arr.join( "\n" ) );

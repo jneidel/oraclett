@@ -1,8 +1,8 @@
 import { Command } from "@oclif/core";
-import inquirer from "inquirer";
 import { readHours, removeHours } from "../../controller/hours";
 import { parseDateStringForValues } from "../../controller/utils";
 import * as dayWeekMode from "../../controller/day-week-mode";
+import * as askFor from "../../controller/questions";
 
 export default class Remove extends Command {
   static summary = "Remove logged hours interactively.";
@@ -40,12 +40,10 @@ export default class Remove extends Command {
     }
 
     const currentHours = hoursData[project][taskDetail][dayOfTheWeek];
-    const { confirmDeletion } = await inquirer.prompt( [ {
-      type   : "confirm",
-      name   : "confirmDeletion",
+    const confirmDeletion = await askFor.confirmation( {
       message: `Execute deletion of ${currentHours} hours?`,
       default: true,
-    } ] );
+    } );
 
     if ( confirmDeletion )
       removeHours( { project, taskDetail, year, week, dayOfTheWeek } );
