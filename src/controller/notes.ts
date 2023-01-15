@@ -103,9 +103,9 @@ export async function listNotes( dateString: string ) {
 
       const note = notesData[projectKey][taskDetailKey][dotw];
       return `${projectText}
-    ${chalk.magenta( note )}`;
+    ${chalk.yellow( note )}`;
     } ) );
-    return `${chalk.yellow( dotw )}:
+    return `${chalk.magenta( dotw )}:
   ${theDaysProjectsWithTheirNotesText.join( `\n  ` )}`;
   } ) ).then( textArr => textArr.join( "\n" ) );
 

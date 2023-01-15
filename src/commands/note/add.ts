@@ -1,14 +1,14 @@
 import { Command, Flags } from "@oclif/core";
-import { interactiveHelpText, getReadableChoices } from "../../controller/utils";
+import { interactiveHelpText } from "../../controller/utils";
 import { addNote } from "../../controller/notes";
 import { validateDateString, validateProject, validateTaskDetails } from "../../controller/validation";
 import * as askFor from "../../controller/questions";
 
 export default class Add extends Command {
-  static summary = "Log working hours.";
+  static summary = "Note down what you worked on.";
   static description = `${interactiveHelpText}
 
-This will add to existing hours, if this command is run twice the hours logged will be doubly.`;
+This will add to existing notes for the same day.`;
 
   static examples = [ `$ <%= config.bin %> <%= command.id %>
 $ <%= config.bin %> <%= command.id %> 3

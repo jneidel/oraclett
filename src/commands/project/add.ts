@@ -4,7 +4,7 @@ import { addProject } from "../../controller/project";
 import { interactiveHelpText } from "../../controller/utils";
 
 export default class Add extends Command {
-  static summary = "Add a project.";
+  static summary = "Add a project code.";
   static description = `${interactiveHelpText}
 
 Copy paste the values from Oracle.
