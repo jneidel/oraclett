@@ -1,0 +1,85 @@
+import chalk from "chalk";
+import { readNotes } from "./notes";
+import { readHours } from "./hours";
+import { getFullNames, parseDateStringForValues } from "./utils";
+
+export async function generateReports( dateString: string, noInteractive: boolean ) {
+  const [ week, year ] = parseDateStringForValues( dateString, "%V %G" );
+
+  const notes = await readNotes().then( data => data[year][week] ).catch( () => ( {} ) ).then( data => data !== undefined ? data : {} );
+  const hours = await readHours().then( data => data[year][week] ).catch( () => ( {} ) ).then( data => data !== undefined ? data : {} );
+
+  const projects = [ ...new Set( [ ...Object.keys( notes ), ...Object.keys( hours ) ] ) ];
+  if ( projects.length === 0 ) {
+    this.error( `No hours or notes have been logged for the selected week?
+Meant anoter week? Specify with: -d, --date
+
+To log some hours: hours add
+To keep some notes: notes add` );
+  }
+
+  const noteStringsForClipboard: any[] = [];
+  const reports = await Promise.all( projects.map( async projectKey => {
+    const projectString = await getFullNames.project( projectKey, { keyColor: "project", style: "hyphen" } );
+
+    let taskDetails: string[] = [];
+    if ( notes[projectKey] )
+      taskDetails = [ ...Object.keys( notes[projectKey] ) ];
+    if ( hours[projectKey] )
+      taskDetails = [ ...taskDetails, ...Object.keys( hours[projectKey] ) ];
+    taskDetails = [ ...new Set( taskDetails ) ];
+
+    return Promise.all( taskDetails.map( async taskDetailKey => {
+      const taskDetailString = await getFullNames.taskDetail( projectKey, taskDetailKey, { keyColor: "td", style: "hyphen" } );
+
+      let relevantHours = {};
+      if ( hours[projectKey] && hours[projectKey][taskDetailKey] )
+        relevantHours = hours[projectKey][taskDetailKey];
+
+      let relevantNotes = {};
+      if ( notes[projectKey] && notes[projectKey][taskDetailKey] )
+        relevantNotes = notes[projectKey][taskDetailKey];
+
+      const sortDaysOfTheWeek =  ( a, b ) => {
+        const daysOfTheWeekInOrder = [ "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" ];
+        if ( daysOfTheWeekInOrder.indexOf( a ) > daysOfTheWeekInOrder.indexOf( b ) )
+          return 1;
+        else
+          return -1;
+      };
+
+      const groupByHourAmount = Object.keys( relevantHours ).reduce( ( acc, dotw ) => {
+        const amountOfHours = relevantHours[dotw];
+        if ( acc[amountOfHours] )
+          acc[amountOfHours].push( dotw );
+        else
+          acc[amountOfHours] = [ dotw ];
+
+        return acc;
+      }, {} );
+      const hoursString = Object.keys( groupByHourAmount ).map( amountOfHours => {
+        const daysOfTheWeek = groupByHourAmount[amountOfHours].sort( sortDaysOfTheWeek );
+
+        return `  Dates:    ${chalk.magenta( daysOfTheWeek.join( " " ) )}
+  Quantity: ${chalk.magenta( amountOfHours )}`;
+      } ).join( "\n  -------------\n" );
+
+      const noteStringArr = Object.keys( relevantNotes ).sort( sortDaysOfTheWeek ).reduce( ( acc: string[], dotw ) => {
+        acc.push( `${dotw}: ${relevantNotes[dotw]}` );
+        return acc;
+      }, [] );
+      let noteString = "";
+      if ( noteStringArr.length !== 0 )
+        noteString = `\nComments${noInteractive ? "" : " (copied to clipboard)"}:\n  ${chalk.yellow( noteStringArr.join( "; " ) )}`;
+      noteStringsForClipboard.push( noteStringArr.join( "; " ) || "" );
+
+      return `Project Code: ${projectString}
+Task Details: ${taskDetailString}
+Date Groups:
+${hoursString}${noteString}
+`;
+    } ) );
+  } ) ).then( data => data.flat() );
+
+  return [ reports, noteStringsForClipboard ];
+}
