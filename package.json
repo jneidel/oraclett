@@ -12,20 +12,21 @@
     "oraclett": "./bin/run"
   },
   "scripts": {
-    "start": "node dist/app.js",
+    "start": "npm run build",
     "test": "jest --coverage",
     "build": "tsc",
     "watch": "concurrently -k -n \"🔨,🚀\" \"npm run watch-build\" \"npm run watch-test\" --prefix name",
     "watch-build": "tsc -w",
     "watch-test": "jest --watch",
     "lint": "eslint --fix --ext .ts --parser-options \"{ 'ecmaVersion': 10, 'ecmaFeatures': { 'impliedStrict': true }, project: ./tsconfig.json }\" src",
-    "pack": "npm run build && oclif manifest && oclif readme"
+    "pack": "npm run build && oclif manifest"
   },
   "files": [
     "/bin",
     "/dist",
     "/npm-shrinkwrap.json",
-    "/oclif.manifest.json"
+    "/oclif.manifest.json",
+    "/LICENCE"
   ],
   "license": "GPLv3",
   "engines": {
