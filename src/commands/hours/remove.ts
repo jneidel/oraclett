@@ -26,7 +26,7 @@ export default class Remove extends Command {
       throwNoTimeLoggedError();
     const hoursData = hours[year][week];
 
-    if ( dateString === "today" && !dayWeekMode.dayModeHasResults( hoursData, dayOfTheWeek ) ) {
+    if ( dateString === "today" && !dayWeekMode.dayModeHasResults( hoursData, dayInQuestion ) ) {
       this.log( "No entries for today. Changing to week mode." );
       operatingMode = "week";
       throwNoTimeLoggedError = dayWeekMode.getNoEntriesErrorFunction( "this week", this.error, "hours" );

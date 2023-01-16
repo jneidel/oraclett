@@ -45,7 +45,7 @@ export function getNoEntriesErrorFunction( dateString: string, errorFunc: Functi
 Specify another timeframe using: -d, --date
 
 ${isHours ? hoursCommandRecommendation : noteCommandRecommendation}`;
-  const dayMessage = `No ${isHours ? hoursEntity : noteEnity} ${isHours ? "on" : "for"} ${dateString}.
+  const dayMessage = `No ${isHours ? hoursEntity : noteEnity} for ${dateString}.
 Specify another timeframe using: -d, --date
 
 ${isHours ? hoursCommandRecommendation : noteCommandRecommendation}`;
@@ -65,31 +65,15 @@ export async function runWeekMode( data, throwNoTimeLoggedError: Function ) {
 export async function runDayMode( dayOfTheWeek: string, data, throwNoTimeLoggedError: Function ) {
   const combinationsWithTheCorrectDOTW = assembleProjectCombinationsForDOTW( data, dayOfTheWeek );
 
-  let project = "";
   const projectsInQuestion: any[] = [ ...new Set( combinationsWithTheCorrectDOTW.map( x => x.project ) ) ];
-  if ( projectsInQuestion.length === 0 ) {
-    return throwNoTimeLoggedError();
-  } else if ( projectsInQuestion.length === 1 ) {
-    console.log( `Using ${projectsInQuestion[0]}` );
-    project = projectsInQuestion[0];
-  } else {
-    const scrubbedHoursData = removeAllKeysExcept( data, projectsInQuestion );
-    project = await selectProject( scrubbedHoursData, throwNoTimeLoggedError );
-  }
+  const projectSelection = removeAllKeysExcept( data, projectsInQuestion );
+  const project = await selectProject( projectSelection, throwNoTimeLoggedError );
 
-  let taskDetail = "";
   const taskDetailsInQuestion: any[] = [ ...new Set( combinationsWithTheCorrectDOTW
     .filter( x => x.project === project )
     .map( x => x.td ) ) ];
-  if ( taskDetailsInQuestion.length === 0 ) {
-    return throwNoTimeLoggedError();
-  } else if ( taskDetailsInQuestion.length === 1 ) {
-    console.log( `Using ${taskDetailsInQuestion[0]}` );
-    taskDetail = taskDetailsInQuestion[0];
-  } else {
-    const scrubbedHoursData = removeAllKeysExcept( data[project], taskDetailsInQuestion );
-    taskDetail = await selectTaskDetail( project, scrubbedHoursData, throwNoTimeLoggedError );
-  }
+  const taskDetailSelection = removeAllKeysExcept( data[project], taskDetailsInQuestion );
+  const taskDetail = await selectTaskDetail( project, taskDetailSelection, throwNoTimeLoggedError );
 
   return { project, taskDetail, dayOfTheWeek };
 }
@@ -123,29 +107,15 @@ export function dayModeHasResults( data, dayOfTheWeek ) {
 }
 
 async function selectProject( data, throwNoTimeLoggedError: Function ): Promise<string> {
-  if ( Object.keys( data ).length === 0 ) {
-    return throwNoTimeLoggedError();
-  } else if ( Object.keys( data ).length === 1 ) {
-    const project = Object.keys( data )[0];
-    console.log( `Using ${project}` );
-    return new Promise( ( resolve ) => resolve( project ) );
-  } else {
-    const projectsToChooseFrom = Object.keys( data );
-    return askFor.project( projectsToChooseFrom );
-  }
+  const projectsToChooseFrom = Object.keys( data );
+  return askFor.project( projectsToChooseFrom )
+    .catch( () =>  throwNoTimeLoggedError() );
 }
 
-async function selectTaskDetail( project, data, throwNoTimeLoggedError: Function ): Promise<string> {
-  if ( Object.keys( data ).length === 0 ) {
-    return throwNoTimeLoggedError();
-  } else if ( Object.keys( data ).length === 1 ) {
-    const taskDetail = Object.keys( data )[0];
-    console.log( `Using ${taskDetail}` );
-    return new Promise( ( resolve ) => resolve( taskDetail ) );
-  } else {
-    const taskDetailsToChooseFrom = Object.keys( data );
-    return askFor.taskDetail( project, taskDetailsToChooseFrom );
-  }
+async function selectTaskDetail( project: string, data, throwNoTimeLoggedError: Function ): Promise<string> {
+  const taskDetailsToChooseFrom = Object.keys( data );
+  return askFor.taskDetail( project, taskDetailsToChooseFrom )
+    .catch( () =>  throwNoTimeLoggedError() );
 }
 
 async function selectDayOfTheWeek( data, throwNoTimeLoggedError: Function ): Promise<string> {

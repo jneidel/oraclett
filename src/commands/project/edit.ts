@@ -14,10 +14,11 @@ export default class Edit extends Command {
     const projectKey = await askFor.project();
 
     let valueToEdit: string;
+    let taskDetailKey = "";
     if ( whatToEdit === "project" ) {
       valueToEdit = await getFullNames.project( projectKey );
     } else {
-      var taskDetailKey = await askFor.taskDetail( projectKey );
+      taskDetailKey = await askFor.taskDetail( projectKey );
       valueToEdit = await getFullNames.taskDetail( projectKey, taskDetailKey );
     }
 

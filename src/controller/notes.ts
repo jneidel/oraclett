@@ -1,13 +1,12 @@
 import chalk from "chalk";
 import { fs, NOTES_FILE } from "../config";
 import { createAndMergeWithStructure, parseDateStringForValues, getFullNames } from "./utils";
-import { getNoEntriesErrorFunction } from "./day-week-mode";
 
 export const readNotes = async ( forceReadingFromDisk = false ) => fs.read( NOTES_FILE, forceReadingFromDisk );
 const writeNotes = async data => fs.write( NOTES_FILE, data );
 
 export async function addNote( data: {
-  note: number|any;
+  note: string;
   dateString: string;
   project: string;
   taskDetail: string;
@@ -33,7 +32,7 @@ export async function addNote( data: {
 }
 
 export async function editNote( data: {
-  note: number;
+  note: string;
   project: string;
   taskDetail: string;
   year: string;

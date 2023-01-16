@@ -11,9 +11,9 @@ export default class Remove extends Command {
     const projectKey = await askFor.project();
 
     if ( whatToRemove === "project" ) {
-      removeProject( projectKey, taskDetailKey );
+      removeProject( projectKey );
     } else {
-      var taskDetailKey = await askFor.taskDetail( projectKey );
+      const taskDetailKey = await askFor.taskDetail( projectKey );
       removeProject( projectKey, taskDetailKey );
     }
   }
