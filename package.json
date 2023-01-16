@@ -19,7 +19,8 @@
     "watch-build": "tsc -w",
     "watch-test": "jest --watch",
     "lint": "eslint --fix --ext .ts --parser-options \"{ 'ecmaVersion': 10, 'ecmaFeatures': { 'impliedStrict': true }, project: ./tsconfig.json }\" src",
-    "pack": "npm run build && oclif manifest"
+    "preversion": "npm run build && npm shrinkwrap",
+    "postversion": "oclif manifest && git add oclif.manifest.json && git commit --amend --no-edit"
   },
   "files": [
     "/bin",

@@ -12,7 +12,7 @@ Keep notes of what you did.
 Generate a report at the end of the week to transfer it into your company's
 Oracle system.
 
-Built for Endava, as part of my [bachelors thesis](https://github.com/jneidel/ba).
+Built for [Endava](https://www.endava.com), as part of my [bachelors thesis](https://github.com/jneidel/ba).
 
 ## Install
 
