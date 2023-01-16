@@ -38,6 +38,7 @@
     "@oclif/plugin-autocomplete": "^1.3.8",
     "@oclif/plugin-help": "^5",
     "@oclif/plugin-plugins": "^2.1.9",
+    "@oclif/plugin-warn-if-update-available": "^2.0.19",
     "chalk": "^4.1.2",
     "clipboardy": "^2.3.0",
     "inquirer": "^8.2.5",
@@ -63,8 +64,13 @@
     "commands": "./dist/commands",
     "plugins": [
       "@oclif/plugin-help",
-      "@oclif/plugin-autocomplete"
+      "@oclif/plugin-autocomplete",
+      "@oclif/plugin-warn-if-update-available"
     ],
+    "warn-if-update-available": {
+      "timeoutInDays": 7,
+      "message": "An update for <%= config.name %> is available (<%= chalk.yellow(config.version) %> => <%= chalk.greenBright(latest) %>).\nInstall with: npm install -g <%= config.name %>"
+    },
     "topics": {
       "plugins": {
         "hidden": true
