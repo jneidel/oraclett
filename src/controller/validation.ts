@@ -22,20 +22,20 @@ Optionally you can interactively test what works here: https://sugarjs.com/dates
 export async function validateProject( projectCode: string|undefined ) {
   const projects = await readProjects();
 
-  if ( !( projectCode  && projects[projectCode] ) ) {
+  if ( !( projectCode  && projects[projectCode] ) )
     throw new Error( `The project code is invalid.
 
 Check existing with: project list
 Add new project using: project add` );
-  }
+
 }
 export async function validateTaskDetails( projectCode: string|undefined, taskDetails: string|undefined ) {
   const projects = await readProjects();
 
-  if ( !( projectCode && taskDetails && projects[projectCode] && projects[projectCode].taskDetails[taskDetails] ) ) {
+  if ( !( projectCode && taskDetails && projects[projectCode] && projects[projectCode].taskDetails[taskDetails] ) )
     throw new Error( `The combination of project code and task details is invalid (either both or one of them don't exist.)
 
 Check existing with: project list
 Add new project using: project add` );
-  }
+
 }

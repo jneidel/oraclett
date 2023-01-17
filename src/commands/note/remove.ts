@@ -33,12 +33,12 @@ export default class Remove extends Command {
       throwNoNotesAddedError = dayWeekMode.getNoEntriesErrorFunction( "this week", this.error, "note" );
     }
 
-    if ( operatingMode === "day" ) {
+    if ( operatingMode === "day" )
       var { project, taskDetail, dayOfTheWeek } = await dayWeekMode.runDayMode( dayInQuestion, notesData, throwNoNotesAddedError );
-    } else {
+    else
       // @ts-ignore
       var { project, taskDetail, dayOfTheWeek } = await dayWeekMode.runWeekMode( notesData, throwNoNotesAddedError );
-    }
+
 
     const currentNote = notesData[project][taskDetail][dayOfTheWeek];
     const confirmDeletion = await askFor.confirmation( {

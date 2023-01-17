@@ -61,9 +61,7 @@ $ <%= config.bin %> <%= command.id %> -t "01 - Career development" -t "03 - Disc
         ] ).then( ( answers ) => {
           taskDetails.push( answers.taskDetails );
           if ( answers.askAgain )
-            return askLoop();
-          else
-            return taskDetails;
+            return askLoop(); else return taskDetails;
         } );
       };
 

@@ -37,56 +37,58 @@ export function combineIntoFullName( key: string, description: string|null, opti
   }
   const coloredKey = keyColor !== "" ? chalk.hex( keyColor )( key ) : key;
 
-  if ( description === null ) {return coloredKey;} else {
+  if ( description === null )
+    return coloredKey;
+  else
     switch ( style ) {
       case "hyphen":
         return `${coloredKey} - ${description}`;
       case "parens":
         return `${coloredKey} (${description})`;
     }
-  }
+
 }
 
 async function getFullProjectName( projectKey: string, options: FullNameOptions = {} ): Promise<string> {
   return readProjects()
     .then( res => res[projectKey] )
     .then( project => {
-      if ( !project ) {
+      if ( !project )
         throw new Error( `Project by the name of ${projectKey} does not exist.
 Did you add it?
 
 To add new projects: project add
 To list existing projects: project list` );
-      } else {
+      else
         return combineIntoFullName( projectKey, project.description, options );
-      }
+
     } );
 }
 async function getFullTaskDetailName( projectKey: string, taskDetailKey: string, options: FullNameOptions = {} ): Promise<string> {
   return readProjects()
     .then( res => res[projectKey] )
     .then( project => {
-      if ( !project ) {
+      if ( !project )
         throw new Error( `Project by the name of ${projectKey} does not exist.
 Did you add it?
 
 To add new projects: project add
 To list existing projects: project list` );
-      } else {
+      else
         return project;
-      }
+
     } )
     .then( project => project.taskDetails[taskDetailKey] )
     .then( taskDetail => {
-      if ( !taskDetail ) {
+      if ( !taskDetail )
         throw new Error( `Task detail by the name of ${taskDetailKey} does not exist.
 Did you add it?
 
 To add new projects: project add
 To list existing projects: project list` );
-      } else {
+      else
         return combineIntoFullName( taskDetailKey, taskDetail.description, options );
-      }
+
     } );
 }
 

@@ -128,4 +128,5 @@ async function selectDayOfTheWeek( data, throwNoTimeLoggedError: Function ): Pro
   } else {
     return askFor.dayOfTheWeek( Object.keys( data ) );
   }
+
 }

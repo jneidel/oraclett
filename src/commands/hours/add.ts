@@ -49,9 +49,9 @@ $ <%= config.bin %> <%= command.id %> 10 -p INTPD999DXD -t 01 -d today -f
     let { project, taskDetail, date, hours }: any = flags;
     const dontAskForDateInteractively = !date && project && taskDetail && hours;
 
-    if ( hours ) {
+    if ( hours )
       hours = Number( hours );
-    } else {
+    else
       await inquirer.prompt( [
         {
           type   : "number",
@@ -63,12 +63,16 @@ $ <%= config.bin %> <%= command.id %> 10 -p INTPD999DXD -t 01 -d today -f
           },
         },
       ] ).then( ans => hours = ans.hours );
-    }
+
 
     if ( project )
       await validateProject( project );
     else
-      project = await askFor.project();
+      project = await askFor.project()
+        .catch( () => this.error( `No projects have been added.
+
+To add a new one: project add` ) );
+
 
 
     if ( taskDetail )
@@ -87,7 +91,6 @@ $ <%= config.bin %> <%= command.id %> 10 -p INTPD999DXD -t 01 -d today -f
       await addHours( { hoursToLog: hours, dateString: date, project, taskDetail, force: flags.force } );
     } catch ( err: any ) {
       if ( err.message.match( /--force/ ) ) {
-
         const combinedHours = err.message.split( " " )[0];
         const force = await inquirer.prompt( [ {
           type   : "confirm",
@@ -96,7 +99,9 @@ $ <%= config.bin %> <%= command.id %> 10 -p INTPD999DXD -t 01 -d today -f
         } ] ).then( answers => answers.force );
         if ( force )
           await addHours( { hoursToLog: hours, dateString: date, project, taskDetail, force } );
-      } else {this.error( err.message );}
+      } else {
+        this.error( err.message );
+      }
     }
   }
 }

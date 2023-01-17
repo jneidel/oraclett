@@ -9,7 +9,7 @@ type InquirerChoice = {
 function handleZeroOrOneChoices( choices: InquirerChoice[]|string[] ) {
   if ( choices.length === 0 ) {
     throw new Error( "Nothing to choose from." );
-  }  else if ( choices.length === 1 ) {
+  } else if ( choices.length === 1 ) {
     const choice = choices[0];
 
     if ( typeof choice === "string" ) {
@@ -28,7 +28,9 @@ export async function project( selection?: string[] ): Promise<string> {
   const choices = selection ? await getReadableChoices.project( selection ) : await getReadableChoices.project();
   const choice: string|null = handleZeroOrOneChoices( choices );
 
-  if ( choice !== null ) {return new Promise( ( resolve ) => resolve( choice ) );} else {
+  if ( choice !== null )
+    return new Promise( ( resolve ) => resolve( choice ) );
+  else
     return inquirer.prompt( [
       {
         type   : "list",
@@ -37,34 +39,34 @@ export async function project( selection?: string[] ): Promise<string> {
         choices,
       },
     ] ).then( ans => ans.project );
-  }
+
 }
 
 export async function taskDetail( projectKey: string, selection?: string[] ): Promise<string> {
   const choices = selection ? await getReadableChoices.taskDetails( projectKey, selection ) : await getReadableChoices.taskDetails( projectKey );
   const choice: string|null = handleZeroOrOneChoices( choices );
 
-  if ( choice !== null ) {return new Promise( ( resolve ) => resolve( choice ) );} else {
+  if ( choice !== null ) return new Promise( ( resolve ) => resolve( choice ) ); else
     return inquirer.prompt( [ {
       type   : "list",
       name   : "taskDetail",
       message: "What task detail?",
       choices,
     } ] ).then( ans => ans.taskDetail );
-  }
+
 }
 
 export async function dayOfTheWeek( choices: string[] ): Promise<string> {
   const choice: string|null = handleZeroOrOneChoices( choices );
 
-  if ( choice !== null ) {return new Promise( ( resolve ) => resolve( choice ) );} else {
+  if ( choice !== null ) return new Promise( ( resolve ) => resolve( choice ) ); else
     return inquirer.prompt( [ {
       type   : "list",
       name   : "dotw",
       message: "What day of the week?",
       choices,
     } ] ).then( ans => ans.dotw );
-  }
+
 }
 
 export async function number( message: string, defaultVal?: number ): Promise<number> {

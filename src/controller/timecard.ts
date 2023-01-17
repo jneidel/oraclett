@@ -10,13 +10,12 @@ export async function generateReports( dateString: string, noInteractive: boolea
   const hours = await readHours().then( data => data[year][week] ).catch( () => ( {} ) ).then( data => data !== undefined ? data : {} );
 
   const projects = [ ...new Set( [ ...Object.keys( notes ), ...Object.keys( hours ) ] ) ];
-  if ( projects.length === 0 ) {
+  if ( projects.length === 0 )
     this.error( `No hours or notes have been logged for the selected week?
 Meant anoter week? Specify with: -d, --date
 
 To log some hours: hours add
 To keep some notes: notes add` );
-  }
 
   const noteStringsForClipboard: any[] = [];
   const reports = await Promise.all( projects.map( async projectKey => {

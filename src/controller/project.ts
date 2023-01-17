@@ -188,6 +188,5 @@ export async function editProject( data: {project: string; newName: string; task
   else
     project = await editProjectData( project, newNameObject );
 
-
   listProjects( project );
 }

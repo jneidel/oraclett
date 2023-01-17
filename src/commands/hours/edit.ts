@@ -32,12 +32,12 @@ export default class Edit extends Command {
       throwNoTimeLoggedError = dayWeekMode.getNoEntriesErrorFunction( "this week", this.error, "hours" );
     }
 
-    if ( operatingMode === "day" ) {
+    if ( operatingMode === "day" )
       var { project, taskDetail, dayOfTheWeek } = await dayWeekMode.runDayMode( dayInQuestion, hoursData, throwNoTimeLoggedError );
-    } else {
+    else
       // @ts-ignore
       var { project, taskDetail, dayOfTheWeek } = await dayWeekMode.runWeekMode( hoursData, throwNoTimeLoggedError );
-    }
+
 
     const currentHours = hoursData[project][taskDetail][dayOfTheWeek];
     const newHours = await askFor.number( `To how many hours should this be changed? (Current: ${currentHours})`, currentHours );

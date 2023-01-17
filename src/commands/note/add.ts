@@ -45,7 +45,11 @@ $ <%= config.bin %> <%= command.id %> 10 -p INTPD999DXD -t 01 -d today -f
     if ( project )
       await validateProject( project );
     else
-      project = await askFor.project();
+      project = await askFor.project()
+        .catch( () => this.error( `No projects have been added.
+
+To add a new one: project add` ) );
+
 
     if ( taskDetail )
       await validateTaskDetails( project, taskDetail );
