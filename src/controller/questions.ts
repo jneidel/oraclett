@@ -39,7 +39,6 @@ export async function project( selection?: string[] ): Promise<string> {
         choices,
       },
     ] ).then( ans => ans.project );
-
 }
 
 export async function taskDetail( projectKey: string, selection?: string[] ): Promise<string> {

@@ -28,6 +28,7 @@ export async function addNote( data: {
     },
   };
   const newNotes = createAndMergeWithStructure( ogNotes, structure, ( cur: string ) => cur === "" ? noteToAdd : `${cur}, ${noteToAdd}` );
+  console.log( "Successfully added note" );
   await writeNotes( newNotes );
 }
 

@@ -35,7 +35,7 @@ $ <%= config.bin %> <%= command.id %> -d "last week" -I
     const [ isoWeek, isoYear ] = parseDateStringForValues( date, "%V %G" );
     this.log( `Timecard for week ${isoWeek} of ${isoYear}:\n` );
 
-    const [ reports, noteStringsForClipboard ] = await generateReports( date, noInteractive );
+    const [ reports, noteStringsForClipboard ] = await generateReports( date, noInteractive, this.error );
 
     const reportSeperator = "----------------------------------";
     const printReport = async () => {

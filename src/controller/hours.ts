@@ -35,6 +35,7 @@ export async function addHours( data: {
   if ( combinedHours > 8 && !force )
     throw new Error( `${combinedHours} --force` );
 
+  console.log( "Successfully added hours" );
   await writeHours( newHours );
 }
 

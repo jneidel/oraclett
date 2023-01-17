@@ -3,7 +3,7 @@ import { readNotes } from "./notes";
 import { readHours } from "./hours";
 import { getFullNames, parseDateStringForValues } from "./utils";
 
-export async function generateReports( dateString: string, noInteractive: boolean ) {
+export async function generateReports( dateString: string, noInteractive: boolean, errorFunc: Function ) {
   const [ week, year ] = parseDateStringForValues( dateString, "%V %G" );
 
   const notes = await readNotes().then( data => data[year][week] ).catch( () => ( {} ) ).then( data => data !== undefined ? data : {} );
@@ -11,8 +11,8 @@ export async function generateReports( dateString: string, noInteractive: boolea
 
   const projects = [ ...new Set( [ ...Object.keys( notes ), ...Object.keys( hours ) ] ) ];
   if ( projects.length === 0 )
-    this.error( `No hours or notes have been logged for the selected week?
-Meant anoter week? Specify with: -d, --date
+    errorFunc( `No hours or notes have been logged for the selected week.
+Meant anoter week? Specify it using: -d, --date
 
 To log some hours: hours add
 To keep some notes: notes add` );

@@ -36,25 +36,25 @@ To add a few use: project add` );
   }
 }
 
-export async function addProject( codeString: string, taskDetailsStrings: string[] = [] ) {
-  const code: any = parseOracleString( codeString );
-  const [ key ] = Object.keys( code );
+export async function addProject( projectString: string, taskDetailsStrings: string[] = [] ) {
+  const project: any = parseOracleString( projectString );
+  const [ key ] = Object.keys( project );
 
   const tds = taskDetailsStrings
     .map( td => parseOracleString( td ) )
     .reduce( ( acc, cur ) => Object.assign( acc, cur ), {} );
 
-  code[key].taskDetails = tds;
+  project[key].taskDetails = tds;
 
   const projects = await readProjects();
   if ( projects[key] ) {
-    if ( code[key].description )
-      projects[key].description = code[key].description;
-    projects[key].taskDetails = Object.assign( projects[key].taskDetails, code[key].taskDetails );
-    console.log( "Successfully updated" );
+    if ( project[key].description )
+      projects[key].description = project[key].description;
+    projects[key].taskDetails = Object.assign( projects[key].taskDetails, project[key].taskDetails );
+    console.log( "Successfully updated project" );
   } else {
-    projects[key] = code[key];
-    console.log( "Sucessfully added" );
+    projects[key] = project[key];
+    console.log( "Successfully added project" );
   }
 
   await writeProjects( projects );
@@ -122,7 +122,7 @@ export async function removeProject( projectCode: string, taskDetail: string|nul
   if ( taskDetail === null )
     removeProjectData( projectCode );
   else
-    removeProjectData( projectCode );
+    removeTaskDetailData( projectCode, taskDetail );
 }
 
 async function editTaskDetailData( projectKey: string, taskDetailKey: string, newTaskDetailObject: any ) {
