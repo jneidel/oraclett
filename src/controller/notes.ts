@@ -3,7 +3,7 @@ import { fs, NOTES_FILE } from "../config";
 import { createAndMergeWithStructure, parseDateStringForValues, getFullNames } from "./utils";
 
 export const readNotes = async ( forceReadingFromDisk = false ) => fs.read( NOTES_FILE, forceReadingFromDisk );
-const writeNotes = async data => fs.write( NOTES_FILE, data );
+export const writeNotes = async data => fs.write( NOTES_FILE, data );
 
 export async function addNote( data: {
   note: string;

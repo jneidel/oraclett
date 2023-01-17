@@ -4,7 +4,7 @@ import { fs, HOURS_FILE } from "../config";
 import { getFullNames, createAndMergeWithStructure, parseDateStringForValues } from "./utils";
 
 export const readHours = async ( forceReadingFromDisk = false ) => fs.read( HOURS_FILE, forceReadingFromDisk );
-const writeHours = async data => fs.write( HOURS_FILE, data );
+export const writeHours = async data => fs.write( HOURS_FILE, data );
 
 export async function addHours( data: {
   hoursToLog: number|any;
