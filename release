@@ -1,0 +1,29 @@
+#! /bin/sh
+
+if [ "$1" = "--help" ] || [ "$1" = "-h" ] || [ "$1" = "help" ] || [ -z "$1" ]; then
+  cat <<EOF
+$ release TYPE
+Release a new version
+
+Parameters:
+  \$1: one of major, minor, patch
+
+Example:
+  $ release patch
+EOF
+  exit
+fi
+
+command -v npm >/dev/null || { echo "npm is not installed" 1>&2; exit 127; }
+command -v oclif >/dev/null || { echo "oclif is not installed" 1>&2; exit 127; }
+
+npm shrinkwrap
+VERSION="$(npm --no-git-tag-version version $1)"
+oclif manifest
+
+echo "Releasing '$VERSION'"
+git add npm-shrinkwrap.json oclif.manifest.json package.json
+git commit $VERSION
+git tag $VERSION
+
+npm publish
