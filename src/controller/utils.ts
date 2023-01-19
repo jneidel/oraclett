@@ -97,7 +97,7 @@ export const interactiveHelpText = `Passing no arguments will start an interacti
 async function getReadableProjectChoices( selection: String[]|null = null ): Promise<Array<{name: string; value: string}>> {
   const projects = await readProjects();
 
-  return Promise.all( Object.keys( projects )
+  return Promise.all( Object.keys( projects ).reverse() // sort by recently added/updated
     .filter( key => {
       if ( selection === null )
         return true;
@@ -115,7 +115,7 @@ async function getReadableProjectChoices( selection: String[]|null = null ): Pro
 async function getReadableTaskDetailChoices( projectCode: string, selection: String[]|null = null ): Promise<Array<{name: string; value: string}>> {
   const projects = await readProjects();
 
-  return Promise.all( Object.keys( projects[projectCode].taskDetails )
+  return Promise.all( Object.keys( projects[projectCode].taskDetails ).sort()
     .filter( key => {
       if ( selection === null )
         return true;
