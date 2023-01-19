@@ -1,0 +1,116 @@
+{
+ "INTPD999DXD": {
+    "description": "People Development DXD",
+    "taskDetails": {
+      "01": {
+        "description": "Career development"
+      },
+      "02": {
+        "description": "Certification"
+      },
+      "03": {
+        "description": "Discipline Weeks"
+      },
+      "04": {
+        "description": "Domain/Industry Training"
+      },
+      "05": {
+        "description": "Team One to Ones"
+      },
+      "06": {
+        "description": "Foreign Language Training"
+      },
+      "07": {
+        "description": "Induction & Awareness training"
+      },
+      "08": {
+        "description": "Innovation Lab"
+      },
+      "09": {
+        "description": "Leadership Training"
+      },
+      "10": {
+        "description": "Management Development"
+      },
+      "11": {
+        "description": "Online Learning Tools & Subscriptions"
+      },
+      "12": {
+        "description": "Pass It On"
+      },
+      "13": {
+        "description": "Project Shadowing"
+      },
+      "14": {
+        "description": "Recruitment"
+      },
+      "15": {
+        "description": "Research and Development"
+      },
+      "16": {
+        "description": "Soft Skills"
+      },
+      "17": {
+        "description": "Team Managament tasks"
+      },
+      "18": {
+        "description": "TEAM Training"
+      },
+      "19": {
+        "description": "Technical Training"
+      },
+      "20": {
+        "description": "University Courses"
+      }
+    }
+  },
+  "INTET999DXD": {
+    "description": "Germany DU Bench Time",
+    "taskDetails": {
+      "01": {
+        "description": "Bench"
+      }
+    }
+  },
+  "INTDS999DXD": {
+    "description": "Endava Disciplines DXD",
+    "taskDetails": {
+      "01": {
+        "description": "Planning"
+      },
+      "02": {
+        "description": "Envisioning"
+      },
+      "03": {
+        "description": "Concurrent Engineering"
+      },
+      "04": {
+        "description": "Closure"
+      },
+      "05": {
+        "description": "Team - Analysis"
+      },
+      "06": {
+        "description": "Team - Applications Management"
+      },
+      "07": {
+        "description": "Team - Creative Services"
+      },
+      "08": {
+        "description": "Team - Development"
+      },
+      "09": {
+        "description": "Team - Facilities"
+      },
+      "10": {
+        "description": "Team - Project Development Management"
+      },
+      "11": {
+        "description": "Team - Service Desk"
+      },
+      "12": {
+        "description": "Team - Testing"
+      }
+    }
+  }
+}

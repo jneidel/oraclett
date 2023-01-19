@@ -1,28 +1,36 @@
 import fs from "fs/promises";
-import { DATA_DIR } from ".";
+import { DATA_DIR, PROJECTS_FILE } from ".";
+import defaultProjects from "./default-projects.json";
 
-const fileContents = {};
+const cachedFileContents = {};
 
 export async function createDataDir() {
   await fs.mkdir( DATA_DIR, { recursive: true } );
 }
 
+function getDefaultValueForEmptyFile( FILE: string ) {
+  switch ( FILE ) {
+    case PROJECTS_FILE:
+      return defaultProjects;
+    default:
+      return {};
+  }
+}
 export async function read( FILE: string, forceReadingFromDisk = false ) {
-  if ( !forceReadingFromDisk && fileContents[FILE] )
-    return new Promise( resolve => resolve( fileContents[FILE] ) );
+  if ( !forceReadingFromDisk && cachedFileContents[FILE] )
+    return new Promise( resolve => resolve( cachedFileContents[FILE] ) );
 
   return fs.readFile( FILE, { encoding: "utf8" } )
     .then( jsonString => JSON.parse( jsonString ) )
     .catch( err => {
-      if ( err.code === "ENOENT" ) {
-        return {};
-      } else {
-        console.log( err );
-        return {};
-      }
+      if ( err.code === "ENOENT" )
+        return getDefaultValueForEmptyFile( FILE );
+      else
+        return getDefaultValueForEmptyFile( FILE );
+
     } )
     .then( data => {
-      fileContents[FILE] = data;
+      cachedFileContents[FILE] = data;
       return data;
     } );
 }
