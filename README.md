@@ -19,7 +19,7 @@ Built for [Endava](https://www.endava.com), as part of my [bachelors thesis](htt
 [![Npm Version](https://img.shields.io/npm/v/oraclett.svg?style=flat-square)](https://www.npmjs.com/package/oraclett)
 
 ```sh
-npm install -g oraclett
+sudo npm install -g oraclett
 ```
 
 ## Usage

@@ -19,8 +19,7 @@
     "watch-build": "tsc -w",
     "watch-test": "jest --watch",
     "lint": "eslint --fix --ext .ts --parser-options \"{ 'ecmaVersion': 10, 'ecmaFeatures': { 'impliedStrict': true }, project: ./tsconfig.json }\" src",
-    "preversion": "npm run build && npm shrinkwrap",
-    "postversion": "oclif manifest && git add oclif.manifest.json && git commit --amend --no-edit"
+    "preversion": "npm run build && npm shrinkwrap"
   },
   "files": [
     "/bin",
@@ -71,7 +70,7 @@
     ],
     "warn-if-update-available": {
       "timeoutInDays": 7,
-      "message": "An update for <%= config.name %> is available (<%= chalk.yellow(config.version) %> => <%= chalk.greenBright(latest) %>).\nInstall with: npm install -g <%= config.name %>"
+      "message": "An update for <%= config.name %> is available (<%= chalk.yellow(config.version) %> => <%= chalk.greenBright(latest) %>).\nInstall with: sudo npm install -g <%= config.name %>"
     },
     "topics": {
       "plugins": {
