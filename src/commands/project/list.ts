@@ -5,17 +5,16 @@ export default class List extends Command {
   static description = "List all projects.";
 
   static flags = {
-    filter: Flags.string( {
+    full: Flags.boolean( {
       char       : "f",
-      description: "Filter for a project code",
-      aliases    : [ "code" ],
-      hidden     : true,
+      description: "Show the full list of task details",
+      aliases    : [ "all" ],
     } ),
   };
 
   async run(): Promise<void> {
     const { flags } = await this.parse( List );
 
-    listProjects( flags.filter );
+    listProjects( { full: flags.full } );
   }
 }

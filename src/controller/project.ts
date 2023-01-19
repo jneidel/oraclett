@@ -3,37 +3,50 @@ import { parseOracleString, getFullNames } from "./utils";
 import { readHours, writeHours } from "./hours";
 import { readNotes, writeNotes } from "./notes";
 
+const TRUNCATED_LIST_MARKER = "any text here";
+
 export const readProjects = async ( forceReadingFromDisk = false ) => fs.read( PROJECTS_FILE, forceReadingFromDisk );
 const writeProjects = async data => fs.write( PROJECTS_FILE, data );
 
-export async function listProjects( projectToFilterBy: string|undefined ) {
+export async function listProjects( options: { filter?: string; full?: boolean } = {} ) {
+  const { filter, full } = options;
+
   let projectList = await readProjects();
-  let projectKeys = Object.keys( projectList );
+  let projectKeys = Object.keys( projectList ); // most recently updated is the last in the list
 
-  if ( projectToFilterBy )
-    projectKeys = projectKeys.filter( projectKey => projectKey === projectToFilterBy );
-
+  if ( filter )
+    projectKeys = projectKeys.filter( projectKey => projectKey === filter );
 
   projectList = await Promise.all( projectKeys.map( async ( projectKey: string ) => {
     const projectName = await getFullNames.project( projectKey, { style: "parens", keyColor: "project" } );
     const taskDetailNames = await Promise.all(
       Object.keys( projectList[projectKey].taskDetails ).sort()
-        .map( async taskDetailKey => {
-          const name = await getFullNames.taskDetail( projectKey, taskDetailKey, { style: "parens", keyColor: "td" } );
-          return `  * ${name}`;
+        .map( ( key, index ) => {
+          if ( !full && index === 3 )
+            return TRUNCATED_LIST_MARKER;
+          else
+            return key;
         } )
-    ).then( arr => arr.join( "\n" ) );
+        .map( async taskDetailKey => {
+          if ( !full && taskDetailKey === TRUNCATED_LIST_MARKER ) {
+            return `  * .. (--full to see all)`;
+          } else {
+            const name = await getFullNames.taskDetail( projectKey, taskDetailKey, { style: "parens", keyColor: "td" } );
+            return `  * ${name}`;
+          }
+        } )
+    ).then( arr => full ? arr : arr.slice( 0, 4 ) )
+      .then( arr => arr.join( "\n" ) );
     return `${projectName}\n${taskDetailNames}`;
   } ) );
 
-  if ( projectList.length !== 0 ) {
-    console.log( "Projects:" );
+  if ( projectList.length !== 0 )
     console.log( projectList.join( "\n" ) );
-  } else {
+  else
     console.log( `There are no projects.
 
 To add a few use: project add` );
-  }
+
 }
 
 export async function addProject( projectString: string, taskDetailsStrings: string[] = [] ) {
@@ -58,7 +71,7 @@ export async function addProject( projectString: string, taskDetailsStrings: str
   }
 
   await writeProjects( projects );
-  listProjects( key );
+  listProjects( { filter: key } );
 }
 
 function findInstancesOfProjectInData( projectKey: string, data: any ): Array<{
@@ -188,5 +201,5 @@ export async function editProject( data: {project: string; newName: string; task
   else
     project = await editProjectData( project, newNameObject );
 
-  listProjects( project );
+  listProjects( { filter: project } );
 }
