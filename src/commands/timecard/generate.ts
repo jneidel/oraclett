@@ -2,7 +2,8 @@ import { Command, Flags } from "@oclif/core";
 import clipboard from "clipboardy";
 import { generateReports } from "../../controller/timecard";
 import * as askFor from "../../controller/questions";
-import { parseDateStringForValues } from "../../controller/utils";
+import { createHumanReadableWeekIdentifier } from "../../controller/utils";
+import { validateDateString } from "../../controller/validation";
 
 export default class List extends Command {
   static summary = "Generate a report for filling out timecards.";
@@ -32,8 +33,8 @@ $ <%= config.bin %> <%= command.id %> -d "last week" -I
     const { flags } = await this.parse( List );
     const { date, "no-interactive": noInteractive } = flags;
 
-    const [ isoWeek, isoYear ] = parseDateStringForValues( date, "%V %G" );
-    this.log( `Timecard for week ${isoWeek} of ${isoYear}:\n` );
+    validateDateString( date );
+    this.log( `Timecard for ${createHumanReadableWeekIdentifier( date, { noLeadingProposition: true } )}:\n` );
 
     const [ reports, noteStringsForClipboard ] = await generateReports( date, noInteractive, this.error );
 

@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import { fs, NOTES_FILE } from "../config";
-import { createAndMergeWithStructure, parseDateStringForValues, getFullNames } from "./utils";
+import { createAndMergeWithStructure, parseDateStringForValues, getFullNames, createHumanReadableWeekIdentifier } from "./utils";
 
 export const readNotes = async ( forceReadingFromDisk = false ) => fs.read( NOTES_FILE, forceReadingFromDisk );
 export const writeNotes = async data => fs.write( NOTES_FILE, data );
@@ -109,5 +109,5 @@ export async function listNotes( dateString: string ) {
   ${theDaysProjectsWithTheirNotesText.join( `\n  ` )}`;
   } ) ).then( textArr => textArr.join( "\n" ) );
 
-  console.log( `Notes for week ${isoWeek} of ${isoYear}:\n${output}` );
+  console.log( `Notes for ${createHumanReadableWeekIdentifier( dateString, { noLeadingProposition: true } )}:\n${output}` );
 }

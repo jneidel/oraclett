@@ -1,7 +1,7 @@
 import { CliUx } from "@oclif/core";
 import chalk from "chalk";
 import { fs, HOURS_FILE } from "../config";
-import { getFullNames, createAndMergeWithStructure, parseDateStringForValues } from "./utils";
+import { getFullNames, createAndMergeWithStructure, parseDateStringForValues, createHumanReadableWeekIdentifier } from "./utils";
 
 export const readHours = async ( forceReadingFromDisk = false ) => fs.read( HOURS_FILE, forceReadingFromDisk );
 export const writeHours = async data => fs.write( HOURS_FILE, data );
@@ -47,7 +47,7 @@ export async function listHours( dateString: string, useShortedTitles: boolean )
     .catch( () => null );
 
   if ( !relevantHours ) {
-    console.log( `No hours logged in week ${isoWeek} of ${isoYear}.
+    console.log( `No hours logged ${createHumanReadableWeekIdentifier( dateString )}.
 
 To log some use: hours add` );
   } else {
@@ -142,7 +142,7 @@ To log some use: hours add` );
       { total: {} }
     );
 
-    console.log( `Hours logged for week ${isoWeek} of ${isoYear}:` );
+    console.log( `Hours logged ${createHumanReadableWeekIdentifier( dateString )}:` );
     CliUx.ux.table( tableData, columns, {} );
   }
 }

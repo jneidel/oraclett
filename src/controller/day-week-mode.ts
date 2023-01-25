@@ -1,6 +1,7 @@
 import { Flags } from "@oclif/core";
 import * as askFor from "./questions";
-import { parseDateStringForValues } from "./utils";
+import { parseDateStringForValues, createHumanReadableWeekIdentifier } from "./utils";
+import { validateDateString } from "./validation";
 
 export const helpText = `If a day is specified, you will edit that days hours.
 If a week is specified, you will be able to pick a day to edit for.
@@ -30,7 +31,7 @@ export function evalOperatingMode( dateString: string ): OperatingMode {
 }
 
 export function getNoEntriesErrorFunction( dateString: string, errorFunc: Function, object: "hours"|"note", forceMode?: OperatingMode ): Function {
-  const [ week, year ] = parseDateStringForValues( dateString, "%V %G" );
+  validateDateString( dateString );
   const operatingMode = forceMode ? forceMode : evalOperatingMode( dateString );
 
   const isHours = object === "hours";
@@ -41,7 +42,7 @@ export function getNoEntriesErrorFunction( dateString: string, errorFunc: Functi
   const hoursCommandRecommendation = "To log some use: hours add";
   const noteCommandRecommendation = "To add one use: note add";
 
-  const weekMessage = `No ${isHours ? hoursEntity : noteEnity} ${isHours ? "in" : "for"} week ${week} of ${year}.
+  const weekMessage = `No ${isHours ? hoursEntity : noteEnity} ${isHours ? "in" : "for"} ${createHumanReadableWeekIdentifier( dateString, { noLeadingProposition: true } )}.
 Specify another timeframe using: -d, --date
 
 ${isHours ? hoursCommandRecommendation : noteCommandRecommendation}`;

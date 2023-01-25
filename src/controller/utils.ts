@@ -167,3 +167,33 @@ export function parseDateStringForValues( dateString: string, formatString: stri
   const date = Date.create( dateString );
   return Date.format( date, formatString ).split( " " );
 }
+
+export function createHumanReadableWeekIdentifier( dateString: string, options: { noLeadingProposition?: boolean } = {} ) {
+  const { noLeadingProposition } = options;
+  if ( noLeadingProposition )
+    return createHumanReadableWeekIdentifier( dateString ).split( " " ).slice( 1 ).join( " " );
+
+
+  const date = Date.create( dateString );
+  const [ isoWeek, isoYear ] = Date.format( date, "%V %G" ).split( " " );
+
+  const firstDayOfTheWeek = Date.format( Date.beginningOfISOWeek( date ), "%h%d" );
+  const lastDayOfTheWeek = Date.format( Date.endOfISOWeek( date ), "%h%d" );
+  const weekInRealDates = ` (${firstDayOfTheWeek} - ${lastDayOfTheWeek})`;
+
+  const getWeekYearCombi = dateString => Date.format( Date.create( dateString ), "%V %G" );
+  switch ( `${isoWeek} ${isoYear}` ) {
+    case getWeekYearCombi( "now" ):
+      return `for this week${  weekInRealDates}`;
+    case getWeekYearCombi( "next week" ):
+      return `for next week${  weekInRealDates}`;
+    case getWeekYearCombi( "last week" ):
+      return `for last week${  weekInRealDates}`;
+    case getWeekYearCombi( "2 weeks ago" ):
+      return `in week ${isoWeek} of ${isoYear} (2 weeks ago)${  weekInRealDates}`;
+    case getWeekYearCombi( "3 weeks ago" ):
+      return `in week ${isoWeek} of ${isoYear} (3 weeks ago)${  weekInRealDates}`;
+    default:
+      return `in week ${isoWeek} of ${isoYear}${  weekInRealDates}`;
+  }
+}
