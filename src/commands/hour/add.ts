@@ -1,6 +1,6 @@
 import { Command, Flags } from "@oclif/core";
 import inquirer from "inquirer";
-import { interactiveHelpText, getReadableChoices } from "../../controller/utils";
+import { interactiveHelpText } from "../../controller/utils";
 import { addHours } from "../../controller/hours";
 import { validateDateString, validateProject, validateTaskDetails } from "../../controller/validation";
 import * as askFor from "../../controller/questions";
@@ -12,12 +12,11 @@ export default class Add extends Command {
 This will add to existing hours, if this command is run twice the hours logged will be doubly.`;
 
   static examples = [ `$ <%= config.bin %> <%= command.id %>
-$ <%= config.bin %> <%= command.id %> 3
-$ <%= config.bin %> <%= command.id %> 3 -p INTPD999DXD -t 01
-$ <%= config.bin %> <%= command.id %> 3 -p INTPD999DXD -t 01 --date yesterday
-$ <%= config.bin %> <%= command.id %> 10 -p INTPD999DXD -t 01 -d today -f
+$ <%= config.bin %> <%= command.id %> -H 3
+$ <%= config.bin %> <%= command.id %> -H 3 -p INTPD999DXD -t 01
+$ <%= config.bin %> <%= command.id %> -H 3 -p INTPD999DXD -t 01 --date yesterday
+$ <%= config.bin %> <%= command.id %> -H 10 -p INTPD999DXD -t 01 -d today --force
 ` ];
-  static aliases = [ "hour:log" ];
 
   static flags = {
     taskDetail: Flags.string( {

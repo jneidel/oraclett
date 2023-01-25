@@ -15,7 +15,7 @@ export default class List extends Command {
   };
 
   static examples = [ `$ <%= config.bin %> <%= command.id %>
-$ <%= config.bin %> <%= command.id %> -d "last week" --short
+$ <%= config.bin %> <%= command.id %> -d "last week"
 ` ];
 
   async run(): Promise<void> {

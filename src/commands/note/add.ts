@@ -11,12 +11,9 @@ export default class Add extends Command {
 This will add to existing notes for the same day.`;
 
   static examples = [ `$ <%= config.bin %> <%= command.id %>
-$ <%= config.bin %> <%= command.id %> 3
-$ <%= config.bin %> <%= command.id %> 3 -p INTPD999DXD -t 01
-$ <%= config.bin %> <%= command.id %> 3 -p INTPD999DXD -t 01 --date yesterday
-$ <%= config.bin %> <%= command.id %> 10 -p INTPD999DXD -t 01 -d today -f
+$ <%= config.bin %> <%= command.id %> -n "This and that" -p INTPD999DXD
+$ <%= config.bin %> <%= command.id %> -n "This and that" -p INTPD999DXD -t 01 --date yesterday
 ` ];
-  static aliases = [ "hours:log" ];
 
   static flags = {
     taskDetail: Flags.string( {
