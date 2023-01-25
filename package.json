@@ -74,7 +74,10 @@
     "topics": {
       "plugins": {
         "hidden": true
-      }
+      },
+      "hour": { "description": "Log working hours." },
+      "note": { "description": "Keep track of what you worked on." },
+      "project": { "description": "Manage projects that you're working on." }
     },
     "topicSeparator": " ",
     "additionalHelpFlags": [

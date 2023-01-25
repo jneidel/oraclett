@@ -17,7 +17,7 @@ $ <%= config.bin %> <%= command.id %> 3 -p INTPD999DXD -t 01
 $ <%= config.bin %> <%= command.id %> 3 -p INTPD999DXD -t 01 --date yesterday
 $ <%= config.bin %> <%= command.id %> 10 -p INTPD999DXD -t 01 -d today -f
 ` ];
-  static aliases = [ "hours:log" ];
+  static aliases = [ "hour:log" ];
 
   static flags = {
     taskDetail: Flags.string( {

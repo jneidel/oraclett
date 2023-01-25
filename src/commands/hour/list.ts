@@ -2,7 +2,7 @@ import { Command, Flags } from "@oclif/core";
 import { listHours } from "../../controller/hours";
 
 export default class List extends Command {
-  static description = "List all projects.";
+  static description = "List all logged hours.";
 
   static flags = {
     date: Flags.string( {
