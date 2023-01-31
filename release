@@ -26,4 +26,4 @@ git add npm-shrinkwrap.json oclif.manifest.json package.json
 git commit -m $VERSION
 git tag $VERSION
 
-npm publish
+disable-mullvad-for npm publish
