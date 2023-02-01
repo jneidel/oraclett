@@ -4,12 +4,14 @@ import { readProjects } from "./project";
 
 export function validateDateString( dateString: string, dontThrow = false ): string|boolean {
   const date = Date.create( dateString );
-  const message = `Invalid date string passed.
+  const message = `Invalid date passed.
 
-Besides normal dates like 5/24, human readable (relative) dates are supported:
-  today, yesterday, tomorrow, fri, last week tue, last wednesday, aug 15
+Natural language dates like these supported:
+  today, yesterday, tomorrow, Thursday, fri, next wednesday, last week tue, mon 3 weeks ago, aug 15
 
-Optionally you can interactively test what works here: https://sugarjs.com/dates/#/Parsing`;
+Alternatively an exact dates like 5/24/2022 can also be used.
+
+You can play around with what works here: https://sugarjs.com/dates/#/Parsing`;
 
   if ( !Date.isValid( date ) ) {
     if ( !dontThrow )
@@ -23,19 +25,18 @@ export async function validateProject( projectCode: string|undefined ) {
   const projects = await readProjects();
 
   if ( !( projectCode  && projects[projectCode] ) )
-    throw new Error( `The project code is invalid.
+    throw new Error( `The project does not exist.
 
-Check existing with: project list
-Add new project using: project add` );
+To check existing: project list
+To add a new one : project add` );
 
 }
 export async function validateTaskDetails( projectCode: string|undefined, taskDetails: string|undefined ) {
   const projects = await readProjects();
 
   if ( !( projectCode && taskDetails && projects[projectCode] && projects[projectCode].taskDetails[taskDetails] ) )
-    throw new Error( `The combination of project code and task details is invalid (either both or one of them don't exist.)
+    throw new Error( `Invalid combination of project and task details (either both or one of them don't exist.)
 
-Check existing with: project list
-Add new project using: project add` );
-
+To check existing: project list
+To add a new one : project add` );
 }
