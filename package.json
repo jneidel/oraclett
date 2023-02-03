@@ -74,13 +74,13 @@
         "hidden": true
       },
       "hour": {
-        "description": "Log working hours."
+        "description": "Log and manage hours."
       },
       "note": {
-        "description": "Keep track of what you worked on."
+        "description": "Write down and manage notes."
       },
       "project": {
-        "description": "Manage projects that you're working on."
+        "description": "Manage projects."
       }
     },
     "topicSeparator": " ",
