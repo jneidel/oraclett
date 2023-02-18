@@ -23,6 +23,10 @@ going along with you while you copy over data into Oracle.`;
       default    : false,
       aliases    : [ "noInteractive", "i" ],
     } ),
+    classic: Flags.boolean( {
+      char       : "c",
+      description: "Use the classic timecard format",
+    } ),
   };
 
   static examples = [ `$ <%= config.bin %> <%= command.id %>
@@ -31,16 +35,17 @@ $ <%= config.bin %> <%= command.id %> -d "last week" -I
 
   async run(): Promise<void> {
     const { flags } = await this.parse( List );
-    const { date, "no-interactive": noInteractive } = flags;
+    const { date, "no-interactive": noInteractive, classic } = flags;
 
     validateDateString( date );
     this.log( `Timecard for ${createHumanReadableWeekIdentifier( date, { noLeadingProposition: true } )}:\n` );
 
-    const [ reports, noteStringsForClipboard ] = await generateReports( date, noInteractive, this.error );
+    const [ reports, noteStringsForClipboard ] = await generateReports( date, noInteractive, classic, this.error );
 
     const reportSeperator = "----------------------------------";
     const printReport = async () => {
-      this.log( reports.shift() );
+      const report = reports.shift();
+      report();
       await clipboard.write( noteStringsForClipboard.shift() );
       if ( reports.length !== 0 ) {
         const confirm = await askFor.confirmation( {
@@ -55,7 +60,11 @@ $ <%= config.bin %> <%= command.id %> -d "last week" -I
     };
 
     if ( noInteractive )
-      this.log( reports.join( `\n${reportSeperator}\n` ) );
+      for ( let i = 0; i < reports.length; i++ ) {
+        reports[i]();
+        if ( i !== reports.length - 1 )
+          this.log( `${reportSeperator}` );
+      }
     else
       await printReport();
   }

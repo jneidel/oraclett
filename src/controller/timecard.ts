@@ -1,9 +1,10 @@
 import chalk from "chalk";
+import { CliUx } from "@oclif/core";
 import { readNotes } from "./notes";
 import { readHours } from "./hours";
 import { getFullNames, parseDateStringForValues } from "./utils";
 
-export async function generateReports( dateString: string, noInteractive: boolean, errorFunc: Function ) {
+export async function generateReports( dateString: string, noInteractive: boolean, classicMode: boolean, errorFunc: Function ) {
   const [ week, year ] = parseDateStringForValues( dateString, "%V %G" );
 
   const notes = await readNotes().then( data => data[year][week] ).catch( () => ( {} ) ).then( data => data !== undefined ? data : {} );
@@ -67,18 +68,54 @@ To keep some notes: notes add` );
         acc.push( `${dotw}: ${relevantNotes[dotw]}` );
         return acc;
       }, [] );
+      const noteStringArrNoDOTW = Object.keys( relevantNotes ).sort( sortDaysOfTheWeek ).reduce( ( acc: string[], dotw ) => {
+        acc.push( relevantNotes[dotw] );
+        return acc;
+      }, [] );
+      const prettyNoteStringArr = noteStringArr
+        .map( string => `Comments for ${chalk.yellow( string.split( ":" )[0].trim() )}${noInteractive ? "" : " (copied to clipboard)"}:\n  ${chalk.yellow( string.split( ":" )[1].trim() )}` );
+
       let noteString = "";
       if ( noteStringArr.length !== 0 )
         noteString = `\nComments${noInteractive ? "" : " (copied to clipboard)"}:\n  ${chalk.yellow( noteStringArr.join( "; " ) )}`;
-      noteStringsForClipboard.push( noteStringArr.join( "; " ) || "" );
 
-      return `Project Code: ${projectString}
+      if ( !classicMode ) {
+        noteStringsForClipboard.push( noteStringArr.join( "; " ) || "" );
+        return () => {
+          console.log( `Project Code: ${projectString}
 Task Details: ${taskDetailString}
 Date Groups:
 ${hoursString}${noteString}
-`;
+` );
+        };
+      } else {
+        noteStringsForClipboard.push( noteStringArrNoDOTW );
+        return [
+          () => {
+            const columns: any = {
+              project: {
+                header: "Project: Task Details",
+              },
+              Mon: {},
+              Tue: {},
+              Wed: {},
+              Thu: {},
+              Fri: {},
+              Sat: {},
+              Sun: {},
+            };
+            const tableData = Object.assign( relevantHours, {
+              project: `${projectString}: ${taskDetailString}`,
+            } );
+
+            CliUx.ux.table( [ tableData ], columns, {} );
+            console.log( `${prettyNoteStringArr.shift()}` );
+          },
+          prettyNoteStringArr.slice( 1 ).map( string => () => {console.log( string );} ),
+        ].flat();
+      }
     } ) );
   } ) ).then( data => data.flat() );
 
-  return [ reports, noteStringsForClipboard ];
+  return [ reports.flat(), noteStringsForClipboard.flat() ];
 }
