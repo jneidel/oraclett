@@ -4,8 +4,8 @@
 
 <!-- TODO: oracle screenshot, app screenshot -->
 
-[![Licence GPLv3](https://img.shields.io/badge/licence-GPLv3-green.svg?style=flat-square)](https://github.com/jneidel/strpad/blob/master/licence)
-[![Npm Downloads](https://img.shields.io/npm/dw/generator-jneidel.svg?style=flat-square)](https://www.npmjs.com/package/generator-jneidel)
+[![Licence GPLv3](https://img.shields.io/badge/licence-GPLv3-green.svg?style=flat-square)](https://github.com/jneidel/oraclett/blob/master/licence)
+[![Npm Downloads](https://img.shields.io/npm/dw/oraclett.svg?style=flat-square)](https://www.npmjs.com/package/oraclett)
 
 Log working hours on different projects.
 Keep notes of what you did.
