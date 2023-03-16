@@ -1,6 +1,6 @@
 import { Flags } from "@oclif/core";
 import * as askFor from "./questions";
-import { parseDateStringForValues, createHumanReadableWeekIdentifier } from "./utils";
+import { parseDateStringForValues, createHumanReadableWeekIdentifier, convertDateShortcutsIntoFullForms } from "./utils";
 import { validateDateString } from "./validation";
 
 export const helpText = `If a day is specified, you will edit that days hours.
@@ -17,6 +17,7 @@ export const dateFlag = Flags.string( {
   char       : "d",
   description: "A date to specify the day OR the week (can be human-readable)",
   default    : "today",
+  parse      : convertDateShortcutsIntoFullForms,
 } );
 
 type OperatingMode = "week"|"day";

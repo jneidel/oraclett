@@ -1,6 +1,6 @@
 import { Command, Flags } from "@oclif/core";
 import inquirer from "inquirer";
-import { interactiveHelpText } from "../../controller/utils";
+import { interactiveHelpText, convertDateShortcutsIntoFullForms } from "../../controller/utils";
 import { addHours } from "../../controller/hours";
 import { validateDateString, validateProject, validateTaskDetails } from "../../controller/validation";
 import * as askFor from "../../controller/questions";
@@ -31,6 +31,7 @@ $ <%= config.bin %> <%= command.id %> -H 10 -p INTPD999DXD -t 01 -d today --forc
     date: Flags.string( {
       char       : "d",
       description: "[default: today] The date for which to log (can be human-readable)",
+      parse      : convertDateShortcutsIntoFullForms,
     } ),
     force: Flags.boolean( {
       char       : "f",
@@ -71,8 +72,6 @@ $ <%= config.bin %> <%= command.id %> -H 10 -p INTPD999DXD -t 01 -d today --forc
         .catch( () => this.error( `No projects have been added.
 
 To add a new one: project add` ) );
-
-
 
     if ( taskDetail )
       await validateTaskDetails( project, taskDetail );

@@ -1,7 +1,7 @@
 import { Command, Flags } from "@oclif/core";
 import { listNotes, readNotes } from "../../controller/notes";
 import { getNoEntriesErrorFunction } from "../../controller/day-week-mode";
-import { parseDateStringForValues } from "../../controller/utils";
+import { parseDateStringForValues, convertDateShortcutsIntoFullForms } from "../../controller/utils";
 
 export default class List extends Command {
   static description = "List all notes.";
@@ -11,6 +11,7 @@ export default class List extends Command {
       char       : "d",
       description: "A date to specify the week (can be human-readable)",
       default    : "this week",
+      parse      : convertDateShortcutsIntoFullForms,
     } ),
   };
 

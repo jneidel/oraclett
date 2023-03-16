@@ -1,5 +1,5 @@
 import { Command, Flags } from "@oclif/core";
-import { interactiveHelpText } from "../../controller/utils";
+import { interactiveHelpText, convertDateShortcutsIntoFullForms } from "../../controller/utils";
 import { addNote } from "../../controller/notes";
 import { validateDateString, validateProject, validateTaskDetails } from "../../controller/validation";
 import * as askFor from "../../controller/questions";
@@ -28,6 +28,7 @@ $ <%= config.bin %> <%= command.id %> -n "This and that" -p INTPD999DXD -t 01 --
     date: Flags.string( {
       char       : "d",
       description: "The date for which to log (can be human-readable)",
+      parse      : convertDateShortcutsIntoFullForms,
     } ),
     note: Flags.string( {
       char       : "n",

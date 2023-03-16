@@ -1,5 +1,5 @@
 import inquirer from "inquirer";
-import { getReadableChoices } from "./utils";
+import { getReadableChoices, convertDateShortcutsIntoFullForms } from "./utils";
 import { validateDateString } from "./validation";
 
 type InquirerChoice = {
@@ -122,8 +122,11 @@ export async function date( defaultVal = "today" ): Promise<string> {
     name    : "date",
     message : "What date?",
     default : defaultVal,
-    validate: input => validateDateString( input, true ),
-  } ] ).then( ans => ans.date );
+    validate: input => {
+      input = convertDateShortcutsIntoFullForms( input );
+      return validateDateString( input, true );
+    },
+  } ] ).then( ans => ans.date ).then( convertDateShortcutsIntoFullForms );
 }
 
 export async function confirmation( data: { message: string; default: boolean } ): Promise<boolean> {

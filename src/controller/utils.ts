@@ -197,3 +197,17 @@ export function createHumanReadableWeekIdentifier( dateString: string, options: 
       return `in week ${isoWeek} of ${isoYear}${  weekInRealDates}`;
   }
 }
+
+export async function convertDateShortcutsIntoFullForms( input: string ) {
+  switch ( input ) {
+    case "tom":
+      return "tomorrow";
+    case "tod":
+      return "today";
+    case "yest":
+    case "y":
+      return "yesterday";
+    default:
+      return input;
+  }
+}

@@ -1,5 +1,6 @@
 import { Command, Flags } from "@oclif/core";
 import { listHours } from "../../controller/hours";
+import { convertDateShortcutsIntoFullForms } from "../../controller/utils";
 
 export default class List extends Command {
   static description = "List all logged hours.";
@@ -9,6 +10,7 @@ export default class List extends Command {
       char       : "d",
       description: "A date to specify the week (can be human-readable)",
       default    : "this week",
+      parse      : convertDateShortcutsIntoFullForms,
     } ),
     short: Flags.boolean( {
       char       : "s",
