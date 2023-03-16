@@ -49,10 +49,13 @@ $ <%= config.bin %> <%= command.id %> -H 10 -p INTPD999DXD -t 01 -d today --forc
     let { project, taskDetail, date, hours }: any = flags;
     const dontAskForDateInteractively = !date && project && taskDetail && hours;
 
-    if ( hours )
-      hours = Number( hours );
-    else
+    if ( hours ) {
+      hours = parseFloat( hours );
+      if ( isNaN( hours ) )
+        this.error( `Hours (-H, --hours) have to be a number.` );
+    } else {
       hours = await askFor.number( "How many hours?" );
+    }
 
     if ( project )
       await validateProject( project );
