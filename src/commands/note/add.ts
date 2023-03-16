@@ -45,6 +45,7 @@ $ <%= config.bin %> <%= command.id %> -n "Worked 5h with Node" -H5 -pINTPD999DXD
   async run(): Promise<void> {
     const { flags } = await this.parse( Add );
     let { project, taskDetail, date, note }: any = flags;
+    const dontAskForDateInteractively = !date && project && taskDetail && note;
 
     if ( project )
       await validateProject( project );
@@ -60,7 +61,9 @@ To add a new one: project add` ) );
     else
       taskDetail = await askFor.taskDetail( project );
 
-    if ( date )
+    if ( dontAskForDateInteractively )
+      date = "today";
+    else if ( date )
       validateDateString( date );
     else
       date = await askFor.date( "today" );

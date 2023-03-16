@@ -83,8 +83,8 @@ To add a new one: project add` ) );
       date = await askFor.date( "today" );
 
     await addHoursWithAskingForForceConfirmation( { hoursToLog: hours, dateString: date, project, taskDetail, force: flags.force } );
-    if (flags.note) {
+    if ( flags.note )
       addNote( { project, taskDetail, note: flags.note, dateString: date } );
-    }
+
   }
 }
