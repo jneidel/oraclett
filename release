@@ -29,6 +29,12 @@ ex CHANGELOG.md <<EOF >/dev/null
 3 insert
 ## $VERSION
 
+### Improvements
+
+- <++>
+
+### Fixes
+
 - <++>
 
 .
