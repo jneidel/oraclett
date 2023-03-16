@@ -1,7 +1,10 @@
 import { Flags } from "@oclif/core";
 import * as askFor from "./questions";
-import { parseDateStringForValues, createHumanReadableWeekIdentifier, convertDateShortcutsIntoFullForms } from "./utils";
 import { validateDateString } from "./validation";
+import { parseDateStringForValues,
+  createHumanReadableWeekIdentifier,
+  convertDateShortcutsIntoFullForms,
+  hasProjectTaskDetailCombinationsWithEntries } from "./utils";
 
 export const helpText = `If a day is specified, you will edit that days hours.
 If a week is specified, you will be able to pick a day to edit for.
@@ -109,6 +112,9 @@ export function dayModeHasResults( data, dayOfTheWeek ) {
 }
 
 async function selectProject( data, throwNoTimeLoggedError: Function ): Promise<string> {
+  if ( !hasProjectTaskDetailCombinationsWithEntries( data ) )
+    throwNoTimeLoggedError();
+
   const projectsToChooseFrom = Object.keys( data );
   return askFor.project( projectsToChooseFrom )
     .catch( () =>  throwNoTimeLoggedError() );

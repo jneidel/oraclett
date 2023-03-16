@@ -1,6 +1,9 @@
 import { Command, Flags } from "@oclif/core";
-import { listHours } from "../../controller/hours";
-import { convertDateShortcutsIntoFullForms } from "../../controller/utils";
+import { listHours, readHours } from "../../controller/hours";
+import { getNoEntriesErrorFunction } from "../../controller/day-week-mode";
+import { parseDateStringForValues,
+  convertDateShortcutsIntoFullForms,
+  hasProjectTaskDetailCombinationsWithEntries } from "../../controller/utils";
 
 export default class List extends Command {
   static description = "List all logged hours.";
@@ -26,6 +29,14 @@ $ <%= config.bin %> <%= command.id %> -d "last week" --short
   async run(): Promise<void> {
     const { flags } = await this.parse( List );
     const { date, short } = flags;
+
+    const [ isoWeek, isoYear ] = parseDateStringForValues( date, "%V %G" );
+    const throwNoHoursExistError = getNoEntriesErrorFunction( date, this.error, "hours", "week" );
+    const hours = await readHours()
+      .then( hours => hours[isoYear][isoWeek] )
+      .catch( () => null );
+    if ( !hasProjectTaskDetailCombinationsWithEntries( hours ) )
+      return throwNoHoursExistError();
 
     listHours( date, short );
   }

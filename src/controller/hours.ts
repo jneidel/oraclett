@@ -43,110 +43,107 @@ export async function addHours( data: {
 
 export async function listHours( dateString: string, useShortedTitles: boolean ) {
   const [ isoWeek, isoYear ] = parseDateStringForValues( dateString, "%V %G" );
+  const relevantHours = await readHours().then( hours => hours[isoYear][isoWeek] );
+  const projects = Object.keys( relevantHours );
 
-  const relevantHours = await readHours()
-    .then( hours => hours[isoYear][isoWeek] )
-    .catch( () => null );
+  var projectTaskDetailCombinations = projects.reduce( ( acc, project ) => {
+    const taskDetails = Object.keys( relevantHours[project] );
+    taskDetails.filter( tdKey => {
+      if ( Object.keys( relevantHours[project][tdKey] ).length === 0 )
+        return false; // no data inside the object
+      else
+        return true;
 
-  if ( !relevantHours ) {
-    console.log( `No hours logged ${createHumanReadableWeekIdentifier( dateString )}.
-
-To log some use: hours add` );
-  } else {
-    const projects = Object.keys( relevantHours );
-    const projectTaskDetailCombinations = projects.reduce( ( acc, project ) => {
-      const taskDetails = Object.keys( relevantHours[project] );
-      taskDetails.forEach( tdKey => {
-        // @ts-ignore
-        acc.push( {
-          project,
-          taskDetail: tdKey,
-        } );
+    } ).forEach( tdKey => {
+      // @ts-ignore
+      acc.push( {
+        project,
+        taskDetail: tdKey,
       } );
+    } );
+    return acc;
+  }, [] );
+
+  const totals = { total: 0, Mon: 0, Tue: 0, Wed: 0, Thu: 0, Fri: 0, Sat: 0, Sun: 0 };
+  const calulcateTotal = ( projectWeeklyHours ) => {
+    const total = Object.keys( projectWeeklyHours ).reduce( ( acc, key ) => {
+      const hours = projectWeeklyHours[key];
+      if ( typeof hours === "number" ) {
+        totals[key] += hours;
+        return acc + hours;
+      } else {return acc;}
+    }, 0 );
+    totals.total += total;
+    return total;
+  };
+
+  let hasWeekend = false;
+  const hoursPerWeekday = projectTaskDetailCombinations.map( combi => {
+    const { project, taskDetail } = combi;
+    let projectWeeklyHours = relevantHours[project][taskDetail];
+    const total = calulcateTotal( projectWeeklyHours );
+
+    projectWeeklyHours = Object.keys( projectWeeklyHours ).reduce( ( acc, dotw ) => {
+      acc[dotw] = chalk.magenta( projectWeeklyHours[dotw] );
       return acc;
-    }, [] );
+    }, {} );
 
-    const totals = { total: 0, Mon: 0, Tue: 0, Wed: 0, Thu: 0, Fri: 0, Sat: 0, Sun: 0 };
-    const calulcateTotal = ( projectWeeklyHours ) => {
-      const total = Object.keys( projectWeeklyHours ).reduce( ( acc, key ) => {
-        const hours = projectWeeklyHours[key];
-        if ( typeof hours === "number" ) {
-          totals[key] += hours;
-          return acc + hours;
-        } else {return acc;}
-      }, 0 );
-      totals.total += total;
-      return total;
+    if ( !hasWeekend )
+      hasWeekend = !!( projectWeeklyHours.Sat || projectWeeklyHours.Sun );
+
+    return {
+      Mon: projectWeeklyHours.Mon,
+      Tue: projectWeeklyHours.Tue,
+      Wed: projectWeeklyHours.Wed,
+      Thu: projectWeeklyHours.Thu,
+      Fri: projectWeeklyHours.Fri,
+      Sat: projectWeeklyHours.Sat,
+      Sun: projectWeeklyHours.Sun,
+      total,
     };
+  } );
 
-    let hasWeekend = false;
-    const hoursPerWeekday = projectTaskDetailCombinations.map( combi => {
-      const { project, taskDetail } = combi;
-      let projectWeeklyHours = relevantHours[project][taskDetail];
-      const total = calulcateTotal( projectWeeklyHours );
+  const projectTaskDetailText = await Promise.all( projectTaskDetailCombinations.map( async ( combi: any ) => {
+    if ( useShortedTitles ) {
+      return `${combi.project}: ${combi.taskDetail} `;
+    } else {
+      const [ projectName, taskDetailName  ] = await Promise.all( [
+        getFullNames.project( combi.project, { keyColor: "project" } ),
+        getFullNames.taskDetail( combi.project, combi.taskDetail, { keyColor: "td" } ),
+      ] );
 
-      projectWeeklyHours = Object.keys( projectWeeklyHours ).reduce( ( acc, dotw ) => {
-        acc[dotw] = chalk.magenta( projectWeeklyHours[dotw] );
-        return acc;
-      }, {} );
+      return `${projectName}: ${taskDetailName} `;
+    }
+  } ) );
 
-      if ( !hasWeekend )
-        hasWeekend = !!( projectWeeklyHours.Sat || projectWeeklyHours.Sun );
+  const tableData = projectTaskDetailText.map( ( project, index ) => {
+    const hours = hoursPerWeekday[index];
+    return Object.assign( { project }, hours );
+  } );
 
-      return {
-        Mon: projectWeeklyHours.Mon,
-        Tue: projectWeeklyHours.Tue,
-        Wed: projectWeeklyHours.Wed,
-        Thu: projectWeeklyHours.Thu,
-        Fri: projectWeeklyHours.Fri,
-        Sat: projectWeeklyHours.Sat,
-        Sun: projectWeeklyHours.Sun,
-        total,
-      };
-    } );
+  Object.keys( totals ).forEach( key => {
+    if ( totals[key] === 0 )
+      totals[key] = undefined;
+  } );
+  tableData.push( Object.assign( { project: "Sums" }, totals ) );
 
-    const projectTaskDetailText = await Promise.all( projectTaskDetailCombinations.map( async ( combi: any ) => {
-      if ( useShortedTitles ) {
-        return `${combi.project}: ${combi.taskDetail} `;
-      } else {
-        const [ projectName, taskDetailName  ] = await Promise.all( [
-          getFullNames.project( combi.project, { keyColor: "project" } ),
-          getFullNames.taskDetail( combi.project, combi.taskDetail, { keyColor: "td" } ),
-        ] );
-
-        return `${projectName}: ${taskDetailName} `;
-      }
-    } ) );
-
-    const tableData = projectTaskDetailText.map( ( project, index ) => {
-      const hours = hoursPerWeekday[index];
-      return Object.assign( { project }, hours );
-    } );
-
-    Object.keys( totals ).forEach( key => {
-      if ( totals[key] === 0 )
-        totals[key] = undefined;
-    } );
-    tableData.push( Object.assign( { project: "Sums" }, totals ) );
-
-    const columns: any = Object.assign(
-      {
-        project: {
-          header: "Project: Task Details",
-        },
-        Mon: {},
-        Tue: {},
-        Wed: {},
-        Thu: {},
-        Fri: {},
+  const columns: any = Object.assign(
+    {
+      project: {
+        header: "Project: Task Details",
       },
-      hasWeekend ? { Sat: {}, Sun: {} } : {},
-      { total: {} }
-    );
+      Mon: {},
+      Tue: {},
+      Wed: {},
+      Thu: {},
+      Fri: {},
+    },
+    hasWeekend ? { Sat: {}, Sun: {} } : {},
+    { total: {} }
+  );
 
-    console.log( `Hours logged ${createHumanReadableWeekIdentifier( dateString )}:` );
-    CliUx.ux.table( tableData, columns, {} );
-  }
+  console.log( `Hours logged ${createHumanReadableWeekIdentifier( dateString )}:` );
+  CliUx.ux.table( tableData, columns, {} );
 }
 
 export async function editHours( data: {

@@ -1,7 +1,9 @@
 import { Command, Flags } from "@oclif/core";
 import { listNotes, readNotes } from "../../controller/notes";
 import { getNoEntriesErrorFunction } from "../../controller/day-week-mode";
-import { parseDateStringForValues, convertDateShortcutsIntoFullForms } from "../../controller/utils";
+import { parseDateStringForValues,
+  convertDateShortcutsIntoFullForms,
+  hasProjectTaskDetailCombinationsWithEntries } from "../../controller/utils";
 
 export default class List extends Command {
   static description = "List all notes.";
@@ -25,9 +27,10 @@ $ <%= config.bin %> <%= command.id %> -d "last week"
 
     const [ isoWeek, isoYear ] = parseDateStringForValues( date, "%V %G" );
     const throwNoNotesExistError = getNoEntriesErrorFunction( date, this.error, "note", "week" );
-
-    const notes = await readNotes();
-    if ( !notes[isoYear] || !notes[isoYear][isoWeek] )
+    const notes = await readNotes()
+      .then( notes => notes[isoYear][isoWeek] )
+      .catch( () => null );
+    if ( !hasProjectTaskDetailCombinationsWithEntries( notes ) )
       return throwNoNotesExistError();
 
     listNotes( date );

@@ -211,3 +211,12 @@ export async function convertDateShortcutsIntoFullForms( input: string ) {
       return input;
   }
 }
+
+export function hasProjectTaskDetailCombinationsWithEntries( dataObj: any ): boolean {
+  const withoutEmptyObjects = Object.keys( dataObj )
+    .filter( project => Object.keys( dataObj[project] )
+      .filter( taskDetail => Object.keys( dataObj[project][taskDetail] ).length
+      ).length
+    );
+  return withoutEmptyObjects.length !== 0;
+}
