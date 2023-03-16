@@ -38,7 +38,7 @@ export async function addHours( data: {
   console.log( "Successfully added hours\n" );
   await writeHours( newHours );
 
-  listHours( dateString, true );
+  listHours( dateString, false );
 }
 
 export async function listHours( dateString: string, useShortedTitles: boolean ) {
