@@ -1,7 +1,8 @@
 import { Command, Flags } from "@oclif/core";
-import { interactiveHelpText, convertDateShortcutsIntoFullForms } from "../../controller/utils";
 import { addNote } from "../../controller/notes";
+import { addHoursWithAskingForForceConfirmation } from "../../controller/hours";
 import { validateDateString, validateProject, validateTaskDetails } from "../../controller/validation";
+import { interactiveHelpText, convertDateShortcutsIntoFullForms } from "../../controller/utils";
 import * as askFor from "../../controller/questions";
 
 export default class Add extends Command {
@@ -13,6 +14,7 @@ This will add to existing notes for the same day.`;
   static examples = [ `$ <%= config.bin %> <%= command.id %>
 $ <%= config.bin %> <%= command.id %> -n "This and that" -p INTPD999DXD
 $ <%= config.bin %> <%= command.id %> -n "This and that" -p INTPD999DXD -t 01 --date yesterday
+$ <%= config.bin %> <%= command.id %> -n "Worked 5h with Node" -H5 -pINTPD999DXD -t01 -dtoday
 ` ];
 
   static flags = {
@@ -33,6 +35,10 @@ $ <%= config.bin %> <%= command.id %> -n "This and that" -p INTPD999DXD -t 01 --
     note: Flags.string( {
       char       : "n",
       description: "Note to add",
+    } ),
+    hours: Flags.string( {
+      char       : "H",
+      description: "Hours to be logged alongside the note",
     } ),
   };
 
@@ -63,5 +69,13 @@ To add a new one: project add` ) );
       note = await askFor.text( "Note:" );
 
     await addNote( { project, taskDetail, note, dateString: date } );
+
+    if ( flags.hours ) {
+      const hoursToLog = parseFloat( flags.hours );
+      if ( isNaN( hoursToLog ) )
+        this.error( `Hours (-H, --hours) have to be a number.` );
+
+      addHoursWithAskingForForceConfirmation( { hoursToLog, dateString: date, project, taskDetail, force: false } );
+    }
   }
 }

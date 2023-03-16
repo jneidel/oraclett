@@ -1,9 +1,9 @@
 import { Command, Flags } from "@oclif/core";
-import inquirer from "inquirer";
-import { interactiveHelpText, convertDateShortcutsIntoFullForms } from "../../controller/utils";
-import { addHours } from "../../controller/hours";
-import { validateDateString, validateProject, validateTaskDetails } from "../../controller/validation";
+import { addHoursWithAskingForForceConfirmation } from "../../controller/hours";
+import { addNote } from "../../controller/notes";
 import * as askFor from "../../controller/questions";
+import { interactiveHelpText, convertDateShortcutsIntoFullForms } from "../../controller/utils";
+import { validateDateString, validateProject, validateTaskDetails } from "../../controller/validation";
 
 export default class Add extends Command {
   static summary = "Log working hours.";
@@ -16,6 +16,7 @@ $ <%= config.bin %> <%= command.id %> -H 3
 $ <%= config.bin %> <%= command.id %> -H 3 -p INTPD999DXD -t 01
 $ <%= config.bin %> <%= command.id %> -H 3 -p INTPD999DXD -t 01 --date yesterday
 $ <%= config.bin %> <%= command.id %> -H 10 -p INTPD999DXD -t 01 -d today --force
+$ <%= config.bin %> <%= command.id %> -H2 -pINTPD999DXD -dtoday --note "Onboarding meeting"
 ` ];
 
   static flags = {
@@ -40,7 +41,11 @@ $ <%= config.bin %> <%= command.id %> -H 10 -p INTPD999DXD -t 01 -d today --forc
     } ),
     hours: Flags.string( {
       char       : "H",
-      description: "The number of hours to log. (1h: 1, 30min: 0.5, etc.)",
+      description: "The number of hours to log (1h: 1, 30min: 0.5, etc.)",
+    } ),
+    note: Flags.string( {
+      char       : "n",
+      description: "Note to be added alongside the hours",
     } ),
   };
 
@@ -77,21 +82,9 @@ To add a new one: project add` ) );
     else
       date = await askFor.date( "today" );
 
-    try {
-      await addHours( { hoursToLog: hours, dateString: date, project, taskDetail, force: flags.force } );
-    } catch ( err: any ) {
-      if ( err.message.match( /--force/ ) ) {
-        const combinedHours = err.message.split( " " )[0];
-        const force = await inquirer.prompt( [ {
-          type   : "confirm",
-          name   : "force",
-          message: `You are attempting to log a combined ${combinedHours} hours for a workday. Continue?`,
-        } ] ).then( answers => answers.force );
-        if ( force )
-          await addHours( { hoursToLog: hours, dateString: date, project, taskDetail, force } );
-      } else {
-        this.error( err.message );
-      }
+    await addHoursWithAskingForForceConfirmation( { hoursToLog: hours, dateString: date, project, taskDetail, force: flags.force } );
+    if (flags.note) {
+      addNote( { project, taskDetail, note: flags.note, dateString: date } );
     }
   }
 }

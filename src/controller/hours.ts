@@ -1,5 +1,6 @@
 import { CliUx } from "@oclif/core";
 import chalk from "chalk";
+import inquirer from "inquirer";
 import { fs, HOURS_FILE } from "../config";
 import { getFullNames, createAndMergeWithStructure, parseDateStringForValues, createHumanReadableWeekIdentifier } from "./utils";
 
@@ -172,4 +173,25 @@ export async function removeHours( data: {
   const hours = await readHours( true );
   delete hours[year][week][project][taskDetail][dayOfTheWeek];
   await writeHours( hours );
+}
+
+export async function addHoursWithAskingForForceConfirmation( data: { hoursToLog: number; dateString: string; project: string; taskDetail: string; force: boolean } ) {
+  const { hoursToLog, dateString, project, taskDetail, force } = data;
+
+  try {
+    await addHours( { hoursToLog, dateString, project, taskDetail, force } );
+  } catch ( err: any ) {
+    if ( err.message.match( /--force/ ) ) {
+      const combinedHours = err.message.split( " " )[0];
+      const confirm = await inquirer.prompt( [ {
+        type   : "confirm",
+        name   : "force",
+        message: `You are attempting to log a combined ${combinedHours} hours for a workday. Continue?`,
+      } ] ).then( answers => answers.force );
+      if ( confirm )
+        await addHours( { hoursToLog, dateString, project, taskDetail, force: true } );
+    } else {
+      console.error( err.message );
+    }
+  }
 }
