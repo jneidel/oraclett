@@ -1,5 +1,5 @@
 import { Command } from "@oclif/core";
-import { readHours, editHours } from "../../controller/hours";
+import { readHours, editHours, removeHours } from "../../controller/hours";
 import { parseDateStringForValues } from "../../controller/utils";
 import * as askFor from "../../controller/questions";
 import * as dayWeekMode from "../../controller/day-week-mode";
@@ -42,6 +42,9 @@ export default class Edit extends Command {
     const currentHours = hoursData[project][taskDetail][dayOfTheWeek];
     const newHours = await askFor.number( `To how many hours should this be changed? (Current: ${currentHours})`, currentHours );
 
-    editHours( { newHours, project, taskDetail, year, week, dayOfTheWeek } );
+    if ( newHours === 0 )
+      removeHours( { project, taskDetail, year, week, dayOfTheWeek } );
+    else
+      editHours( { newHours, project, taskDetail, year, week, dayOfTheWeek } );
   }
 }
