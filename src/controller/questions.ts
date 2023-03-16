@@ -70,15 +70,15 @@ export async function dayOfTheWeek( choices: string[] ): Promise<string> {
 
 export async function number( message: string, defaultVal?: number ): Promise<number> {
   return inquirer.prompt( [ {
-    type   : "number",
+    type   : "string",
     name   : "n",
     message,
     default: defaultVal,
-    validate( value ) {
-      const valid = !isNaN( parseFloat( value ) );
+    validate( input ) {
+      const valid = !isNaN( parseFloat( input ) );
       return valid || "Please enter a number";
     },
-  } ] ).then( ans => ans.n );
+  } ] ).then( ans => parseFloat( ans.n ) );
 }
 
 export async function renaming( defaultVal: string,  message = "Please open your editor to rename" ): Promise<string> {

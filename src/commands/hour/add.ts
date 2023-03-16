@@ -52,18 +52,7 @@ $ <%= config.bin %> <%= command.id %> -H 10 -p INTPD999DXD -t 01 -d today --forc
     if ( hours )
       hours = Number( hours );
     else
-      await inquirer.prompt( [
-        {
-          type   : "number",
-          name   : "hours",
-          message: "How many hours?",
-          validate( value ) {
-            const valid = !isNaN( parseFloat( value ) );
-            return valid || "Please enter a number";
-          },
-        },
-      ] ).then( ans => hours = ans.hours );
-
+      hours = await askFor.number( "How many hours?" );
 
     if ( project )
       await validateProject( project );
