@@ -17,12 +17,34 @@ fi
 command -v npm >/dev/null || { echo "npm is not installed" 1>&2; exit 127; }
 command -v oclif >/dev/null || { echo "oclif is not installed" 1>&2; exit 127; }
 
+if [ "$1" != "major" ] && [ "$1" != "minor" ] && [ "$1" != "patch" ]; then
+  echo "\$1 has to be one of: major, minor, patch"
+  exit 1
+fi
+
+ex CHANGELOG.md <<EOF >/dev/null
+3 insert
+## $ver
+
+- <++>
+
+.
+xit
+EOF
+echo "Appended version to CHANGELOG.md, please describe changes there."
+
+printf "Ready to continue (Y/n): "
+read ans
+if [ "$ans" = "n" ] || [ "$ans" = "N" ]; then
+  exit 1
+fi
+
 npm shrinkwrap
 VERSION="$(npm --no-git-tag-version version $1)"
 oclif manifest
 
 echo "Releasing '$VERSION'"
-git add npm-shrinkwrap.json oclif.manifest.json package.json
+git add npm-shrinkwrap.json oclif.manifest.json package.json CHANGELOG.md
 git commit -m $VERSION
 git tag $VERSION
 
