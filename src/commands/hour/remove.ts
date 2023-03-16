@@ -8,7 +8,7 @@ export default class Remove extends Command {
   static summary = "Remove logged hours interactively.";
   static description = dayWeekMode.helpText;
   static examples = dayWeekMode.examples;
-
+  static aliases = [ "hour:delete", "hour:r", "hour:d" ];
   static flags = {
     date: dayWeekMode.dateFlag,
   };

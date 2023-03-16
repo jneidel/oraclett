@@ -7,7 +7,7 @@ import { parseDateStringForValues,
 
 export default class List extends Command {
   static description = "List all notes.";
-
+  static aliases = [ "note:l" ];
   static flags = {
     date: Flags.string( {
       char       : "d",

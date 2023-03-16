@@ -11,6 +11,7 @@ export default class List extends Command {
       aliases    : [ "all" ],
     } ),
   };
+  static aliases = [ "project:l" ];
 
   async run(): Promise<void> {
     const { flags } = await this.parse( List );

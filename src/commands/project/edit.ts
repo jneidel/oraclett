@@ -7,6 +7,7 @@ export default class Edit extends Command {
   static summary = "Edit the names interactively.";
   static description = `Allows for renaming a projects or their task details.
 \n${askFor.renamingHelpText( "rename" )}`;
+  static aliases = [ "project:e" ];
 
   async run(): Promise<void> {
     const whatToEdit = await askFor.projectOrTaskDetail( "What do you want to edit?" );

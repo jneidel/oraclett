@@ -21,6 +21,7 @@ export default class List extends Command {
       default    : false,
     } ),
   };
+  static aliases = [ "hour:l" ];
 
   static examples = [ `$ <%= config.bin %> <%= command.id %>
 $ <%= config.bin %> <%= command.id %> -d "last week" --short

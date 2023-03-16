@@ -7,9 +7,8 @@ import * as dayWeekMode from "../../controller/day-week-mode";
 export default class Remove extends Command {
   static summary = "Remove your notes interactively.";
   static description = dayWeekMode.helpText;
-
   static examples = dayWeekMode.examples;
-
+  static aliases = [ "note:delete", "note:r", "note:d" ];
   static flags = {
     date: dayWeekMode.dateFlag,
   };

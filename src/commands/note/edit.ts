@@ -11,6 +11,7 @@ export default class Edit extends Command {
 
   static examples = dayWeekMode.examples;
 
+  static aliases = [ "note:e" ];
   static flags = {
     date: dayWeekMode.dateFlag,
   };

@@ -8,7 +8,7 @@ export default class Edit extends Command {
   static summary = "Edit the logged hours interactively.";
   static description = dayWeekMode.helpText;
   static examples = dayWeekMode.examples;
-
+  static aliases = [ "hour:e" ];
   static flags = {
     date: dayWeekMode.dateFlag,
   };

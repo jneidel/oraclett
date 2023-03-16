@@ -15,6 +15,7 @@ And the task details will like this: 01 - Career development`;
 $ <%= config.bin %> <%= command.id %> -p "INTPD999DXD - People Development DXD"
 $ <%= config.bin %> <%= command.id %> -t "01 - Career development" -t "03 - Discipline Weeks" -p "INTPD999DXD - People Development DXD"
 ` ];
+  static aliases = [ "project:a" ];
 
   static flags = {
     taskDetail: Flags.string( {

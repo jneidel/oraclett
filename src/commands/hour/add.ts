@@ -18,6 +18,7 @@ $ <%= config.bin %> <%= command.id %> -H 3 -p INTPD999DXD -t 01 --date yesterday
 $ <%= config.bin %> <%= command.id %> -H 10 -p INTPD999DXD -t 01 -d today --force
 $ <%= config.bin %> <%= command.id %> -H2 -pINTPD999DXD -dtoday --note "Onboarding meeting"
 ` ];
+  static aliases = [ "hour:log", "hour:a" ];
 
   static flags = {
     taskDetail: Flags.string( {

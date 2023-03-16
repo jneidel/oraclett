@@ -41,6 +41,7 @@ $ <%= config.bin %> <%= command.id %> -n "Worked 5h with Node" -H5 -pINTPD999DXD
       description: "Hours to be logged alongside the note",
     } ),
   };
+  static aliases = [ "note:a" ];
 
   async run(): Promise<void> {
     const { flags } = await this.parse( Add );
