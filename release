@@ -22,9 +22,12 @@ if [ "$1" != "major" ] && [ "$1" != "minor" ] && [ "$1" != "patch" ]; then
   exit 1
 fi
 
+npm shrinkwrap
+VERSION="$(npm --no-git-tag-version version $1)"
+
 ex CHANGELOG.md <<EOF >/dev/null
 3 insert
-## $ver
+## $VERSION
 
 - <++>
 
@@ -39,8 +42,6 @@ if [ "$ans" = "n" ] || [ "$ans" = "N" ]; then
   exit 1
 fi
 
-npm shrinkwrap
-VERSION="$(npm --no-git-tag-version version $1)"
 oclif manifest
 
 echo "Releasing '$VERSION'"
