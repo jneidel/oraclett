@@ -111,5 +111,6 @@ export async function listNotes( dateString: string ) {
   ${theDaysProjectsWithTheirNotesText.join( `\n  ` )}`;
   } ) ).then( textArr => textArr.join( "\n" ) );
 
-  console.log( `Notes for ${createHumanReadableWeekIdentifier( dateString, { noLeadingProposition: true } )}:\n${output}` );
+  const humanReadableWeekIdentifier = createHumanReadableWeekIdentifier( dateString, { noLeadingProposition: true } );
+  console.log( `Notes for ${chalk.magenta( humanReadableWeekIdentifier )}:\n${output}` );
 }

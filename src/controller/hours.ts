@@ -143,7 +143,8 @@ export async function listHours( dateString: string, useShortedTitles: boolean )
     { total: {} }
   );
 
-  console.log( `Hours logged ${createHumanReadableWeekIdentifier( dateString )}:` );
+  const humanReadableWeekIdentifier = createHumanReadableWeekIdentifier( dateString, { noLeadingProposition: true } );
+  console.log( `Hours logged for ${chalk.magenta( humanReadableWeekIdentifier )}:` );
   CliUx.ux.table( tableData, columns, {} );
 }
 

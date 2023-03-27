@@ -5,6 +5,9 @@ import { parseDateStringForValues,
   convertDateShortcutsIntoFullForms,
   hasProjectTaskDetailCombinationsWithEntries } from "../../controller/utils";
 
+const DEFAULT_DATE = "this week";
+const SECONDARY_DEFAULT_DATE = "last week";
+
 export default class List extends Command {
   static description = "List all logged hours.";
 
@@ -12,7 +15,7 @@ export default class List extends Command {
     date: Flags.string( {
       char       : "d",
       description: "A date to specify the week (can be human-readable)",
-      default    : "this week",
+      default    : DEFAULT_DATE,
       parse      : convertDateShortcutsIntoFullForms,
     } ),
     short: Flags.boolean( {
@@ -27,18 +30,30 @@ export default class List extends Command {
 $ <%= config.bin %> <%= command.id %> -d "last week" --short
 ` ];
 
-  async run(): Promise<void> {
-    const { flags } = await this.parse( List );
-    const { date, short } = flags;
-
+  private async checkIfTimeframeHasData( date: string, throwNoHoursExistError: Function ): Promise<void> {
     const [ isoWeek, isoYear ] = parseDateStringForValues( date, "%V %G" );
-    const throwNoHoursExistError = getNoEntriesErrorFunction( date, this.error, "hours", "week" );
     const hours = await readHours()
       .then( hours => hours[isoYear][isoWeek] )
       .catch( () => null );
     if ( !hasProjectTaskDetailCombinationsWithEntries( hours ) )
       return throwNoHoursExistError();
+  }
 
-    listHours( date, short );
+  async run(): Promise<void> {
+    const { flags } = await this.parse( List );
+    const { date, short } = flags;
+    const throwNoHoursExistError = getNoEntriesErrorFunction( date, this.error, "hours", "week" );
+
+    try {
+      await this.checkIfTimeframeHasData( date, throwNoHoursExistError );
+      listHours( date, short );
+    } catch ( err ) {
+      if ( date === DEFAULT_DATE ) {
+        await this.checkIfTimeframeHasData( SECONDARY_DEFAULT_DATE, throwNoHoursExistError );
+        listHours( SECONDARY_DEFAULT_DATE, short );
+      } else {
+        throw err;
+      }
+    }
   }
 }
