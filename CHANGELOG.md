@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.3.1
+
+### Improvements
+
+- If there are no hours or notes to `list` for the current week, it will try to
+list last week
+- Add more data shortcuts:
+  - t = today
+  - lw = last week
+
 ## v0.3.0
 
 ### Improvements
