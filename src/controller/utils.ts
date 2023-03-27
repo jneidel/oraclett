@@ -212,7 +212,10 @@ export async function convertDateShortcutsIntoFullForms( input: string ) {
   }
 }
 
-export function hasProjectTaskDetailCombinationsWithEntries( dataObj: any ): boolean {
+export function hasProjectTaskDetailCombinationsWithEntries( dataObj: any|null ): boolean {
+  if ( !dataObj )
+    return false;
+
   const withoutEmptyObjects = Object.keys( dataObj )
     .filter( project => Object.keys( dataObj[project] )
       .filter( taskDetail => Object.keys( dataObj[project][taskDetail] ).length
