@@ -202,11 +202,14 @@ export async function convertDateShortcutsIntoFullForms( input: string ) {
   switch ( input ) {
     case "tom":
       return "tomorrow";
+    case "t":
     case "tod":
       return "today";
     case "yest":
     case "y":
       return "yesterday";
+    case "lw":
+      return "last week";
     default:
       return input;
   }
