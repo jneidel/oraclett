@@ -10,7 +10,7 @@ function handleZeroOrOneChoices( choices: InquirerChoice[]|string[] ) {
   if ( choices.length === 0 ) {
     throw new Error( "Nothing to choose from." );
   } else if ( choices.length === 1 ) {
-    const choice = choices[0];
+    const [ choice ] = choices;
 
     if ( typeof choice === "string" ) {
       console.log( `Using ${choice}` );

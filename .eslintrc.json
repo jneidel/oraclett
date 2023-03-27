@@ -227,7 +227,7 @@
     "no-labels": 0,
     "no-case-declarations": 0,
     "no-underscore-dangle": 0,
-    "no-unused-vars": 1,
+    "no-unused-vars": 0,
     "consistent-return": 0,
     "new-cap": 0,
     "global-require": 0,
@@ -463,10 +463,10 @@
       }
     ],
     "@typescript-eslint/no-unnecessary-type-assertion": 0,
-    "@typescript-eslint/no-unused-vars": 0,
+    "@typescript-eslint/no-unused-vars": 1,
     "@typescript-eslint/no-use-before-define": 0,
     "@typescript-eslint/no-useless-constructor": 2,
-    "@typescript-eslint/no-var-requires": 1,
+    "@typescript-eslint/no-var-requires": 0,
     "@typescript-eslint/prefer-namespace-keyword": 2,
     "@typescript-eslint/promise-function-async": 0,
     "@typescript-eslint/restrict-plus-operands": [

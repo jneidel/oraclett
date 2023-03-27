@@ -182,7 +182,7 @@ export async function addHoursWithAskingForForceConfirmation( data: { hoursToLog
     await addHours( { hoursToLog, dateString, project, taskDetail, force } );
   } catch ( err: any ) {
     if ( err.message.match( /--force/ ) ) {
-      const combinedHours = err.message.split( " " )[0];
+      const [ combinedHours ] = err.message.split( " " );
       const confirm = await inquirer.prompt( [ {
         type   : "confirm",
         name   : "force",

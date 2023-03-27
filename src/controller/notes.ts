@@ -95,7 +95,7 @@ export async function listNotes( dateString: string ) {
     else
       return combinationsGroupedByDOTW[dotw];
   } ).filter( x => x ).map( async dotwGroup => {
-    const { dotw } = dotwGroup[0];
+    const [ { dotw } ] = dotwGroup;
 
     const theDaysProjectsWithTheirNotesText = await Promise.all( dotwGroup.map( async combi => {
       const { projectKey, taskDetailKey, dotw } = combi;

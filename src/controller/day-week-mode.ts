@@ -130,7 +130,7 @@ async function selectDayOfTheWeek( data, throwNoTimeLoggedError: Function ): Pro
   if ( Object.keys( data ).length === 0 ) {
     return throwNoTimeLoggedError();
   } else if ( Object.keys( data ).length === 1 ) {
-    const dayOfTheWeek = Object.keys( data )[0];
+    const [ dayOfTheWeek ] = Object.keys( data );
     console.log( `Using ${dayOfTheWeek}` );
     return new Promise( ( resolve ) => resolve( dayOfTheWeek ) );
   } else {

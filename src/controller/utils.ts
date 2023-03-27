@@ -143,7 +143,7 @@ type AddNumbers = ( a: number ) => number;
 type AddStrings = ( a: string ) => string;
 
 export function createAndMergeWithStructure( source, structureToMerge, addDataFunc: AddNumbers|AddStrings ) {
-  const key = Object.keys( structureToMerge )[0];
+  const [ key ] = Object.keys( structureToMerge );
   if ( typeof structureToMerge[key] !== "object" || Array.isArray( structureToMerge[key] ) ) {
     if ( !source[key] )
       source[key] = structureToMerge[key];
@@ -172,7 +172,6 @@ export function createHumanReadableWeekIdentifier( dateString: string, options: 
   const { noLeadingProposition } = options;
   if ( noLeadingProposition )
     return createHumanReadableWeekIdentifier( dateString ).split( " " ).slice( 1 ).join( " " );
-
 
   const date = Date.create( dateString );
   const [ isoWeek, isoYear ] = Date.format( date, "%V %G" ).split( " " );

@@ -43,7 +43,7 @@ $ <%= config.bin %> <%= command.id %> -t "01 - Career development" -t "03 - Disc
         when   : () => !project,
       } ).then( answers => {
         if ( answers.project )
-          project = answers.project;
+          project = answers.project; // eslint-disable-line prefer-destructuring
       } );
 
       const askLoop = async () => {

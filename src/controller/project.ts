@@ -142,7 +142,7 @@ async function editTaskDetailData( projectKey: string, taskDetailKey: string, ne
   const projects = await readProjects();
   projects[projectKey].taskDetails = Object.assign( projects[projectKey].taskDetails, newTaskDetailObject );
 
-  const newTaskDetailKey = Object.keys( newTaskDetailObject )[0];
+  const [ newTaskDetailKey ] = Object.keys( newTaskDetailObject );
   const keyHasChanged = taskDetailKey !== newTaskDetailKey;
 
   if ( keyHasChanged ) {
@@ -166,7 +166,7 @@ async function editTaskDetailData( projectKey: string, taskDetailKey: string, ne
 }
 async function editProjectData( projectKey: string, newProjectObject: any ) {
   let projects = await readProjects();
-  const newProjectKey = Object.keys( newProjectObject )[0];
+  const [ newProjectKey ] = Object.keys( newProjectObject );
   newProjectObject[newProjectKey].taskDetails = projects[projectKey].taskDetails;
   projects = Object.assign( projects, newProjectObject );
 

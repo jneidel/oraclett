@@ -1,4 +1,4 @@
-import { Help, Interfaces, Command } from "@oclif/core";
+import { Help, Interfaces } from "@oclif/core";
 import chalk from "chalk";
 
 export default class CustomHelp extends Help {
