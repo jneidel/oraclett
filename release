@@ -42,9 +42,9 @@ xit
 EOF
 echo "Appended version to CHANGELOG.md, please describe changes there."
 
-printf "Ready to continue (Y/n): "
+printf "Ready to continue (y/N): "
 read ans
-if [ "$ans" = "n" ] || [ "$ans" = "N" ]; then
+if [ ! "$ans" = "y" ] && [ ! "$ans" = "Y" ]; then
   exit 1
 fi
 
