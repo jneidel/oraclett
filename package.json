@@ -33,7 +33,6 @@
   },
   "dependencies": {
     "@oclif/core": "^1.22.0",
-    "@oclif/plugin-help": "^5",
     "@oclif/plugin-not-found": "^2.3.15",
     "@oclif/plugin-plugins": "^2.2.2",
     "@oclif/plugin-warn-if-update-available": "^2.0.19",
@@ -60,9 +59,8 @@
     "bin": "oraclett",
     "dirname": "oraclett",
     "commands": "./dist/commands",
-    "helpClass": "./dist/help",
+    "helpClass": "./dist/CustomHelp",
     "plugins": [
-      "@oclif/plugin-help",
       "@oclif/plugin-warn-if-update-available",
       "@oclif/plugin-not-found"
     ],

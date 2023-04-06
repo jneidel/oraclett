@@ -2,6 +2,9 @@ import { Help, Interfaces } from "@oclif/core";
 import chalk from "chalk";
 
 export default class CustomHelp extends Help {
+  constructor( config, opts = {} ) {
+    super( config, opts );
+  }
   public async showRootHelp() {
     // Source: https://github.com/oclif/core/blob/main/src/help/index.ts
     const formattedRoot = this.formatRoot().split( "\n" );
@@ -14,6 +17,10 @@ export default class CustomHelp extends Help {
       formattedTopics[0] = chalk.bold( "COMMANDS" );
       this.log( formattedTopics.join( "\n" ), "\n" );
     }
+  }
+
+  formatCommands( c ) {
+    return super.formatCommands( c );
   }
 
   public async showTopicHelp( topic: Interfaces.Topic ) {
@@ -35,6 +42,8 @@ export default class CustomHelp extends Help {
           return !line.match( /^\s+hour log/ ) &&
                  !line.match( /^\s+note delete/ ) &&
                  !line.match( /^\s+hour delete/ ) &&
+                 !line.match( /^\s+project delete/ ) &&
+                 !line.match( /^\s+project [a-z]\s/ ) &&
                  !line.match( /^\s+note [a-z]\s/ ) &&
                  !line.match( /^\s+hour [a-z]\s/ );
         } ).join( "\n" );
