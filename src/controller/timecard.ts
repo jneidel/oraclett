@@ -86,9 +86,10 @@ ${hoursString}${noteString}
 ` );
         };
       } else {
+        noteStringsForClipboard.push( projectKey );
         noteStringsForClipboard.push( noteStringArrNoDOTW );
         return [
-          () => {
+          ( noInteractive = false ) => {
             const columns: any = {
               project: {
                 header: "Project: Task Details",
@@ -106,9 +107,11 @@ ${hoursString}${noteString}
             } );
 
             CliUx.ux.table( [ tableData ], columns, {} );
-            console.log( `${prettyNoteStringArr.shift()}` );
+
+            if ( !noInteractive )
+              console.log( `\nCopied project key to clipboard (${chalk.green( projectKey )})` );
           },
-          prettyNoteStringArr.slice( 1 ).map( string => () => {console.log( string );} ),
+          prettyNoteStringArr.map( string => () => {console.log( string );} ),
         ].flat();
       }
     } ) );

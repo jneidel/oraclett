@@ -45,7 +45,7 @@ $ <%= config.bin %> <%= command.id %> -d "last week" -I
     const reportSeperator = "----------------------------------";
     const printReport = async () => {
       const report = reports.shift();
-      report();
+      report( noInteractive );
       await clipboard.write( noteStringsForClipboard.shift() );
       if ( reports.length !== 0 ) {
         const confirm = await askFor.confirmation( {
@@ -61,7 +61,7 @@ $ <%= config.bin %> <%= command.id %> -d "last week" -I
 
     if ( noInteractive )
       for ( let i = 0; i < reports.length; i++ ) {
-        reports[i]();
+        reports[i]( noInteractive );
         if ( i !== reports.length - 1 )
           this.log( `${reportSeperator}` );
       }
