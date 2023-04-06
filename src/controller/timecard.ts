@@ -32,13 +32,10 @@ To keep some notes: notes add` );
     return Promise.all( taskDetails.map( async taskDetailKey => {
       const taskDetailString = await getFullNames.taskDetail( projectKey, taskDetailKey, { keyColor: "td", style: "hyphen" } );
 
-      let relevantHours = {};
-      if ( hours[projectKey] && hours[projectKey][taskDetailKey] )
-        relevantHours = hours[projectKey][taskDetailKey];
-
-      let relevantNotes = {};
-      if ( notes[projectKey] && notes[projectKey][taskDetailKey] )
-        relevantNotes = notes[projectKey][taskDetailKey];
+      const relevantHours = hours?.[projectKey]?.[taskDetailKey];
+      const relevantNotes = notes?.[projectKey]?.[taskDetailKey];
+      if ( !( relevantNotes && relevantHours ) )
+        return null;
 
       const sortDaysOfTheWeek =  ( a, b ) => {
         const daysOfTheWeekInOrder = [ "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" ];
@@ -115,7 +112,7 @@ ${hoursString}${noteString}
         ].flat();
       }
     } ) );
-  } ) ).then( data => data.flat() );
+  } ) ).then( data => data.flat().filter( x => Array.isArray( x ) ) );
 
   return [ reports.flat(), noteStringsForClipboard.flat() ];
 }
