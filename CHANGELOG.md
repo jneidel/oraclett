@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.3.2
+
+### Improvements
+
+- For the classic interactive timecard generation the app will first copy the
+project key for easy pasting into your keyboard.
+
 ## v0.3.1
 
 ### Improvements

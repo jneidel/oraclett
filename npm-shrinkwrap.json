@@ -1,16 +1,15 @@
 {
   "name": "oraclett",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "lockfileVersion": 2,
   "requires": true,
   "packages": {
     "": {
       "name": "oraclett",
-      "version": "0.3.1",
+      "version": "0.3.2",
       "license": "GPLv3",
       "dependencies": {
         "@oclif/core": "^1.22.0",
-        "@oclif/plugin-help": "^5",
         "@oclif/plugin-not-found": "^2.3.15",
         "@oclif/plugin-plugins": "^2.2.2",
         "@oclif/plugin-warn-if-update-available": "^2.0.19",
@@ -1156,6 +1155,7 @@
       "version": "5.1.20",
       "resolved": "https://registry.npmjs.org/@oclif/plugin-help/-/plugin-help-5.1.20.tgz",
       "integrity": "sha512-N8xRxE/isFcdBDI8cobixEZA5toxIK5jbxpwALNTr4s8KNAtBA3ORQrSiY0fWGkcv0sCGMwZw7rJ0Izh18JPsw==",
+      "extraneous": true,
       "dependencies": {
         "@oclif/core": "^1.21.0"
       },
@@ -7709,9 +7709,9 @@
       }
     },
     "@oclif/plugin-help": {
-      "version": "5.1.20",
-      "resolved": "https://registry.npmjs.org/@oclif/plugin-help/-/plugin-help-5.1.20.tgz",
+      "version": "https://registry.npmjs.org/@oclif/plugin-help/-/plugin-help-5.1.20.tgz",
       "integrity": "sha512-N8xRxE/isFcdBDI8cobixEZA5toxIK5jbxpwALNTr4s8KNAtBA3ORQrSiY0fWGkcv0sCGMwZw7rJ0Izh18JPsw==",
+      "extraneous": true,
       "requires": {
         "@oclif/core": "^1.21.0"
       }
