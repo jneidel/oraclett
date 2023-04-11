@@ -97,7 +97,7 @@ export async function projectOrTaskDetail( message: string ): Promise<"project"|
     message,
     choices: [
       {
-        name : "Project Name",
+        name : "Project itself",
         value: "project",
       },
       {

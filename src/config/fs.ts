@@ -36,6 +36,7 @@ export async function read( FILE: string, forceReadingFromDisk = false ) {
 }
 
 export async function write( FILE: string, data: any ) {
+  cachedFileContents[FILE] = data;
   const jsonString = JSON.stringify( data, null, 2 );
   await createDataDir();
   await fs.writeFile( FILE, jsonString );
