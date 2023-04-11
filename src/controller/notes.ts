@@ -1,9 +1,6 @@
 import chalk from "chalk";
-import { fs, NOTES_FILE } from "../config";
 import { createAndMergeWithStructure, parseDateStringForValues, getFullNames, createHumanReadableWeekIdentifier } from "./utils";
-
-export const readNotes = async ( forceReadingFromDisk = false ) => fs.read( NOTES_FILE, forceReadingFromDisk );
-export const writeNotes = async data => fs.write( NOTES_FILE, data );
+import Note from "../data/note";
 
 export async function addNote( data: {
   note: string;
@@ -12,7 +9,7 @@ export async function addNote( data: {
   taskDetail: string;
 } ) {
   const { note: noteToAdd, dateString, project, taskDetail } = data;
-  const ogNotes = await readNotes( true );
+  const ogNotes = await Note.readAll( true );
 
   const [ isoWeek, isoYear, dayOfTheWeek ] = parseDateStringForValues( dateString, "%V %G %a" );
   const structure = {
@@ -29,7 +26,7 @@ export async function addNote( data: {
   };
   const newNotes = createAndMergeWithStructure( ogNotes, structure, ( cur: string ) => cur === "" ? noteToAdd : `${cur}, ${noteToAdd}` );
   console.log( "Successfully added note\n" );
-  await writeNotes( newNotes );
+  await Note.writeAll( newNotes );
 
   listNotes( dateString );
 }
@@ -44,9 +41,9 @@ export async function editNote( data: {
 } ) {
   const { note, project, taskDetail, week, year, dayOfTheWeek } = data;
 
-  const notes = await readNotes( true );
+  const notes = await Note.readAll( true );
   notes[year][week][project][taskDetail][dayOfTheWeek] = note;
-  await writeNotes( notes );
+  await Note.writeAll( notes );
 }
 
 export async function removeNote( data: {
@@ -58,15 +55,15 @@ export async function removeNote( data: {
 } ) {
   const { project, taskDetail, week, year, dayOfTheWeek } = data;
 
-  const notes = await readNotes( true );
+  const notes = await Note.readAll( true );
   delete notes[year][week][project][taskDetail][dayOfTheWeek];
-  await writeNotes( notes );
+  await Note.writeAll( notes );
 }
 
 export async function listNotes( dateString: string ) {
   const [ isoWeek, isoYear ] = parseDateStringForValues( dateString, "%V %G" );
 
-  const notes = await readNotes( true );
+  const notes = await Note.readAll( true );
   const notesData = notes[isoYear][isoWeek];
 
   const allProjectTaskDetailDOTWCombinations = Object.keys( notesData ).reduce( ( acc: any[], projectKey ) => {

@@ -1,14 +1,14 @@
 import chalk from "chalk";
 import { CliUx } from "@oclif/core";
-import { readNotes } from "./notes";
-import { readHours } from "./hours";
+import Note from "../data/note";
+import Hour from "../data/hour";
 import { getFullNames, parseDateStringForValues } from "./utils";
 
 export async function generateReports( dateString: string, noInteractive: boolean, classicMode: boolean, errorFunc: Function ) {
   const [ week, year ] = parseDateStringForValues( dateString, "%V %G" );
 
-  const notes = await readNotes().then( data => data[year][week] ).catch( () => ( {} ) ).then( data => data !== undefined ? data : {} );
-  const hours = await readHours().then( data => data[year][week] ).catch( () => ( {} ) ).then( data => data !== undefined ? data : {} );
+  const notes = await Note.readAll().then( data => data[year][week] ).catch( () => ( {} ) ).then( data => data !== undefined ? data : {} );
+  const hours = await Hour.readAll().then( data => data[year][week] ).catch( () => ( {} ) ).then( data => data !== undefined ? data : {} );
 
   const projects = [ ...new Set( [ ...Object.keys( notes ), ...Object.keys( hours ) ] ) ];
   if ( projects.length === 0 )

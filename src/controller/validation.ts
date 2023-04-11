@@ -1,6 +1,6 @@
 
 const { Date } = require( "sugar" );
-import { readProjects } from "./project";
+import Project from "../data/project";
 
 export function validateDateString( dateString: string, dontThrow = false ): string|boolean {
   const date = Date.create( dateString );
@@ -22,7 +22,7 @@ You can play around with what works here: https://sugarjs.com/dates/#/Parsing`;
 }
 
 export async function validateProject( projectCode: string|undefined ) {
-  const projects = await readProjects();
+  const projects = await Project.readAll();
 
   if ( !( projectCode  && projects[projectCode] ) )
     throw new Error( `The project does not exist.
@@ -32,7 +32,7 @@ To add a new one : project add` );
 
 }
 export async function validateTaskDetails( projectCode: string|undefined, taskDetails: string|undefined ) {
-  const projects = await readProjects();
+  const projects = await Project.readAll();
 
   if ( !( projectCode && taskDetails && projects[projectCode] && projects[projectCode].taskDetails[taskDetails] ) )
     throw new Error( `Invalid combination of project and task details (either both or one of them don't exist.)

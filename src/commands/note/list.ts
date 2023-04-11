@@ -1,5 +1,6 @@
 import { Command, Flags } from "@oclif/core";
-import { listNotes, readNotes } from "../../controller/notes";
+import Note from "../../data/note";
+import { listNotes } from "../../controller/notes";
 import { getNoEntriesErrorFunction } from "../../controller/day-week-mode";
 import { parseDateStringForValues,
   convertDateShortcutsIntoFullForms,
@@ -26,7 +27,7 @@ $ <%= config.bin %> <%= command.id %> -d "last week"
 
   private async checkIfTimeframeHasData( date: string, throwNoNotesExistError: Function ): Promise<void> {
     const [ isoWeek, isoYear ] = parseDateStringForValues( date, "%V %G" );
-    const notes = await readNotes()
+    const notes = await Note.readAll()
       .then( notes => notes[isoYear][isoWeek] )
       .catch( () => null );
     if ( !hasProjectTaskDetailCombinationsWithEntries( notes ) )

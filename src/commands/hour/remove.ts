@@ -1,5 +1,6 @@
 import { Command } from "@oclif/core";
-import { readHours, removeHours } from "../../controller/hours";
+import { removeHours } from "../../controller/hours";
+import Hour from "../../data/hour";
 import { parseDateStringForValues } from "../../controller/utils";
 import * as dayWeekMode from "../../controller/day-week-mode";
 import * as askFor from "../../controller/questions";
@@ -21,7 +22,7 @@ export default class Remove extends Command {
     let operatingMode = dayWeekMode.evalOperatingMode( dateString );
     let throwNoTimeLoggedError = dayWeekMode.getNoEntriesErrorFunction( dateString, this.error, "hours" );
 
-    const hours = await readHours();
+    const hours = await Hour.readAll();
     if ( !( hours[year] && hours[year][week] ) )
       throwNoTimeLoggedError();
     const hoursData = hours[year][week];

@@ -1,6 +1,6 @@
 import chalk from "chalk";
 const { Date } = require( "sugar" );
-import { readProjects } from "./project";
+import Project from "../data/project";
 import { validateDateString } from "./validation";
 
 export function parseOracleString( str: string ) {
@@ -50,7 +50,7 @@ export function combineIntoFullName( key: string, description: string|null, opti
 }
 
 async function getFullProjectName( projectKey: string, options: FullNameOptions = {} ): Promise<string> {
-  return readProjects()
+  return Project.readAll()
     .then( res => res[projectKey] )
     .then( project => {
       if ( !project )
@@ -65,7 +65,7 @@ To list existing projects: project list` );
     } );
 }
 async function getFullTaskDetailName( projectKey: string, taskDetailKey: string, options: FullNameOptions = {} ): Promise<string> {
-  return readProjects()
+  return Project.readAll()
     .then( res => res[projectKey] )
     .then( project => {
       if ( !project )
@@ -95,7 +95,7 @@ To list existing projects: project list` );
 export const interactiveHelpText = `Passing no arguments will start an interactive session.`;
 
 async function getReadableProjectChoices( selection: String[]|null = null ): Promise<Array<{name: string; value: string}>> {
-  const projects = await readProjects();
+  const projects = await Project.readAll();
 
   return Promise.all( Object.keys( projects ).reverse() // sort by recently added/updated
     .filter( key => {
@@ -113,7 +113,7 @@ async function getReadableProjectChoices( selection: String[]|null = null ): Pro
     } ) );
 }
 async function getReadableTaskDetailChoices( projectCode: string, selection: String[]|null = null ): Promise<Array<{name: string; value: string}>> {
-  const projects = await readProjects();
+  const projects = await Project.readAll();
 
   return Promise.all( Object.keys( projects[projectCode].taskDetails ).sort()
     .filter( key => {

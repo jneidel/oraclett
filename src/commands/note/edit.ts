@@ -1,5 +1,6 @@
 import { Command } from "@oclif/core";
-import { editNote, readNotes } from "../../controller/notes";
+import Note from "../../data/note";
+import { editNote } from "../../controller/notes";
 import { parseDateStringForValues } from "../../controller/utils";
 import * as askFor from "../../controller/questions";
 import * as dayWeekMode from "../../controller/day-week-mode";
@@ -24,7 +25,7 @@ export default class Edit extends Command {
     let operatingMode = dayWeekMode.evalOperatingMode( dateString );
     let throwNoNotesAddedError = dayWeekMode.getNoEntriesErrorFunction( dateString, this.error, "note" );
 
-    const notes = await readNotes();
+    const notes = await Note.readAll();
     if ( !( notes[year] && notes[year][week] ) )
       throwNoNotesAddedError();
     const notesData = notes[year][week];

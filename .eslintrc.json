@@ -444,7 +444,7 @@
     "@typescript-eslint/no-array-constructor": 2,
     "@typescript-eslint/no-empty-interface": 2,
     "@typescript-eslint/no-explicit-any": 0,
-    "@typescript-eslint/no-extraneous-class": 2,
+    "@typescript-eslint/no-extraneous-class": 0,
     "@typescript-eslint/no-for-in-array": 2,
     "@typescript-eslint/no-inferrable-types": 2,
     "@typescript-eslint/no-misused-new": 2,

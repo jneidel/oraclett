@@ -1,11 +1,8 @@
 import { CliUx } from "@oclif/core";
 import chalk from "chalk";
 import inquirer from "inquirer";
-import { fs, HOURS_FILE } from "../config";
+import Hour from "../data/hour";
 import { getFullNames, createAndMergeWithStructure, parseDateStringForValues, createHumanReadableWeekIdentifier } from "./utils";
-
-export const readHours = async ( forceReadingFromDisk = false ) => fs.read( HOURS_FILE, forceReadingFromDisk );
-export const writeHours = async data => fs.write( HOURS_FILE, data );
 
 export async function addHours( data: {
   hoursToLog: number|any;
@@ -15,7 +12,7 @@ export async function addHours( data: {
   force: boolean;
 } ) {
   const { hoursToLog, dateString, project, taskDetail, force } = data;
-  const ogHours = await readHours( true );
+  const ogHours = await Hour.readAll( true );
 
   const [ isoWeek, isoYear, dayOfTheWeek ] = parseDateStringForValues( dateString, "%V %G %a" );
   const structure = {
@@ -37,14 +34,14 @@ export async function addHours( data: {
     throw new Error( `${combinedHours} --force` );
 
   console.log( "Successfully added hours\n" );
-  await writeHours( newHours );
+  await Hour.writeAll( newHours );
 
   listHours( dateString, false );
 }
 
 export async function listHours( dateString: string, useShortedTitles: boolean ) {
   const [ isoWeek, isoYear ] = parseDateStringForValues( dateString, "%V %G" );
-  const relevantHours = await readHours().then( hours => hours[isoYear][isoWeek] );
+  const relevantHours = await Hour.readByYearAndWeek( isoYear, isoWeek );
   const projects = Object.keys( relevantHours );
 
   var projectTaskDetailCombinations = projects.reduce( ( acc, project ) => {
@@ -158,9 +155,9 @@ export async function editHours( data: {
 } ) {
   const { project, taskDetail, year, week, dayOfTheWeek, newHours } = data;
 
-  const hours = await readHours( true );
+  const hours = await Hour.readAll( true );
   hours[year][week][project][taskDetail][dayOfTheWeek] = newHours;
-  await writeHours( hours );
+  await Hour.writeAll( hours );
 }
 export async function removeHours( data: {
   project: string;
@@ -171,9 +168,9 @@ export async function removeHours( data: {
 } ) {
   const { project, taskDetail, year, week, dayOfTheWeek } = data;
 
-  const hours = await readHours( true );
+  const hours = await Hour.readAll( true );
   delete hours[year][week][project][taskDetail][dayOfTheWeek];
-  await writeHours( hours );
+  await Hour.writeAll( hours );
 }
 
 export async function addHoursWithAskingForForceConfirmation( data: { hoursToLog: number; dateString: string; project: string; taskDetail: string; force: boolean } ) {

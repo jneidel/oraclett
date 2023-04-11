@@ -1,5 +1,6 @@
 import { Command, Flags } from "@oclif/core";
-import { listHours, readHours } from "../../controller/hours";
+import Hour from "../../data/hour";
+import { listHours } from "../../controller/hours";
 import { getNoEntriesErrorFunction } from "../../controller/day-week-mode";
 import { parseDateStringForValues,
   convertDateShortcutsIntoFullForms,
@@ -32,7 +33,7 @@ $ <%= config.bin %> <%= command.id %> -d "last week" --short
 
   private async checkIfTimeframeHasData( date: string, throwNoHoursExistError: Function ): Promise<void> {
     const [ isoWeek, isoYear ] = parseDateStringForValues( date, "%V %G" );
-    const hours = await readHours()
+    const hours = await Hour.readAll()
       .then( hours => hours[isoYear][isoWeek] )
       .catch( () => null );
     if ( !hasProjectTaskDetailCombinationsWithEntries( hours ) )
