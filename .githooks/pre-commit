@@ -1,0 +1,6 @@
+#!/bin/sh
+
+if git status --porcelain | grep "README.md" >/dev/null && command -v doctoc >/dev/null; then
+  doctoc README.md
+  git add README.md
+fi
