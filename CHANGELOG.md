@@ -1,5 +1,24 @@
 # Changelog
 
+## v0.4.0
+
+### Improvements
+
+- Add `ticket`.
+
+You can add tickets with an identifier and title to a project. Referencing that
+ticket id in a note will expand it to include the title!
+
+Example:
+```sh
+$ oraclett ticket add -i AAKKK001-1337 -t 'The status icon "New" and the filter behind it should be adjusted.' -p INTPD999DXD
+# Successfully added AAKKK001-1337 to INTPD999DXD!
+$ oraclett note add -p INTPD999DXD -t02 -n "Finished AAKKK001-1337"
+# Matched and expanded ticket AAKKK001-1337!
+# INTPD999DXD
+#   Finished AAKKK001-1337 (The status icon "New" and the filter behind it should be adjusted.)
+```
+
 ## v0.3.2
 
 ### Improvements
