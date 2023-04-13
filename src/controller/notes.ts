@@ -1,6 +1,7 @@
 import chalk from "chalk";
 import { createAndMergeWithStructure, parseDateStringForValues, getFullNames, createHumanReadableWeekIdentifier } from "./utils";
 import Note from "../data/note";
+import Ticket from "../data/ticket";
 
 export async function addNote( data: {
   note: string;
@@ -8,8 +9,19 @@ export async function addNote( data: {
   project: string;
   taskDetail: string;
 } ) {
-  const { note: noteToAdd, dateString, project, taskDetail } = data;
-  const ogNotes = await Note.readAll( true );
+  const { note, dateString, project, taskDetail } = data;
+  const [ ogNotes, tickets ] = await Promise.all( [ Note.readAll(), Ticket.readAll() ] );
+
+  // expand ticket ids in note
+  let noteToAdd = note;
+  if ( tickets[project] )
+    noteToAdd = Object.entries( tickets[project] ).reduce( ( acc: string, [ id, title ] ) => {
+      if ( acc.match( id ) ) {
+        console.log( `Matched and expanded ticket ${chalk.grey( id )}!` );
+        return acc.replace( id, `${id} (${title})` );
+      }
+      return acc;
+    }, noteToAdd );
 
   const [ isoWeek, isoYear, dayOfTheWeek ] = parseDateStringForValues( dateString, "%V %G %a" );
   const structure = {
