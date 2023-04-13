@@ -4,35 +4,32 @@ import Note from "./note";
 import { findInstancesOfProjectInData, findInstancesOfTaskDetailInData } from "./utils";
 
 export default class Project {
-  static async readAll( forceReadingFromDisk = false ) {
-    return fs.read( PROJECTS_FILE, forceReadingFromDisk );
-  }
-  static async writeAll( data: Object ) {
-    return fs.write( PROJECTS_FILE, data );
-  }
+  private static FILE = PROJECTS_FILE;
+  static readAll = fs.readAll( this.FILE );
+  static writeAll = fs.writeAll( this.FILE );
 
   static async deleteProject( projectKey: string ) {
     return Promise.all( [
-      async function deleteProject() {
+      ( async () => {
         const projects = await this.readAll();
 
         delete projects?.[projectKey];
 
         return this.writeAll( projects );
-      },
+      } )(),
       Note.deleteByProject( projectKey ),
       Hour.deleteByProject( projectKey ),
     ] );
   }
   static async deleteTaskDetail( projectKey: string, taskDetailKey: string ) {
     return Promise.all( [
-      async function deleteTaskDetail() {
+      ( async () => {
         const projects = await this.readAll();
 
         delete projects?.[projectKey]?.taskDetails?.[taskDetailKey];
 
         return this.writeAll( projects );
-      },
+      } )(),
       Note.deleteByTaskDetail( projectKey, taskDetailKey ),
       Hour.deleteByTaskDetail( projectKey, taskDetailKey ),
     ] );

@@ -2,12 +2,9 @@ import { fs, HOURS_FILE } from "../config";
 import { findInstancesOfProjectInData, findInstancesOfTaskDetailInData } from "./utils";
 
 export default class Hour {
-  static async readAll( forceReadingFromDisk = false ) {
-    return fs.read( HOURS_FILE, forceReadingFromDisk );
-  }
-  static async writeAll( data: Object ) {
-    return fs.write( HOURS_FILE, data );
-  }
+  private static FILE = HOURS_FILE;
+  static readAll = fs.readAll( this.FILE );
+  static writeAll = fs.writeAll( this.FILE );
 
   static async readByYearAndWeek( year: string, week: string ): Promise<any> {
     return this.readAll().then( hours => {

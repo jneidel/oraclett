@@ -42,7 +42,6 @@ export async function listProjects( options: { filter?: string; full?: boolean }
     console.log( `There are no projects.
 
 To add a few use: project add` );
-
 }
 
 export async function addProject( projectString: string, taskDetailsStrings: string[] = [] ) {

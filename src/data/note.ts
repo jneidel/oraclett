@@ -2,12 +2,9 @@ import { fs, NOTES_FILE } from "../config";
 import { findInstancesOfProjectInData, findInstancesOfTaskDetailInData } from "./utils";
 
 export default class Note {
-  static async readAll( forceReadingFromDisk = false ) {
-    return fs.read( NOTES_FILE, forceReadingFromDisk );
-  }
-  static async writeAll( data: Object ) {
-    return fs.write( NOTES_FILE, data );
-  }
+  private static FILE = NOTES_FILE;
+  static readAll = fs.readAll( this.FILE );
+  static writeAll = fs.writeAll( this.FILE );
 
   static async deleteByProject( projectKey: string ) {
     const notes = await this.readAll();
