@@ -21,11 +21,12 @@
     "lint": "eslint --fix --ext .ts --parser-options \"{ 'ecmaVersion': 10, 'ecmaFeatures': { 'impliedStrict': true }, project: ./tsconfig.json }\" src"
   },
   "files": [
-    "/bin",
-    "/dist",
-    "/npm-shrinkwrap.json",
-    "/oclif.manifest.json",
-    "/LICENCE"
+    "bin",
+    "dist",
+    "npm-shrinkwrap.json",
+    "oclif.manifest.json",
+    "LICENCE",
+    "README.md"
   ],
   "license": "GPLv3",
   "engines": {
