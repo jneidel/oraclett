@@ -90,22 +90,37 @@ export async function renaming( defaultVal: string,  message = "Please open your
   } ] ).then( ans => ans.updated.trim() );
 }
 
-export async function projectOrTaskDetail( message: string ): Promise<"project"|"taskDetail"> {
+export async function either( message: string, option1: InquirerChoice, option2: InquirerChoice ) {
   return inquirer.prompt( [ {
     type   : "list",
     name   : "what",
     message,
-    choices: [
-      {
-        name : "Project itself",
-        value: "project",
-      },
-      {
-        name : "Task Details (of a project)",
-        value: "taskDetail",
-      },
-    ],
+    choices: [ option1, option2 ],
   } ] ).then( ans => ans.what );
+}
+export async function eitherProjectOrTaskDetail( message: string ): Promise<"project"|"taskDetail"> {
+  return either( message,
+    {
+      name : "The project itself",
+      value: "project",
+    },
+    {
+      name : "The task details (of a project)",
+      value: "taskDetail",
+    }
+  );
+}
+export async function eitherIdOrTitle( message: string ): Promise<"id"|"title"> {
+  return either( message,
+    {
+      name : "The tickets identifier",
+      value: "id",
+    },
+    {
+      name : "The tickets title",
+      value: "title",
+    }
+  );
 }
 
 export async function text( message: string ): Promise<string> {
@@ -136,6 +151,20 @@ export async function confirmation( data: { message: string; default: boolean } 
     message: data.message,
     default: data.default,
   } ] ).then( ans => ans.confirmation );
+}
+
+export async function selection( message: string, choices: InquirerChoice[] ) {
+  if ( choices.length === 1 )
+    return choices[0].value;
+
+  return inquirer.prompt( [
+    {
+      type: "list",
+      name: "res",
+      message,
+      choices,
+    },
+  ] ).then( ans => ans.res );
 }
 
 export const renamingHelpText = ( wording ) => `It will ask you to ${wording} in your $EDITOR (in your case: ${process.env.EDITOR}).`;

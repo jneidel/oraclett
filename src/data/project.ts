@@ -1,6 +1,7 @@
 import { fs, PROJECTS_FILE } from "../config";
 import Hour from "./hour";
 import Note from "./note";
+import Ticket from "./ticket";
 import { findInstancesOfProjectInData, findInstancesOfTaskDetailInData } from "./utils";
 
 export default class Project {
@@ -19,6 +20,7 @@ export default class Project {
       } )(),
       Note.deleteByProject( projectKey ),
       Hour.deleteByProject( projectKey ),
+      Ticket.deleteByProject( projectKey ),
     ] );
   }
   static async deleteTaskDetail( projectKey: string, taskDetailKey: string ) {
@@ -55,7 +57,6 @@ export async function editTaskDetailData( projectKey: string, taskDetailKey: str
     };
     findInstancesOfTaskDetailInData( projectKey, taskDetailKey, hours ).forEach( rewriteInstance( hours ) );
     findInstancesOfTaskDetailInData( projectKey, taskDetailKey, notes ).forEach( rewriteInstance( notes ) );
-
     Hour.writeAll( hours );
     Note.writeAll( notes );
   }
@@ -73,7 +74,7 @@ export async function editProjectData( projectKey: string, newProjectObject: any
   if ( keyHasChanged ) {
     delete projects[projectKey];
 
-    const [ hours, notes ] = await Promise.all( [ Hour.readAll( true ), Note.readAll( true ) ] );
+    const [ hours, notes, tickets ] = await Promise.all( [ Hour.readAll( true ), Note.readAll( true ), Ticket.readAll( true ) ] );
 
     const rewriteInstance = data => instance => {
       const { year, week } = instance;
@@ -82,9 +83,12 @@ export async function editProjectData( projectKey: string, newProjectObject: any
     };
     findInstancesOfProjectInData( projectKey, hours ).forEach( rewriteInstance( hours ) );
     findInstancesOfProjectInData( projectKey, notes ).forEach( rewriteInstance( notes ) );
-
     Hour.writeAll( hours );
     Note.writeAll( notes );
+
+    tickets[newProjectKey] = tickets[projectKey];
+    delete tickets[projectKey];
+    Ticket.writeAll( tickets );
   }
 
   await Project.writeAll( projects );

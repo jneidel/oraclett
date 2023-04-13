@@ -79,7 +79,10 @@
         "description": "Write down and manage notes."
       },
       "project": {
-        "description": "Manage projects."
+        "description": "Manage projects for which you want to keep hours and notes."
+      },
+      "ticket": {
+        "description": "Manage tickets, which will automatically expand in notes."
       }
     },
     "topicSeparator": " ",

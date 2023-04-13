@@ -40,12 +40,8 @@ export default class CustomHelp extends Help {
       const formattedCommands = this.formatCommands( commands ).split( "\n" )
         .filter( line => {
           return !line.match( /^\s+hour log/ ) &&
-                 !line.match( /^\s+note delete/ ) &&
-                 !line.match( /^\s+hour delete/ ) &&
-                 !line.match( /^\s+project delete/ ) &&
-                 !line.match( /^\s+project [a-z]\s/ ) &&
-                 !line.match( /^\s+note [a-z]\s/ ) &&
-                 !line.match( /^\s+hour [a-z]\s/ );
+                 !line.match( /^\s+[a-z]+ delete/ ) &&
+                 !line.match( /^\s+[a-z]+ [a-z]\s/ );
         } ).join( "\n" );
       this.log( formattedCommands );
       this.log( "" );

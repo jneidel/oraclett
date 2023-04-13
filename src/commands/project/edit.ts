@@ -10,7 +10,7 @@ export default class Edit extends Command {
   static aliases = [ "project:e" ];
 
   async run(): Promise<void> {
-    const whatToEdit = await askFor.projectOrTaskDetail( "What do you want to edit?" );
+    const whatToEdit = await askFor.eitherProjectOrTaskDetail( "What do you want to edit?" );
 
     const projectKey = await askFor.project();
 

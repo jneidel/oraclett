@@ -24,5 +24,3 @@ export function findInstancesOfTaskDetailInData( projectKey: string, taskDetailK
   return findInstancesOfProjectInData( projectKey, data )
     .filter( instance => !!data[instance.year][instance.week][projectKey][taskDetailKey] );
 }
-
-

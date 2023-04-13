@@ -225,3 +225,7 @@ export function hasProjectTaskDetailCombinationsWithEntries( dataObj: any|null )
     );
   return withoutEmptyObjects.length !== 0;
 }
+
+export function hasExistingValue( [ , v ]: any ) {
+  return Object.keys( v ).length;
+}

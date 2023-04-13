@@ -7,7 +7,7 @@ export default class Remove extends Command {
   static aliases = [ "project:delete", "project:r", "project:d" ];
 
   async run(): Promise<void> {
-    const whatToRemove = await askFor.projectOrTaskDetail( "What do you want to remove?" );
+    const whatToRemove = await askFor.eitherProjectOrTaskDetail( "What do you want to remove?" );
 
     const projectKey = await askFor.project();
 
