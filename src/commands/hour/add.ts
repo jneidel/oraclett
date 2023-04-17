@@ -48,11 +48,26 @@ $ <%= config.bin %> <%= command.id %> -H2 -pINTPD999DXD -dtoday --note "Onboardi
       char       : "n",
       description: "Note to be added alongside the hours",
     } ),
+    dontMatchNumbers: Flags.boolean( {
+      default    : false,
+      description: "Disable number-based matching (4+ numbers)",
+      hidden     : true,
+    } ),
+    dontMatchProject: Flags.boolean( {
+      default    : false,
+      description: "Disable project-based matching (project key + postfix)",
+      hidden     : true,
+    } ),
+    dontMatchTickets: Flags.boolean( {
+      default    : false,
+      description: "Disable all checking for new tickets",
+      hidden     : true,
+    } ),
   };
 
   async run(): Promise<void> {
     const { flags } = await this.parse( Add );
-    let { project, taskDetail, date, hours }: any = flags;
+    let { project, taskDetail, date, hours, dontMatchNumbers, dontMatchProject, dontMatchTickets  }: any = flags;
     const dontAskForDateInteractively = !date && project && taskDetail && hours;
 
     if ( hours ) {
@@ -85,7 +100,7 @@ To add a new one: project add` ) );
 
     await addHoursWithAskingForForceConfirmation( { hoursToLog: hours, dateString: date, project, taskDetail, force: flags.force } );
     if ( flags.note )
-      addNote( { project, taskDetail, note: flags.note, dateString: date } );
+      addNote( { project, taskDetail, note: flags.note, dateString: date, dontMatchNumbers, dontMatchProject, dontMatchTickets } );
 
   }
 }

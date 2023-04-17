@@ -40,12 +40,27 @@ $ <%= config.bin %> <%= command.id %> -n "Worked 5h with Node" -H5 -pINTPD999DXD
       char       : "H",
       description: "Hours to be logged alongside the note",
     } ),
+    dontMatchNumbers: Flags.boolean( {
+      default    : false,
+      description: "Disable number-based matching (4+ numbers)",
+      helpGroup  : "NEW TICKET MATCHING",
+    } ),
+    dontMatchProject: Flags.boolean( {
+      default    : false,
+      description: "Disable project-based matching (project key + postfix)",
+      helpGroup  : "NEW TICKET MATCHING",
+    } ),
+    dontMatchTickets: Flags.boolean( {
+      default    : false,
+      description: "Disable all checking for new tickets",
+      helpGroup  : "NEW TICKET MATCHING",
+    } ),
   };
   static aliases = [ "note:a" ];
 
   async run(): Promise<void> {
     const { flags } = await this.parse( Add );
-    let { project, taskDetail, date, note }: any = flags;
+    let { project, taskDetail, date, note, dontMatchNumbers, dontMatchTickets, dontMatchProject }: any = flags;
     const dontAskForDateInteractively = !date && project && taskDetail && note;
 
     if ( project )
@@ -72,7 +87,7 @@ To add a new one: project add` ) );
     if ( !note )
       note = await askFor.text( "Note:" );
 
-    await addNote( { project, taskDetail, note, dateString: date } );
+    await addNote( { project, taskDetail, note, dateString: date, dontMatchNumbers, dontMatchProject, dontMatchTickets } );
 
     if ( flags.hours ) {
       const hoursToLog = parseFloat( flags.hours );

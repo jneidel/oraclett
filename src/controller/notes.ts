@@ -8,20 +8,18 @@ export async function addNote( data: {
   dateString: string;
   project: string;
   taskDetail: string;
+  dontMatchTickets: boolean;
+  dontMatchNumbers: boolean;
+  dontMatchProject: boolean;
 } ) {
-  const { note, dateString, project, taskDetail } = data;
-  const [ ogNotes, tickets ] = await Promise.all( [ Note.readAll(), Ticket.readAll() ] );
-
-  // expand ticket ids in note
-  let noteToAdd = note;
-  if ( tickets[project] )
-    noteToAdd = Object.entries( tickets[project] ).reduce( ( acc: string, [ id, title ] ) => {
-      if ( acc.match( id ) ) {
-        console.log( `Matched and expanded ticket ${chalk.grey( id )}!` );
-        return acc.replace( id, `${id} (${title})` );
-      }
-      return acc;
-    }, noteToAdd );
+  const { note, dateString, project, taskDetail, dontMatchTickets, dontMatchProject, dontMatchNumbers } = data;
+  const [
+    ogNotes,
+    noteToAdd,
+  ] = await Promise.all( [
+    Note.readAll(),
+    Ticket.expandInNote( { note, project, dontMatchNumbers, dontMatchProject, dontMatchTickets } ),
+  ] );
 
   const [ isoWeek, isoYear, dayOfTheWeek ] = parseDateStringForValues( dateString, "%V %G %a" );
   const structure = {
@@ -114,10 +112,10 @@ export async function listNotes( dateString: string ) {
 
       const note = notesData[projectKey][taskDetailKey][dotw];
       return `${projectText}
-    ${chalk.yellow( note )}`;
+${chalk.yellow( note )}`;
     } ) );
     return `${chalk.magenta( dotw )}:
-  ${theDaysProjectsWithTheirNotesText.join( `\n  ` )}`;
+${theDaysProjectsWithTheirNotesText.join( `\n  ` )}`;
   } ) ).then( textArr => textArr.join( "\n" ) );
 
   const humanReadableWeekIdentifier = createHumanReadableWeekIdentifier( dateString, { noLeadingProposition: true } );

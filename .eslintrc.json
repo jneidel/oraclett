@@ -329,7 +329,7 @@
     "unicorn/import-index": 2,
     "unicorn/new-for-builtins": 2,
     "unicorn/regex-shorthand": 2,
-    "unicorn/prefer-spread": 2,
+    "unicorn/prefer-spread": 0,
     "unicorn/error-message": 1,
     "unicorn/no-unsafe-regex": 1,
     "unicorn/prefer-add-event-listener": 2,
