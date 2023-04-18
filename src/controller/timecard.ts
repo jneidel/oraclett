@@ -86,13 +86,13 @@ To keep some notes: notes add` );
 
       if ( !classicMode ) {
         noteStringsForClipboard.push( noteStringArr.join( "; " ) || "" );
-        return () => {
+        return [ () => {
           console.log( `Project Code: ${projectString}
 Task Details: ${taskDetailString}
 Date Groups:
 ${hoursString}${noteString}
 ` );
-        };
+        } ];
       } else {
         noteStringsForClipboard.push( projectKey );
         noteStringsForClipboard.push( noteStringArrNoDOTW );
