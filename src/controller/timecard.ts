@@ -32,9 +32,12 @@ To keep some notes: notes add` );
     return Promise.all( taskDetails.map( async taskDetailKey => {
       const taskDetailString = await getFullNames.taskDetail( projectKey, taskDetailKey, { keyColor: "td", style: "hyphen" } );
 
-      const relevantHours = hours?.[projectKey]?.[taskDetailKey];
-      const relevantNotes = notes?.[projectKey]?.[taskDetailKey];
-      if ( !( relevantNotes && relevantHours ) )
+      let relevantHours = hours?.[projectKey]?.[taskDetailKey];
+      relevantHours = relevantHours && Object.keys( relevantHours ).length !== 0 ? relevantHours : undefined;
+      let relevantNotes = notes?.[projectKey]?.[taskDetailKey];
+      relevantNotes = relevantNotes && Object.keys( relevantNotes ).length !== 0 ? relevantNotes : undefined;
+
+      if ( !( relevantNotes || relevantHours ) )
         return null;
 
       const sortDaysOfTheWeek =  ( a, b ) => {
@@ -61,20 +64,25 @@ To keep some notes: notes add` );
   Quantity: ${chalk.magenta( amountOfHours )}`;
       } ).join( "\n  -------------\n" );
 
-      const noteStringArr = Object.keys( relevantNotes ).sort( sortDaysOfTheWeek ).reduce( ( acc: string[], dotw ) => {
-        acc.push( `${dotw}: ${relevantNotes[dotw]}` );
-        return acc;
-      }, [] );
-      const noteStringArrNoDOTW = Object.keys( relevantNotes ).sort( sortDaysOfTheWeek ).reduce( ( acc: string[], dotw ) => {
-        acc.push( relevantNotes[dotw] );
-        return acc;
-      }, [] );
-      const prettyNoteStringArr = noteStringArr
-        .map( string => `Comments for ${chalk.yellow( string.split( ":" )[0].trim() )}${noInteractive ? "" : " (copied to clipboard)"}:\n  ${chalk.yellow( string.split( ":" )[1].trim() )}` );
-
+      let noteStringArr: string[] = [];
+      let noteStringArrNoDOTW: string[] = [];
+      let prettyNoteStringArr: string[] = [];
       let noteString = "";
-      if ( noteStringArr.length !== 0 )
-        noteString = `\nComments${noInteractive ? "" : " (copied to clipboard)"}:\n  ${chalk.yellow( noteStringArr.join( "; " ) )}`;
+      if ( relevantNotes ) {
+        noteStringArr = Object.keys( relevantNotes ).sort( sortDaysOfTheWeek ).reduce( ( acc: string[], dotw ) => {
+          acc.push( `${dotw}: ${relevantNotes[dotw]}` );
+          return acc;
+        }, [] );
+        noteStringArrNoDOTW = Object.keys( relevantNotes ).sort( sortDaysOfTheWeek ).reduce( ( acc: string[], dotw ) => {
+          acc.push( relevantNotes[dotw] );
+          return acc;
+        }, [] );
+        prettyNoteStringArr = noteStringArr
+          .map( string => `Comments for ${chalk.yellow( string.split( ":" )[0].trim() )}${noInteractive ? "" : " (copied to clipboard)"}:\n  ${chalk.yellow( string.split( ":" )[1].trim() )}` );
+
+        if ( noteStringArr.length !== 0 )
+          noteString = `\nComments${noInteractive ? "" : " (copied to clipboard)"}:\n  ${chalk.yellow( noteStringArr.join( "; " ) )}`;
+      }
 
       if ( !classicMode ) {
         noteStringsForClipboard.push( noteStringArr.join( "; " ) || "" );
@@ -115,7 +123,7 @@ ${hoursString}${noteString}
         ].flat();
       }
     } ) );
-  } ) ).then( data => data.flat().filter( x => Array.isArray( x ) ) );
+  } ) ).then( data => data.flat().filter( x => x !== null && Array.isArray( x ) ) );
 
   return [ reports.flat(), noteStringsForClipboard.flat() ];
 }
