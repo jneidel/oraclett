@@ -12,7 +12,8 @@ Keep notes of what you did.
 Generate a report at the end of the week to transfer it into your company's
 Oracle system.
 
-Built for [Endava](https://www.endava.com), initially as part of my [bachelors thesis](https://github.com/jneidel/ba).
+Built for [Endava](https://www.endava.com), initially as part of my [bachelors
+thesis](https://github.com/jneidel/ba) on improving CLI app usability.
 
 ## Table of Contents
 
@@ -28,6 +29,7 @@ Built for [Endava](https://www.endava.com), initially as part of my [bachelors t
     - [`ticket list`](#ticket-list)
     - [`ticket edit`](#ticket-edit)
     - [`ticket remove`](#ticket-remove)
+- [Example aliases](#example-aliases)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -153,3 +155,46 @@ Remove a ticket.
   $ oraclett ticket remove
   $ oraclett ticket remove --id AAKKK001-1337 -p INTPD999DXD
 ```
+
+## Example aliases
+
+Here are the aliases I use in the day-to-day.
+
+I have everything set-up to add/filter for the main project I'm working on. All
+`oraclett` commands have a three letter shorthand. For some common notes of mime
+I have shortcuts.
+
+```sh
+local ORACLETT_MAIN_PROJECT=ORFDV001
+local ORACLETT_MAIN_TASK_DETAILS=03
+
+alias onl="oraclett note list"
+alias ona="oraclett note add -p $ORACLETT_MAIN_PROJECT -t $ORACLETT_MAIN_TASK_DETAILS"
+alias one="oraclett note edit"
+alias onr="oraclett note remove"
+
+# add common notes
+alias onaprs="ona -n 'Review PRs'"
+alias onareviewprs="onaprs"
+alias onaceremonies="ona -n 'Sprint ceremonies'"
+
+alias ohl="oraclett hour list"
+alias oha="oraclett hour add -p $ORACLETT_MAIN_PROJECT -t $ORACLETT_MAIN_TASK_DETAILS"
+alias ohe="oraclett hour edit"
+alias ohr="oraclett hour remove"
+alias oha8="oha -H8"
+
+alias otl="oraclett ticket list -p $ORACLETT_MAIN_PROJECT"
+alias ota="oraclett ticket add -p $ORACLETT_MAIN_PROJECT"
+alias ote="oraclett ticket edit -p $ORACLETT_MAIN_PROJECT"
+alias otr="oraclett ticket remove -p $ORACLETT_MAIN_PROJECT"
+
+alias otc="oraclett timecard --classic"
+```
+
+Because they are aliases you can just add your flags to them like you normally
+would.
+
+If you don't know where to put aliases: this depends on your shell. You can use
+`echo $0` to find out what you're using. In the case of zsh, the relevant file
+is `~/.zshrc`. And in bashs case `~/.bashrc`.
