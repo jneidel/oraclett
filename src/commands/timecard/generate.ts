@@ -2,7 +2,7 @@ import { Command, Flags } from "@oclif/core";
 import clipboard from "clipboardy";
 import { generateReports } from "../../controller/timecard";
 import * as askFor from "../../controller/questions";
-import { createHumanReadableWeekIdentifier } from "../../controller/utils";
+import { convertDateShortcutsIntoFullForms, createHumanReadableWeekIdentifier } from "../../controller/utils";
 import { validateDateString } from "../../controller/validation";
 
 export default class List extends Command {
@@ -16,6 +16,7 @@ going along with you while you copy over data into Oracle.`;
       char       : "d",
       description: "A date to specify the week (can be human-readable)",
       default    : "this week",
+      parse      : convertDateShortcutsIntoFullForms,
     } ),
     "no-interactive": Flags.boolean( {
       char       : "I",
