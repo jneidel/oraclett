@@ -102,7 +102,7 @@ export async function listHours( dateString: string, useShortedTitles: boolean )
 
   const projectTaskDetailText = await Promise.all( projectTaskDetailCombinations.map( async ( combi: any ) => {
     if ( useShortedTitles ) {
-      return `${combi.project}: ${combi.taskDetail} `;
+      return `${applyColor( "project", combi.project )}: ${applyColor( "taskDetail", combi.taskDetail )} `;
     } else {
       const [ projectName, taskDetailName  ] = await Promise.all( [
         getFullNames.project( combi.project, { colorForWhat: "project" } ),

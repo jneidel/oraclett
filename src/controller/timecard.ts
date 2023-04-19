@@ -6,8 +6,10 @@ import { applyColor, getFullNames, parseDateStringForValues } from "./utils";
 export async function generateReports( dateString: string, noInteractive: boolean, classicMode: boolean, errorFunc: Function ) {
   const [ week, year ] = parseDateStringForValues( dateString, "%V %G" );
 
-  const notes = await Note.readAll().then( data => data[year][week] ).catch( () => ( {} ) ).then( data => data !== undefined ? data : {} );
-  const hours = await Hour.readAll().then( data => data[year][week] ).catch( () => ( {} ) ).then( data => data !== undefined ? data : {} );
+  const [ notes, hours ] = await Promise.all( [
+    Note.readAll().then( data => data[year][week] ).catch( () => ( {} ) ).then( data => data !== undefined ? data : {} ),
+    Hour.readAll().then( data => data[year][week] ).catch( () => ( {} ) ).then( data => data !== undefined ? data : {} ),
+  ] );
 
   const projects = [ ...new Set( [ ...Object.keys( notes ), ...Object.keys( hours ) ] ) ];
   if ( projects.length === 0 )
@@ -109,7 +111,10 @@ ${hoursString}${noteString}
               Sat: {},
               Sun: {},
             };
-            const tableData = Object.assign( relevantHours, {
+            const tableData = Object.entries( relevantHours ).reduce( ( acc, [ dotw, hourAmount ]: any ) => {
+              acc[dotw] = applyColor( "hour", hourAmount );
+              return acc;
+            }, {
               project: `${projectString}: ${taskDetailString}`,
             } );
 
