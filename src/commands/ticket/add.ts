@@ -1,8 +1,8 @@
 import { Command, Flags } from "@oclif/core";
-import chalk from "chalk";
 import { addTicket, listTicketsByProject } from "../../controller/ticket";
 import { validateProject } from "../../controller/validation";
 import * as askFor from "../../controller/questions";
+import { applyColor } from "../../controller/utils";
 
 export default class Add extends Command {
   static summary = "Add a new ticket";
@@ -49,7 +49,7 @@ To add a new one: project add` ) );
       title = await askFor.text( "What the tickets title?" );
 
     await addTicket( { project, id, title } )
-      .then( () => this.log( `Successfully added ${chalk.grey( id )} to ${chalk.green( project )}!` ) )
+      .then( () => this.log( `Successfully added ${applyColor( "ticket", id )} to ${applyColor( "project", project )}!` ) )
       .then( () => listTicketsByProject( project ) );
   }
 }

@@ -1,5 +1,4 @@
-import chalk from "chalk";
-import { createAndMergeWithStructure, parseDateStringForValues, getFullNames, createHumanReadableWeekIdentifier } from "./utils";
+import { createAndMergeWithStructure, parseDateStringForValues, getFullNames, createHumanReadableWeekIdentifier, applyColor } from "./utils";
 import Note from "../data/note";
 import Ticket from "../data/ticket";
 
@@ -106,18 +105,18 @@ export async function listNotes( dateString: string ) {
 
     const theDaysProjectsWithTheirNotesText = await Promise.all( dotwGroup.map( async combi => {
       const { projectKey, taskDetailKey, dotw } = combi;
-      const project = await getFullNames.project( projectKey, { style: "hyphen", keyColor: "project" } );
-      const taskDetail = await getFullNames.taskDetail( projectKey, taskDetailKey, { style: "hyphen", keyColor: "td" } );
+      const project = await getFullNames.project( projectKey, { style: "hyphen", colorForWhat: "project" } );
+      const taskDetail = await getFullNames.taskDetail( projectKey, taskDetailKey, { style: "hyphen", colorForWhat: "taskDetail" } );
       const projectText = `${project}: ${taskDetail}`;
 
       const note = notesData[projectKey][taskDetailKey][dotw];
       return `${projectText}
-${chalk.yellow( note )}`;
+${applyColor( "note", note )}`;
     } ) );
-    return `${chalk.magenta( dotw )}:
+    return `${applyColor( "hour", dotw )}:
 ${theDaysProjectsWithTheirNotesText.join( `\n  ` )}`;
   } ) ).then( textArr => textArr.join( "\n" ) );
 
   const humanReadableWeekIdentifier = createHumanReadableWeekIdentifier( dateString, { noLeadingProposition: true } );
-  console.log( `Notes for ${chalk.magenta( humanReadableWeekIdentifier )}:\n${output}` );
+  console.log( `Notes for ${applyColor( "hour", humanReadableWeekIdentifier )}:\n${output}` );
 }

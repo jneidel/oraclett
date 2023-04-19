@@ -1,8 +1,7 @@
-import chalk from "chalk";
 import { CliUx } from "@oclif/core";
 import Note from "../data/note";
 import Hour from "../data/hour";
-import { getFullNames, parseDateStringForValues } from "./utils";
+import { applyColor, getFullNames, parseDateStringForValues } from "./utils";
 
 export async function generateReports( dateString: string, noInteractive: boolean, classicMode: boolean, errorFunc: Function ) {
   const [ week, year ] = parseDateStringForValues( dateString, "%V %G" );
@@ -20,7 +19,7 @@ To keep some notes: notes add` );
 
   const noteStringsForClipboard: any[] = [];
   const reports = await Promise.all( projects.map( async projectKey => {
-    const projectString = await getFullNames.project( projectKey, { keyColor: "project", style: "hyphen" } );
+    const projectString = await getFullNames.project( projectKey, { colorForWhat: "project", style: "hyphen" } );
 
     let taskDetails: string[] = [];
     if ( notes[projectKey] )
@@ -30,7 +29,7 @@ To keep some notes: notes add` );
     taskDetails = [ ...new Set( taskDetails ) ];
 
     return Promise.all( taskDetails.map( async taskDetailKey => {
-      const taskDetailString = await getFullNames.taskDetail( projectKey, taskDetailKey, { keyColor: "td", style: "hyphen" } );
+      const taskDetailString = await getFullNames.taskDetail( projectKey, taskDetailKey, { colorForWhat: "taskDetail", style: "hyphen" } );
 
       let relevantHours = hours?.[projectKey]?.[taskDetailKey];
       relevantHours = relevantHours && Object.keys( relevantHours ).length !== 0 ? relevantHours : undefined;
@@ -60,8 +59,8 @@ To keep some notes: notes add` );
       const hoursString = Object.keys( groupByHourAmount ).map( amountOfHours => {
         const daysOfTheWeek = groupByHourAmount[amountOfHours].sort( sortDaysOfTheWeek );
 
-        return `  Dates:    ${chalk.magenta( daysOfTheWeek.join( " " ) )}
-  Quantity: ${chalk.magenta( amountOfHours )}`;
+        return `  Dates:    ${applyColor( "hour", daysOfTheWeek.join( " " ) )}
+  Quantity: ${applyColor( "hour", amountOfHours )}`;
       } ).join( "\n  -------------\n" );
 
       let noteStringArr: string[] = [];
@@ -78,10 +77,10 @@ To keep some notes: notes add` );
           return acc;
         }, [] );
         prettyNoteStringArr = noteStringArr
-          .map( string => `Comments for ${chalk.yellow( string.split( ":" )[0].trim() )}${noInteractive ? "" : " (copied to clipboard)"}:\n  ${chalk.yellow( string.split( ":" )[1].trim() )}` );
+          .map( string => `Comments for ${applyColor( "note", string.split( ":" )[0].trim() )}${noInteractive ? "" : " (copied to clipboard)"}:\n  ${applyColor( "note", string.split( ":" )[1].trim() )}` );
 
         if ( noteStringArr.length !== 0 )
-          noteString = `\nComments${noInteractive ? "" : " (copied to clipboard)"}:\n  ${chalk.yellow( noteStringArr.join( "; " ) )}`;
+          noteString = `\nComments${noInteractive ? "" : " (copied to clipboard)"}:\n  ${applyColor( "note", noteStringArr.join( "; " ) )}`;
       }
 
       if ( !classicMode ) {
@@ -117,7 +116,7 @@ ${hoursString}${noteString}
             CliUx.ux.table( [ tableData ], columns, {} );
 
             if ( !noInteractive )
-              console.log( `\nCopied project key to clipboard (${chalk.green( projectKey )})` );
+              console.log( `\nCopied project key to clipboard (${applyColor( "ticket", projectKey )})` );
           },
           prettyNoteStringArr.map( string => () => {console.log( string );} ),
         ].flat();

@@ -1,8 +1,7 @@
 import { CliUx } from "@oclif/core";
-import chalk from "chalk";
 import inquirer from "inquirer";
 import Hour from "../data/hour";
-import { getFullNames, createAndMergeWithStructure, parseDateStringForValues, createHumanReadableWeekIdentifier } from "./utils";
+import { getFullNames, createAndMergeWithStructure, parseDateStringForValues, createHumanReadableWeekIdentifier, applyColor } from "./utils";
 
 export async function addHours( data: {
   hoursToLog: number|any;
@@ -82,7 +81,7 @@ export async function listHours( dateString: string, useShortedTitles: boolean )
     const total = calulcateTotal( projectWeeklyHours );
 
     projectWeeklyHours = Object.keys( projectWeeklyHours ).reduce( ( acc, dotw ) => {
-      acc[dotw] = chalk.magenta( projectWeeklyHours[dotw] );
+      acc[dotw] = applyColor( "hour", projectWeeklyHours[dotw] );
       return acc;
     }, {} );
 
@@ -106,8 +105,8 @@ export async function listHours( dateString: string, useShortedTitles: boolean )
       return `${combi.project}: ${combi.taskDetail} `;
     } else {
       const [ projectName, taskDetailName  ] = await Promise.all( [
-        getFullNames.project( combi.project, { keyColor: "project" } ),
-        getFullNames.taskDetail( combi.project, combi.taskDetail, { keyColor: "td" } ),
+        getFullNames.project( combi.project, { colorForWhat: "project" } ),
+        getFullNames.taskDetail( combi.project, combi.taskDetail, { colorForWhat: "taskDetail" } ),
       ] );
 
       return `${projectName}: ${taskDetailName} `;
@@ -141,7 +140,7 @@ export async function listHours( dateString: string, useShortedTitles: boolean )
   );
 
   const humanReadableWeekIdentifier = createHumanReadableWeekIdentifier( dateString, { noLeadingProposition: true } );
-  console.log( `Hours logged for ${chalk.magenta( humanReadableWeekIdentifier )}:` );
+  console.log( `Hours logged for ${applyColor( "hour", humanReadableWeekIdentifier )}:` );
   CliUx.ux.table( tableData, columns, {} );
 }
 

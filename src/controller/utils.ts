@@ -2,6 +2,7 @@ import chalk from "chalk";
 const { Date } = require( "sugar" );
 import Project from "../data/project";
 import { validateDateString } from "./validation";
+import colors from "../data/colors";
 
 export function parseOracleString( str: string ) {
   const match = str.match( /(.+) - (.*)/ );
@@ -11,31 +12,17 @@ export function parseOracleString( str: string ) {
     return { [str]: { description: null } };
 }
 
-const colors = {
-  project   : "#00ff5f",
-  taskDetail: "#005fd7",
-};
-
 type FullNameOptions = {
   style?: "parens"|"hyphen";
-  keyColor?: string;
+  colorForWhat?: string;
 }
 const fullNameOptionsDefaults = {
-  style   : "hyphen",
-  keyColor: "",
+  style       : "hyphen",
+  colorForWhat: "",
 };
 export function combineIntoFullName( key: string, description: string|null, options: FullNameOptions = {} ): string {
-  let { style, keyColor } = Object.assign( fullNameOptionsDefaults, options );
-
-  switch ( keyColor ) {
-    case "project":
-      keyColor = colors.project;
-      break;
-    case "td":
-      keyColor = colors.taskDetail;
-      break;
-  }
-  const coloredKey = keyColor !== "" ? chalk.hex( keyColor )( key ) : key;
+  const { style, colorForWhat } = Object.assign( fullNameOptionsDefaults, options );
+  const coloredKey = colorForWhat !== "" ? applyColor( colorForWhat, key ) : key;
 
   if ( description === null )
     return coloredKey;
@@ -46,7 +33,6 @@ export function combineIntoFullName( key: string, description: string|null, opti
       case "parens":
         return `${coloredKey} (${description})`;
     }
-
 }
 
 async function getFullProjectName( projectKey: string, options: FullNameOptions = {} ): Promise<string> {
@@ -61,7 +47,6 @@ To add new projects: project add
 To list existing projects: project list` );
       else
         return combineIntoFullName( projectKey, project.description, options );
-
     } );
 }
 async function getFullTaskDetailName( projectKey: string, taskDetailKey: string, options: FullNameOptions = {} ): Promise<string> {
@@ -76,7 +61,6 @@ To add new projects: project add
 To list existing projects: project list` );
       else
         return project;
-
     } )
     .then( project => project.taskDetails[taskDetailKey] )
     .then( taskDetail => {
@@ -88,7 +72,6 @@ To add new projects: project add
 To list existing projects: project list` );
       else
         return combineIntoFullName( taskDetailKey, taskDetail.description, options );
-
     } );
 }
 
@@ -228,4 +211,17 @@ export function hasProjectTaskDetailCombinationsWithEntries( dataObj: any|null )
 
 export function hasExistingValue( [ , v ]: any ) {
   return Object.keys( v ).length;
+}
+
+export function applyColor( id: string, str: string ): string {
+  const idColors = colors[id];
+  if ( !idColors )
+    throw new Error( `color id ${id} does not exist` );
+
+
+  if ( idColors.bg )
+    return chalk.hex( idColors.fg ).bgHex( idColors.bg )( str );
+  else
+    return chalk.hex( idColors.fg )( str );
+
 }

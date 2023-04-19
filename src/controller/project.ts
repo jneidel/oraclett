@@ -14,7 +14,7 @@ export async function listProjects( options: { filter?: string; full?: boolean }
     projectKeys = projectKeys.filter( projectKey => projectKey === filter );
 
   projectList = await Promise.all( projectKeys.map( async ( projectKey: string ) => {
-    const projectName = await getFullNames.project( projectKey, { style: "parens", keyColor: "project" } );
+    const projectName = await getFullNames.project( projectKey, { style: "parens", colorForWhat: "project" } );
     const taskDetailNames = await Promise.all(
       Object.keys( projectList[projectKey].taskDetails ).sort()
         .map( ( key, index ) => {
@@ -27,7 +27,7 @@ export async function listProjects( options: { filter?: string; full?: boolean }
           if ( !full && taskDetailKey === TRUNCATED_LIST_MARKER ) {
             return `  * .. (--full to see all)`;
           } else {
-            const name = await getFullNames.taskDetail( projectKey, taskDetailKey, { style: "parens", keyColor: "td" } );
+            const name = await getFullNames.taskDetail( projectKey, taskDetailKey, { style: "parens", colorForWhat: "taskDetail" } );
             return `  * ${name}`;
           }
         } )

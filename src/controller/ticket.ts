@@ -1,6 +1,5 @@
-import chalk from "chalk";
 import Ticket from "../data/ticket";
-import { hasExistingValue, getFullNames } from "./utils";
+import { hasExistingValue, getFullNames, applyColor } from "./utils";
 import { validateProject } from "./validation";
 import * as askFor from "./questions";
 
@@ -10,10 +9,10 @@ function sortById( [ aId ]: any, [ bId ]: any ) {
   return aId > bId ? 1 : -1;
 }
 function printIdAndTitle( [ ticketId, title ] ) {
-  console.log( `  ${chalk.grey( ticketId )}: ${title}` );
+  console.log( `  ${applyColor( "ticket", ticketId )}: ${title}` );
 }
 async function printTicketsForProject( project: string, data: Object ) {
-  const projectIdAndTitle = await getFullNames.project( project, { style: "parens", keyColor: "project" } );
+  const projectIdAndTitle = await getFullNames.project( project, { style: "parens", colorForWhat: "project" } );
   console.log( projectIdAndTitle );
 
   Object.entries( data ).filter( hasExistingValue )
@@ -67,7 +66,7 @@ To add some use: ticket add` );
   if ( !id ) {
     const idChoices = Object.entries( projectTickets ).sort( sortById )
       .map( ( [ id, title ]: any ) => ( {
-        name : `${chalk.grey( id )}: ${title}`,
+        name : `${applyColor( "ticket", id )}: ${title}`,
         value: id,
       } ) );
     id = await askFor.selection( `Pick ticket to edit the ${isOperatingOn} for:`, idChoices );
@@ -112,7 +111,7 @@ To add some use: ticket add` );
   if ( !id ) {
     const idChoices = Object.entries( projectTickets ).sort( sortById )
       .map( ( [ id, title ]: any ) => ( {
-        name : `${chalk.grey( id )}: ${title}`,
+        name : `${applyColor( "ticket", id )}: ${title}`,
         value: id,
       } ) );
     id = await askFor.selection( `Pick ticket to delete:`, idChoices );

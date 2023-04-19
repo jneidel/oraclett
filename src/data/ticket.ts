@@ -1,7 +1,7 @@
 import { fs, TICKETS_FILE } from "../config";
 import { TicketData } from "./interfaces";
-import chalk from "chalk";
 import * as askFor from "../controller/questions";
+import { applyColor } from "../controller/utils";
 
 export default class Ticket {
   private static FILE = TICKETS_FILE;
@@ -52,7 +52,7 @@ export default class Ticket {
 
     const existingTicketsMatched = matchAgainstExistingTickets( { note, tickets } );
     note = existingTicketsMatched.reduce( ( note, id ) => {
-      console.log( `Matched and expanded ticket ${chalk.grey( id )}!` );
+      console.log( `Matched and expanded ticket ${applyColor( "ticket", id )}!` );
       const title = tickets[id];
       return note.replace( id, `${id} (${title})` );
     }, note );
@@ -62,7 +62,7 @@ export default class Ticket {
 
       const newCreatedTickets: string[][] = [];
       for ( const id of newTicketsMatched ) {
-        console.log( `Matched a new ticket ${chalk.grey( id )}!` );
+        console.log( `Matched a new ticket ${applyColor( "ticket", id )}!` );
         const title = await askFor.text( `Enter its title: (leave empty to not add it)` );
         if ( title ) {
           await Ticket.writeTicket( { project, id, title } );
