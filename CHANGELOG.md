@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.4.2
+
+### Fixes
+
+- Fix ticket matching so it works as described
+- Fix classic timecard throwing if there were no hours logged
+
 ## v0.4.1
 
 ### Improvements
