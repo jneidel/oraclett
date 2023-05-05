@@ -6,7 +6,7 @@
 
 - Add pattern matching on `note add` for creating new tickets
   - By project: the projected code and some postfix, e.g. `ORFDV001-1172`
-  - By numbers: any 4-6 numbers will be prefixed with the project code, e.g.
+  - By numbers: any 3-6 numbers will be prefixed with the project code, e.g.
     `1172` -> `ORFDV001-1172`
   - You will be prompted to add the missing title
 - Describe my aliases and `ticket` command usage in the README

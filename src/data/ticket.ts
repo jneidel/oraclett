@@ -47,21 +47,22 @@ export default class Ticket {
     return this.writeAll( tickets );
   }
 
-  static async expandInNote( { note, project, dontMatchNumbers, dontMatchProject, dontMatchTickets } ): Promise<string> {
+  static async expandInNote( { note, project, dontMatchNumbers, dontMatchProject, dontMatchNewTickets } ): Promise<string> {
     const tickets = await this.readByProject( project );
 
-    const existingTicketsMatched = matchAgainstExistingTickets( { note, tickets } );
-    note = existingTicketsMatched.reduce( ( note, id ) => {
+    const ticketsMatched = getTicketMatches( { note, project, tickets, dontMatchNumbers, dontMatchProject } );
+    const existingTickets = ticketsMatched.filter( id => tickets[id] );
+    const nonExistingTickets = ticketsMatched.filter( id => !tickets[id] );
+
+    note = existingTickets.reduce( ( note, id ) => {
       console.log( `Matched and expanded ticket ${applyColor( "ticket", id )}!` );
       const title = tickets[id];
-      return note.replace( id, `${id} (${title})` );
+      return replaceTicketInNote( note, id, title );
     }, note );
 
-    if ( !dontMatchTickets && !( dontMatchNumbers && dontMatchProject ) ) {
-      const newTicketsMatched = getNewTicketMatches( { note, project, tickets, dontMatchNumbers, dontMatchProject } );
-
+    if ( !dontMatchNewTickets ) {
       const newCreatedTickets: string[][] = [];
-      for ( const id of newTicketsMatched ) {
+      for ( const id of nonExistingTickets ) {
         console.log( `Matched a new ticket ${applyColor( "ticket", id )}!` );
         const title = await askFor.text( `Enter its title: (leave empty to not add it)` );
         if ( title ) {
@@ -69,13 +70,20 @@ export default class Ticket {
           newCreatedTickets.push( [ id, title ] );
         }
       }
-
       note = newCreatedTickets.filter( x => x )
-        .reduce( async ( note, [ id, title ]: any ) => note.replace( id, `${id} (${title})` ), note );
+        .reduce( async ( note, [ id, title ]: any ) => replaceTicketInNote( note, id, title ), note );
     }
 
     return note;
   }
+}
+
+function replaceTicketInNote( note: string, id: string, title: string ) {
+  const replacementText = `${id} (${title})`;
+  if ( note.match( id ) )
+    return note.replace( id, replacementText );
+  else
+    return note.replace( id.split( "-" )[1], replacementText );
 }
 
 function matchByProjectCode( note, project ): string[] {
@@ -83,12 +91,12 @@ function matchByProjectCode( note, project ): string[] {
     .map( ( [ id ]: any ) => id );
 }
 function matchByNumbers( note, project ): string[] {
-  return Array.from( note.matchAll( `[0-9]{4,6}` ) )
-    .map( ( [ numbers ]: any ) => `${project}-${numbers}` )
-    .filter( id => note.match( id ) ); // check that id actually exists
+  return Array.from( note.matchAll( `[0-9]{3,6}` ) )
+    .map( ( [ numbers ]: any ) => `${project}-${numbers}` );
 }
-function getNewTicketMatches( { note, project, tickets, dontMatchNumbers, dontMatchProject } ) {
+function getTicketMatches( { note, project, tickets, dontMatchNumbers, dontMatchProject } ) {
   let matches: string[] = [];
+
   if ( !dontMatchProject )
     matches = matchByProjectCode( note, project );
 
@@ -97,15 +105,12 @@ function getNewTicketMatches( { note, project, tickets, dontMatchNumbers, dontMa
     matches = [ ...new Set( matches.concat( idsMatchedByNumbers ) ) ];
   }
 
-  return matches.filter( id => !tickets[id] );
-}
-function matchAgainstExistingTickets( { note, tickets } ): string[] {
   if ( Object.keys( tickets ).length !== 0 )
-    return Object.entries( tickets ).reduce( ( matches: string[], [ id ]: any ) => {
+    matches = Object.entries( tickets ).reduce( ( matches: string[], [ id ]: any ) => {
       if ( note.match( id ) )
         matches.push( id );
       return matches;
-    }, [] );
-  else
-    return [];
+    }, matches );
+
+  return matches;
 }

@@ -7,17 +7,17 @@ export async function addNote( data: {
   dateString: string;
   project: string;
   taskDetail: string;
-  dontMatchTickets: boolean;
+  dontMatchNewTickets: boolean;
   dontMatchNumbers: boolean;
   dontMatchProject: boolean;
 } ) {
-  const { note, dateString, project, taskDetail, dontMatchTickets, dontMatchProject, dontMatchNumbers } = data;
+  const { note, dateString, project, taskDetail, dontMatchNewTickets, dontMatchProject, dontMatchNumbers } = data;
   const [
     ogNotes,
     noteToAdd,
   ] = await Promise.all( [
     Note.readAll(),
-    Ticket.expandInNote( { note, project, dontMatchNumbers, dontMatchProject, dontMatchTickets } ),
+    Ticket.expandInNote( { note, project, dontMatchNumbers, dontMatchProject, dontMatchNewTickets } ),
   ] );
 
   const [ isoWeek, isoYear, dayOfTheWeek ] = parseDateStringForValues( dateString, "%V %G %a" );

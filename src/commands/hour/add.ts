@@ -58,7 +58,7 @@ $ <%= config.bin %> <%= command.id %> -H2 -pINTPD999DXD -dtoday --note "Onboardi
       description: "Disable project-based matching (project key + postfix)",
       hidden     : true,
     } ),
-    dontMatchTickets: Flags.boolean( {
+    dontMatchNewTickets: Flags.boolean( {
       default    : false,
       description: "Disable all checking for new tickets",
       hidden     : true,
@@ -67,7 +67,7 @@ $ <%= config.bin %> <%= command.id %> -H2 -pINTPD999DXD -dtoday --note "Onboardi
 
   async run(): Promise<void> {
     const { flags } = await this.parse( Add );
-    let { project, taskDetail, date, hours, dontMatchNumbers, dontMatchProject, dontMatchTickets  }: any = flags;
+    let { project, taskDetail, date, hours, dontMatchNumbers, dontMatchProject, dontMatchNewTickets  }: any = flags;
     const dontAskForDateInteractively = !date && project && taskDetail && hours;
 
     if ( hours ) {
@@ -100,7 +100,7 @@ To add a new one: project add` ) );
 
     await addHoursWithAskingForForceConfirmation( { hoursToLog: hours, dateString: date, project, taskDetail, force: flags.force } );
     if ( flags.note )
-      addNote( { project, taskDetail, note: flags.note, dateString: date, dontMatchNumbers, dontMatchProject, dontMatchTickets } );
+      addNote( { project, taskDetail, note: flags.note, dateString: date, dontMatchNumbers, dontMatchProject, dontMatchNewTickets } );
 
   }
 }

@@ -17,7 +17,7 @@ $ <%= config.bin %> <%= command.id %> -p INTPD999DXD
       aliases    : [ "projectKey" ],
     } ),
   };
-  static aliases = [ "ticket:a" ];
+  static aliases = [ "ticket:l" ];
 
   async run(): Promise<void> {
     const { flags: { project } } = await this.parse( Add );
