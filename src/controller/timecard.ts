@@ -49,21 +49,24 @@ To keep some notes: notes add` );
           return -1;
       };
 
-      const groupByHourAmount = Object.keys( relevantHours ).reduce( ( acc, dotw ) => {
-        const amountOfHours = relevantHours[dotw];
-        if ( acc[amountOfHours] )
-          acc[amountOfHours].push( dotw );
-        else
-          acc[amountOfHours] = [ dotw ];
+      let hoursString = "";
+      if ( relevantHours ) {
+        const groupByHourAmount = Object.keys( relevantHours ).reduce( ( acc, dotw ) => {
+          const amountOfHours = relevantHours[dotw];
+          if ( acc[amountOfHours] )
+            acc[amountOfHours].push( dotw );
+          else
+            acc[amountOfHours] = [ dotw ];
 
-        return acc;
-      }, {} );
-      const hoursString = Object.keys( groupByHourAmount ).map( amountOfHours => {
-        const daysOfTheWeek = groupByHourAmount[amountOfHours].sort( sortDaysOfTheWeek );
+          return acc;
+        }, {} );
+        hoursString = Object.keys( groupByHourAmount ).map( amountOfHours => {
+          const daysOfTheWeek = groupByHourAmount[amountOfHours].sort( sortDaysOfTheWeek );
 
-        return `  Dates:    ${applyColor( "hour", daysOfTheWeek.join( " " ) )}
-  Quantity: ${applyColor( "hour", amountOfHours )}`;
-      } ).join( "\n  -------------\n" );
+          return `  Dates:    ${applyColor( "hour", daysOfTheWeek.join( " " ) )}
+    Quantity: ${applyColor( "hour", amountOfHours )}`;
+        } ).join( "\n  -------------\n" );
+      }
 
       let noteStringArr: string[] = [];
       let noteStringArrNoDOTW: string[] = [];
@@ -111,12 +114,12 @@ ${hoursString}${noteString}
               Sat: {},
               Sun: {},
             };
-            const tableData = Object.entries( relevantHours ).reduce( ( acc, [ dotw, hourAmount ]: any ) => {
-              acc[dotw] = applyColor( "hour", hourAmount );
-              return acc;
-            }, {
-              project: `${projectString}: ${taskDetailString}`,
-            } );
+            let tableData = { project: `${projectString}: ${taskDetailString}` };
+            if ( relevantHours )
+              tableData = Object.entries( relevantHours ).reduce( ( acc, [ dotw, hourAmount ]: any ) => {
+                acc[dotw] = applyColor( "hour", hourAmount );
+                return acc;
+              }, tableData );
 
             CliUx.ux.table( [ tableData ], columns, {} );
 
