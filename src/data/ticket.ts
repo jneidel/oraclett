@@ -8,9 +8,9 @@ export default class Ticket {
   static readAll = fs.readAll( this.FILE );
   static writeAll = fs.writeAll( this.FILE );
 
-  static readByProject( project: string ) {
+  static readByProject( project: string ): any[] {
     return Ticket.readAll()
-      .then( tickets => tickets?.[project] );
+      .then( tickets => tickets?.[project] || [] );
   }
 
   static async writeTicket( data: TicketData ) {
@@ -91,8 +91,9 @@ function matchByProjectCode( note, project ): string[] {
     .map( ( [ id ]: any ) => id );
 }
 function matchByNumbers( note, project ): string[] {
-  return Array.from( note.matchAll( `[0-9]{3,6}` ) )
-    .map( ( [ numbers ]: any ) => `${project}-${numbers}` );
+  // regex: 3-6 numbers, pro/preceded by spaces unless beginning/end of string
+  return Array.from( note.matchAll( `(:?^| )[0-9]{3,6}(:?$| )` ) )
+    .map( ( [ numbers ]: any ) => `${project}-${numbers.trim()}` );
 }
 function getTicketMatches( { note, project, tickets, dontMatchNumbers, dontMatchProject } ) {
   let matches: string[] = [];
