@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.4.3
+
+### Fixes
+
+- Fix numbers in project id being matched (like `001` in `ABC001-5555`) [8b221b7](https://github.com/jneidel/oraclett/commit/8b221b788e9e44946f85f87896d1ba1e56fad8e9)
+- Fix existing tickets being matched twice [9330a95](https://github.com/jneidel/oraclett/commit/9330a959bdd5726e91094fea26afc99c62c5c11d)
+
 ## v0.4.2
 
 ### Fixes
