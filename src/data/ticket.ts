@@ -113,5 +113,5 @@ function getTicketMatches( { note, project, tickets, dontMatchNumbers, dontMatch
       return matches;
     }, matches );
 
-  return matches;
+  return [ ...new Set( matches ) ];
 }
