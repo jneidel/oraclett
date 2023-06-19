@@ -1,8 +1,11 @@
 {
   "name": "oraclett",
-  "repository": "jneidel/oraclett",
   "version": "0.4.3",
   "description": "Oracle time tracker",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jneidel/oraclett.git"
+  },
   "author": {
     "name": "Jonathan Neidel",
     "email": "git@jneidel.com",
@@ -67,7 +70,7 @@
     ],
     "warn-if-update-available": {
       "timeoutInDays": 7,
-      "message": "An update for <%= config.name %> is available (<%= chalk.yellow(config.version) %> => <%= chalk.greenBright(latest) %>).\nInstall with: sudo npm install -g <%= config.name %>\n\nFor what's new see: https://github.com/jneidel/oraclett/blob/master/CHANGELOG.md"
+      "message": "An update for <%= config.name %> is available (<%= chalk.yellow(config.version) %> => <%= chalk.greenBright(latest) %>).\nInstall with: sudo npm install -g <%= config.name %>\n\nFor what's new see: https://github.com/jneidel/oraclett/releases"
     },
     "topics": {
       "plugins": {

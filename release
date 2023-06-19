@@ -24,43 +24,14 @@ fi
 
 VERSION="$(npm --no-git-tag-version version $1)"
 
-# prepare changelog
-ex CHANGELOG.md <<EOF >/dev/null
-3 insert
-## $VERSION
-
-### Improvements
-
-- <++>
-
-### Fixes
-
-- <++>
-
-.
-xit
-EOF
-echo "Appended version to CHANGELOG.md, please describe changes there."
-
-printf "Ready to continue (y/N): "
-read ans
-if [ ! "$ans" = "y" ] && [ ! "$ans" = "Y" ]; then
-  exit 1
-fi
-
 # track changes to release relevant files only here
-git update-index --no-assume-unchanged oclif.manifest.json npm-shrinkwrap.json
-oclif manifest
+git update-index --no-assume-unchanged npm-shrinkwrap.json
 npm shrinkwrap
 
 echo "Releasing '$VERSION'"
-git add npm-shrinkwrap.json oclif.manifest.json package.json CHANGELOG.md
+git add npm-shrinkwrap.json package.json
 git commit -m $VERSION
 git tag $VERSION
 
-# npm block requests through mullvad
-disable-mullvad-for npm publish
-
 # ignore for development
-rm oclif.manifest.json
-git update-index --assume-unchanged oclif.manifest.json npm-shrinkwrap.json
+git update-index --assume-unchanged npm-shrinkwrap.json
