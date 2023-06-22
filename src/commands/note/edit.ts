@@ -44,7 +44,8 @@ export default class Edit extends Command {
 
 
     const currentNote = notesData[project][taskDetail][dayOfTheWeek];
-    const updatedNote = await askFor.renaming( currentNote, "Please update the notes in your editor:" );
+    this.log( `You're about to edit: "${currentNote}"` );
+    const updatedNote = await askFor.renaming( currentNote, "Please update the note in your editor:" );
 
     editNote( { note: updatedNote, project, taskDetail, year, week, dayOfTheWeek } );
   }
