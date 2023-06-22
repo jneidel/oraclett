@@ -4,3 +4,4 @@ dist
 database.sqlite
 .env.local
 todo.norg
+oclif.manifest.json

@@ -15,7 +15,7 @@ EOF
 fi
 
 command -v npm >/dev/null || { echo "npm is not installed" 1>&2; exit 127; }
-command -v oclif >/dev/null || { echo "oclif is not installed" 1>&2; exit 127; }
+command -v $BROWSER >/dev/null || { echo "$BROWSER was not found" 1>&2; exit 127; }
 
 if [ "$1" != "major" ] && [ "$1" != "minor" ] && [ "$1" != "patch" ]; then
   echo "\$1 has to be one of: major, minor, patch"
@@ -23,15 +23,31 @@ if [ "$1" != "major" ] && [ "$1" != "minor" ] && [ "$1" != "patch" ]; then
 fi
 
 VERSION="$(npm --no-git-tag-version version $1)"
+echo "Releasing '$VERSION'"
 
 # track changes to release relevant files only here
 git update-index --no-assume-unchanged npm-shrinkwrap.json
-npm shrinkwrap
 
-echo "Releasing '$VERSION'"
+npm shrinkwrap
 git add npm-shrinkwrap.json package.json
 git commit -m $VERSION
 git tag $VERSION
+git push origin --tags
 
 # ignore for development
 git update-index --assume-unchanged npm-shrinkwrap.json
+
+# create changelog 
+REPO=jneidel/oraclett
+URL="https://github.com/$REPO/releases/new?tag=$VERSION&title=$VERSION&body=%23%23%20Improvements%0A%0A%0A%0A%23%23%20Fixes%0A%0A%0A%0A"
+
+LATEST=$(git tag | tail -n1)
+git log $LATEST..HEAD --oneline --no-decorate | {
+  while read line; do
+    COMMIT_LINE=`echo $line | awk '{ REPO = ENVIRON["REPO"]; print "- ["substr($0, index($0," ")+1)"](https://github.com/"REPO"/commit/"$1")" }'`
+    ENCODED_COMMIT_LINE=`node -e "console.log( encodeURIComponent( '$COMMIT_LINE' ) )"`
+    URL="${URL}${ENCODED_COMMIT_LINE}%0A"
+  done
+
+  $BROWSER "$URL" 2>/dev/null
+}
