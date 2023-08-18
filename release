@@ -32,12 +32,13 @@ npm shrinkwrap
 git add npm-shrinkwrap.json package.json
 git commit -m $VERSION
 git tag $VERSION
+git push origin
 git push origin --tags
 
 # ignore for development
 git update-index --assume-unchanged npm-shrinkwrap.json
 
-# create changelog 
+# create changelog
 REPO=jneidel/oraclett
 URL="https://github.com/$REPO/releases/new?tag=$VERSION&title=$VERSION&body=%23%23%20Improvements%0A%0A%0A%0A%23%23%20Fixes%0A%0A%0A%0A"
 
