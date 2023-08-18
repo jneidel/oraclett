@@ -87,7 +87,7 @@ function replaceTicketInNote( note: string, id: string, title: string ) {
 }
 
 function matchByProjectCode( note, project ): string[] {
-  return Array.from( note.matchAll( `${project}[^ ]+` ) )
+  return Array.from( note.matchAll( `${project}[^ ,;.]+` ) )
     .map( ( [ id ]: any ) => id );
 }
 function matchByNumbers( note, project ): string[] {
