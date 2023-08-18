@@ -1,0 +1,9 @@
+name: oraclett
+root: /home/jneidel/code/oraclett
+windows:
+  - vim: cd src; vim
+  - zsh:
+      layout: 70a3,192x43,0,0[192x12,0,0,92,192x30,0,13,100]
+      panes:
+        - nwb
+        -
