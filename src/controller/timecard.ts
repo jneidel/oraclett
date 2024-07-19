@@ -16,8 +16,8 @@ export async function generateReports( dateString: string, noInteractive: boolea
     errorFunc( `No hours or notes have been logged for the selected week.
 Meant anoter week? Specify it using: -d, --date
 
-To log some hours: hours add
-To keep some notes: notes add` );
+To log some hours: hour add
+To keep some notes: note add` );
 
   const noteStringsForClipboard: any[] = [];
   const reports = await Promise.all( projects.map( async projectKey => {

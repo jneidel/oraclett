@@ -43,7 +43,7 @@ export function getNoEntriesErrorFunction( dateString: string, errorFunc: Functi
   const hoursEntity = "hours logged";
   const noteEnity = "notes added";
 
-  const hoursCommandRecommendation = "To log some use: hours add";
+  const hoursCommandRecommendation = "To log some use: hour add";
   const noteCommandRecommendation = "To add one use: note add";
 
   const weekMessage = `No ${isHours ? hoursEntity : noteEnity} ${isHours ? "in" : "for"} ${createHumanReadableWeekIdentifier( dateString, { noLeadingProposition: true } )}.
