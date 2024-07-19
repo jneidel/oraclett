@@ -21,7 +21,10 @@ To keep some notes: note add` );
 
   const noteStringsForClipboard: any[] = [];
   const reports = await Promise.all( projects.map( async projectKey => {
-    const projectString = await getFullNames.project( projectKey, { colorForWhat: "project", style: "hyphen" } );
+    const [ projectString, projectStringNoColor ] = await Promise.all( [
+      getFullNames.project( projectKey, { colorForWhat: "project", style: "hyphen" } ),
+      getFullNames.project( projectKey, { colorForWhat: "", style: "hyphen" } ),
+    ] );
 
     let taskDetails: string[] = [];
     if ( notes[projectKey] )
@@ -98,7 +101,7 @@ ${hoursString}${noteString}
 ` );
         } ];
       } else {
-        noteStringsForClipboard.push( projectKey );
+        noteStringsForClipboard.push( projectStringNoColor );
         noteStringsForClipboard.push( noteStringArrNoDOTW );
         return [
           ( noInteractive = false ) => {
@@ -124,7 +127,7 @@ ${hoursString}${noteString}
             CliUx.ux.table( [ tableData ], columns, {} );
 
             if ( !noInteractive )
-              console.log( `\nCopied project key to clipboard (${applyColor( "ticket", projectKey )})` );
+              console.log( `\nCopied project key to clipboard (${projectString})` );
           },
           prettyNoteStringArr.map( string => () => {console.log( string );} ),
         ].flat();
