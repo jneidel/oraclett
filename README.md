@@ -170,6 +170,7 @@ local ORACLETT_MAIN_TASK_DETAILS=03
 
 alias onl="oraclett note list"
 alias ona="oraclett note add -p $ORACLETT_MAIN_PROJECT -t $ORACLETT_MAIN_TASK_DETAILS"
+alias onaa="oraclett note add -p $ORACLETT_MAIN_PROJECT -t $ORACLETT_MAIN_TASK_DETAILS -H8 -n" # I use this every day
 alias one="oraclett note edit"
 alias onr="oraclett note remove"
 
