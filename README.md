@@ -27,20 +27,8 @@ thesis](https://github.com/jneidel/ba) on improving CLI app usability.
   - [Aliases](#aliases)
   - [`project`](#project)
   - [`hour`](#hour)
-    - [`hour add`](#hour-add)
-    - [`hour list`](#hour-list)
-    - [`hour edit`](#hour-edit)
-    - [`hour remove`](#hour-remove)
   - [`note`](#note)
-    - [`note add`](#note-add)
-    - [`note list`](#note-list)
-    - [`note edit`](#note-edit)
-    - [`note remove`](#note-remove)
   - [`ticket`](#ticket)
-    - [`ticket add`](#ticket-add)
-    - [`ticket list`](#ticket-list)
-    - [`ticket edit`](#ticket-edit)
-    - [`ticket remove`](#ticket-remove)
 - [Example aliases](#example-aliases)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -79,6 +67,63 @@ All verbs have short, one-letter aliases available:
 - `list` -> `l`
 - `edit` -> `e`
 - `remove` -> `r`, `d` (for `delete`)
+
+### `project`
+
+Management of projects and their task details.
+
+#### `project add`
+
+Add a project and its task details.
+Copy paste the values from Oracle.
+
+- A project code will look like this: "INTPD999DXD - People Development DXD"
+- And the task details will look like this: "01 - Career development"
+
+**Flags:**
+- `-p`, `--project`: The project code
+- `-t`, `--task-detail`: A task detail (repeatable; pass multiple `-t` flags)
+
+**Examples:**
+```sh
+  $ oraclett project add
+  $ oraclett project add -p "INTPD999DXD - People Development DXD"
+  $ oraclett project add -t "01 - Career development" -t "03 - Discipline Weeks" -p "INTPD999DXD - People Development DXD"
+```
+
+#### `project list`
+
+List all projects.
+
+By default, only a shortened list of task details is shown.
+Use `--full` to display all task details.
+
+**Optional Flags:**
+- `-f`, `--full`: Show the full list of task details (default: false)
+
+**Examples:**
+```sh
+  $ oraclett project list
+  $ oraclett project list --full
+```
+
+#### `project edit`
+
+Rename a project or one of its task details interactively.
+
+**Examples:**
+```sh
+  $ oraclett project edit
+```
+
+#### `project remove`
+
+Remove a project or one of its task details interactively.
+
+**Examples:**
+```sh
+  $ oraclett project remove
+```
 
 ### `hour`
 
