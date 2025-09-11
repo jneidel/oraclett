@@ -7,13 +7,21 @@
 [![Licence GPLv3](https://img.shields.io/badge/licence-GPLv3-green.svg?style=flat-square)](https://github.com/jneidel/oraclett/blob/master/licence)
 [![Npm Downloads](https://img.shields.io/npm/dw/oraclett.svg?style=flat-square)](https://www.npmjs.com/package/oraclett)
 
-Log working hours on different projects.
-Keep notes of what you did.
-Generate a report at the end of the week to transfer it into your company's
-Oracle system.
+An interactive CLI for tracking your work.
+Optimized for timecard submission in oracle.
 
-Built for [Endava](https://www.endava.com), initially as part of my [bachelors
-thesis](https://github.com/jneidel/ba) on improving CLI app usability.
+Built for [Endava](https://www.endava.com), initially as part of my [bachelors thesis](https://github.com/jneidel/ba) on improving CLI app usability.
+
+## Features
+
+- Log hours.
+- Note what you worked on.
+- Weekly views, edit and removal flows for notes and hours.
+- Manage multiple projects (and task details.)
+- Fill out oraclet timecards (normal & classic layout.)
+- Interactively prompts for missing data.
+- Understands human‑readable dates like 'today', 'yesterday', 'mon', 'this week', 'last week wed'.
+- Auto-expands ticket descriptions from a ticket id.
 
 ## Table of Contents
 
@@ -21,6 +29,7 @@ thesis](https://github.com/jneidel/ba) on improving CLI app usability.
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Install](#install)
+- [Quickstart](#quickstart)
 - [Usage](#usage)
   - [Command structure](#command-structure)
   - [Interactivity](#interactivity)
@@ -42,10 +51,57 @@ thesis](https://github.com/jneidel/ba) on improving CLI app usability.
 sudo npm install -g oraclett
 ```
 
+## Quickstart
+
+This demonstrates the essential workflow of the app.
+Removing any of the flags will make the app prompt for a required value.
+
+You can follow along by replacing examples with your data.
+
+1) Configure a project and its task details.
+
+```sh
+oraclett project add -p "INTPD999DXD - People Development DXD" -t "01 - Career development"
+```
+
+![Quickstart project](img/quickstart-1.png)
+
+2) Jot down a note about what you did.
+
+```sh
+oraclett note add -p INTPD999DXD -t 01 -n "Kickoff + project setup"
+```
+
+![Quickstart project](img/quickstart-2.png)
+
+3) Log some hours.
+
+```sh
+oraclett hour add -H 8 -p INTPD999DXD -t 01 -d today
+```
+
+![Quickstart project](img/quickstart-3.png)
+
+4) Take a look at what you logged.
+
+```sh
+oraclett note list
+oraclett hour list
+```
+
+![Quickstart project](img/quickstart-4.png)
+
+5) Interactively fill in your timecard.
+
+```sh
+oraclett timecard
+```
+
+![Quickstart project](img/quickstart-5.png)
+
+The complete documentation of the available commands and their options can be found below or by using the `--help`/`-h` flags on any command with the app.
+
 ## Usage
-
-<!-- TODO: copy over screenshots and describe commands -->
-
 ### Command structure
 
 The app is structured in nouns and verbs (e.g. `project` and `add`).
