@@ -28,6 +28,7 @@ thesis](https://github.com/jneidel/ba) on improving CLI app usability.
   - [`project`](#project)
   - [`hour`](#hour)
   - [`note`](#note)
+  - [`timecard`](#timecard)
   - [`ticket`](#ticket)
 - [Example aliases](#example-aliases)
 
@@ -271,6 +272,36 @@ Remove notes interactively.
   $ oraclett note remove
   $ oraclett note remove -dy # yesterday
   $ oraclett note remove -d "this week"
+```
+
+### `timecard`
+
+Generate a report for filling out timecards.
+
+The non-interactive mode (`-I`) will print the report.
+
+The interactive mode will step through one project and note after the other, copying relevant data (notes and project ids) to your clipboard to be pasted into oracle.
+
+**Optional Flags:**
+- `-d`, `--date`: A date specifying the week (can be human‑readable; default: `this week`)
+- `-I`, `--no-interactive`: Just print out the report
+- `-c`, `--classic`: Use the classic timecard format
+
+<details>
+<summary>What is the classic timecard?</summary>
+
+This is the `--classic` timecard:
+![Classic timecard](img/classic-timecard.png)
+
+Without the use of `-c` the `timecard` command is optimized for the normal flow:
+![Normal timecard](img/normal-timecard.png)
+</details>
+
+**Examples:**
+```sh
+  $ oraclett timecard
+  $ oraclett timecard -d "last week" -I
+  $ oraclett timecard --classic
 ```
 
 ### `ticket`
