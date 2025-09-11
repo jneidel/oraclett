@@ -20,10 +20,14 @@ thesis](https://github.com/jneidel/ba) on improving CLI app usability.
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-
 - [Install](#install)
 - [Usage](#usage)
   - [Some notes](#some-notes)
+  - [`hour`](#hour)
+    - [`hour add`](#hour-add)
+    - [`hour list`](#hour-list)
+    - [`hour edit`](#hour-edit)
+    - [`hour remove`](#hour-remove)
   - [`ticket`](#ticket)
     - [`ticket add`](#ticket-add)
     - [`ticket list`](#ticket-list)
@@ -68,6 +72,74 @@ All verbs have short, one-letter aliases available:
 - `list` -> `l`
 - `edit` -> `e`
 - `remove` -> `r`, `d` (for `delete`)
+
+### `hour`
+#### `hour add`
+
+Log working hours.
+
+**Required Flags:**
+- `-p`, `--project`: Project code
+- `-t`, `--task-detail`: Task details (short form, e.g. 01)
+- `-H`, `--hours`: Number of hours to log (1h: 1, 30min: 0.5)
+
+**Optional Flags:**
+- `-d`, `--date`: Date to log for (can be human‑readable; default: `today`)
+- `-n`, `--note`: Note to log alongside the hours (see `note add`
+
+**Examples:**
+```sh
+  $ oraclett hour add
+  $ oraclett hour add -H 8
+  $ oraclett hour add -H 3 -p INTPD999DXD -t 01
+  $ oraclett hour add -H 3 -p INTPD999DXD -t 01 --date yesterday
+  $ oraclett hour add -H 10 -p INTPD999DXD -t 01 -d today
+  $ oraclett hour add -H2 -pINTPD999DXD -dtoday --note "Onboarding meeting"
+```
+
+#### `hour list`
+
+List all logged hours for a week.
+
+**Optional Flags:**
+- `-d`, `--date`: A date specifying the week (can be human‑readable; default: `this week` with fallback to `last week` if empty)
+- `-s`, `--short`: Show shortened project/task titles (for smaller terminals)
+
+**Examples:**
+```sh
+  $ oraclett hour list
+  $ oraclett hour list -d "last week" --short
+```
+
+#### `hour edit`
+
+Edit logged hours interactively.
+Specifying a week allows you to pick a day to edit.
+
+**Optional Flags:**
+- `-d`, `--date`: A date specifying the day or the week (can be human‑readable; default: `today`)
+
+**Examples:**
+```sh
+  $ oraclett hour edit
+  $ oraclett hour edit -d "mon"
+  $ oraclett hour edit -d "last week"
+```
+
+#### `hour remove`
+
+Remove logged hours interactively.
+Specifying a week allows you to pick a day to edit.
+
+**Optional Flags:**
+- `-d`, `--date`: A date specifying the day or the week (can be human‑readable; default: `today`)
+
+**Examples:**
+```sh
+  $ oraclett hour remove
+  $ oraclett hour remove -dy # yesterday
+  $ oraclett hour remove -d "this week"
+```
 
 ### `ticket`
 
