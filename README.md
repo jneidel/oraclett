@@ -22,7 +22,10 @@ thesis](https://github.com/jneidel/ba) on improving CLI app usability.
 
 - [Install](#install)
 - [Usage](#usage)
-  - [Some notes](#some-notes)
+  - [Command structure](#command-structure)
+  - [Interactivity](#interactivity)
+  - [Aliases](#aliases)
+  - [`project`](#project)
   - [`hour`](#hour)
     - [`hour add`](#hour-add)
     - [`hour list`](#hour-list)
@@ -54,22 +57,21 @@ sudo npm install -g oraclett
 
 <!-- TODO: copy over screenshots and describe commands -->
 
-### Some notes
+### Command structure
 
-**On structure**
+The app is structured in nouns and verbs (e.g. `project` and `add`).
+The first subcommand is always a noun and the secound one a verb (e.g. `oraclett project add`).
+The verbs are the same accross all nouns.
+So `list` and `edit` will work for both `note` and `hour`.
 
-The app is structured in nouns and verbs (e.g. `project` and `add`). The first
-subcommand is always a noun and the secound one a verb (e.g. `oraclett project
-add`). The verbs are the same accross all nouns. So `list` and `edit` will work
-for both `note` and `hour`.
+### Interactivity
 
-**On interactivity**
+All commands offer a interactivity.
+`add` commands are completely scriptable.
+So you can either pass all of the required arguments (runs non-interactive.)
+Or pass none or some of the arguments and you will be interactively prompted for what is needed.
 
-All commands are offered in an interactive version. Just call them with some or
-none of the flags and everything necessary that you omitted will be prompted
-for.
-
-**On aliases**
+### Aliases
 
 All verbs have short, one-letter aliases available:
 
@@ -317,11 +319,12 @@ Remove a ticket.
 
 ## Example aliases
 
-Here are the aliases I use in the day-to-day.
+A set of shell alias can significantly speed up usage.
+These are the aliases I use.
 
-I have everything set-up to add/filter for the main project I'm working on. All
-`oraclett` commands have a three letter shorthand. For some common notes of mime
-I have shortcuts.
+I have everything set-up to add/filter for the main project I'm working on.
+All `oraclett` commands have a three letter shorthand.
+For some common notes of mime I have shortcuts.
 
 ```sh
 local ORACLETT_MAIN_PROJECT=ORFDV001
