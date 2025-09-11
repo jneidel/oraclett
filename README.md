@@ -28,6 +28,11 @@ thesis](https://github.com/jneidel/ba) on improving CLI app usability.
     - [`hour list`](#hour-list)
     - [`hour edit`](#hour-edit)
     - [`hour remove`](#hour-remove)
+  - [`note`](#note)
+    - [`note add`](#note-add)
+    - [`note list`](#note-list)
+    - [`note edit`](#note-edit)
+    - [`note remove`](#note-remove)
   - [`ticket`](#ticket)
     - [`ticket add`](#ticket-add)
     - [`ticket list`](#ticket-list)
@@ -74,6 +79,10 @@ All verbs have short, one-letter aliases available:
 - `remove` -> `r`, `d` (for `delete`)
 
 ### `hour`
+
+Management of logged hours.
+Keep track of your working time across multiple projects.
+
 #### `hour add`
 
 Log working hours.
@@ -114,7 +123,6 @@ List all logged hours for a week.
 #### `hour edit`
 
 Edit logged hours interactively.
-Specifying a week allows you to pick a day to edit.
 
 **Optional Flags:**
 - `-d`, `--date`: A date specifying the day or the week (can be human‑readable; default: `today`)
@@ -129,7 +137,6 @@ Specifying a week allows you to pick a day to edit.
 #### `hour remove`
 
 Remove logged hours interactively.
-Specifying a week allows you to pick a day to edit.
 
 **Optional Flags:**
 - `-d`, `--date`: A date specifying the day or the week (can be human‑readable; default: `today`)
@@ -141,10 +148,90 @@ Specifying a week allows you to pick a day to edit.
   $ oraclett hour remove -d "this week"
 ```
 
+### `note`
+
+Management of notes.
+Describe what you worked on per day and project.
+
+#### `note add`
+
+Note down what you worked on.
+Adding to existing notes works no problem.
+
+If you included a ticket number in your note it will be expanded (see [`ticket`](#ticket) for details.)
+
+**Required Flags:**
+- `-p`, `--project`: Project code
+- `-t`, `--task-detail`: Task details (short form, e.g. 01)
+- `-n`, `--note`: Note to add
+
+**Optional Flags:**
+- `-d`, `--date`: Date to log for (can be human-readable; default: `today`)
+- `-H`, `--hours`: Hours to log alongside the note (1h: 1, 30min: 0.5)
+
+**Optional Flags for [ticket](#ticket) matching:**
+- `--dont-match-numbers`: Disable number-based matching (3+ numbers)
+- `--dont-match-project`: Disable project-based matching (project key + postfix)
+- `--dont-match-new-tickets`: Disable all checking for new tickets
+
+Notes automatically match and expand ticket identifiers in the text.
+See [`ticket`](#ticket) for details on ticket expansion.
+
+**Examples:**
+```sh
+  $ oraclett note add
+  $ oraclett note add -n "This and that" -p INTPD999DXD
+  $ oraclett note add -n "This and that" -p INTPD999DXD -t 01 --date yesterday
+  $ oraclett note add -n "Worked 5h with Node" -H5 -pINTPD999DXD -t01 -dt # today
+```
+
+#### `note list`
+
+List all notes for a week.
+
+**Optional Flags:**
+- `-d`, `--date`: A date specifying the week (can be human-readable; default: `this week` with fallback to `last week` if empty)
+
+**Examples:**
+```sh
+  $ oraclett note list      # this week
+  $ oraclett note list -dlw # last week
+```
+
+#### `note edit`
+
+Edit a note in your editor.
+
+**Optional Flags:**
+- `-d`, `--date`: A date specifying the day or the week (can be human-readable; default: `today`)
+
+**Examples:**
+```sh
+  $ oraclett note edit
+  $ oraclett note edit -d "mon"
+  $ oraclett note edit -d "last week"
+```
+
+#### `note remove`
+
+Remove notes interactively.
+
+**Optional Flags:**
+- `-d`, `--date`: A date specifying the day or the week (can be human-readable; default: `today`)
+
+**Examples:**
+```sh
+  $ oraclett note remove
+  $ oraclett note remove -dy # yesterday
+  $ oraclett note remove -d "this week"
+```
+
 ### `ticket`
 
-The point of tickets is to expand a short identifier in a note to include a
-description.
+Manage tickets.
+A ticket includes an identifier (e.g. "OVABC001-1337") and a description (e.g. "Improve feature").
+Whenever a registered ticket identifier is mentioned in a [note](#note-add), it will be expaned to include the ticket description.
+If see app see a Jira id in a note it will prompt you to add a description, even if the ticket was not setup beforehand.
 
 Example:
 ```sh
@@ -157,8 +244,8 @@ $ oraclett note add -p INTPD999DXD -t02 -n "Finished AAKKK001-1337"
 ```
 
 This arose out of the need to be required to include the full title each time I
-was to reference a ticket id. If you don't need to do this, don't bother with it
-:)
+was to reference a ticket id.
+If that is not requested of you don't bother with it :)
 
 #### `ticket add`
 
